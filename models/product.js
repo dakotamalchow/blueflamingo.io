@@ -14,5 +14,12 @@ const productSchema = new mongoose.Schema({
     },
     picture:{
         type: String
+    },
+    category:{
+        type: String
     }
 });
+
+const Product = mongoose.model("product",productSchema);
+
+module.exports = Product;
