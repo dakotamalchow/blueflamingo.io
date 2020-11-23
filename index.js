@@ -15,9 +15,15 @@ mongoose.connect("mongodb://localhost:27017/blueflamingo",{useNewUrlParser:true,
 
 app.set("views",path.join(__dirname,"views"));
 app.set("view engine","ejs");
+app.use(express.static("_seedData"));
 
 app.get("/",(req,res)=>{
     res.render("index");
+});
+
+app.get("/products",async (req,res)=>{
+    const products = await Product.find({});
+    res.render("products",{products});
 });
 
 app.listen(3000,()=>{
