@@ -3,6 +3,8 @@ const app = express();
 const path = require("path");
 const mongoose = require("mongoose");
 const stripe = require("stripe")('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
+const session = require("express-session");
+const mongoStore = require("connect-mongo")(session);
 
 const Product = require("./models/product");
 
