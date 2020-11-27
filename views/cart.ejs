@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+</head>
+<body>
+    <h1>Cart</h1>
+    <% if(products){ %>
+        <ul>
+            <% for(let product of products){ %>
+                <li><%= product.product.name %> (<%= product.quantity %>) $<%= product.price %></li>
+            <% } %>
+        </ul>
+        <p>Total: $<%= totalPrice %> </p>
+    <% } else { %>
+        <h2>No items in cart</h2>
+    <% } %>  
+</body>
+</html>

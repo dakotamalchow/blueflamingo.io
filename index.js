@@ -5,8 +5,10 @@ const mongoose = require("mongoose");
 const stripe = require("stripe")('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
 const session = require("express-session");
 const mongoStore = require("connect-mongo")(session);
+const Cart = require("./models/cart");
 
 const Product = require("./models/product");
+const cart = require("./models/cart");
 
 const domain = 'http://localhost:3030';
 
@@ -21,6 +23,17 @@ mongoose.connect("mongodb://localhost:27017/blueflamingo",{useNewUrlParser:true,
 app.set("views",path.join(__dirname,"views"));
 app.set("view engine","ejs");
 app.use(express.static("_seedData"));
+app.use(session({
+    secret: "testSecret",
+    resave: false,
+    saveUninitialized: false,
+    store: new mongoStore({mongooseConnection:mongoose.connection}),
+    cookie: {maxAge:180*60*1000}
+}));
+app.use(function(req,res,next){
+    res.locals.session = req.session;
+    next();
+});
 
 app.get("/",(req,res)=>{
     res.render("index");
@@ -29,6 +42,28 @@ app.get("/",(req,res)=>{
 app.get("/products",async (req,res)=>{
     const products = await Product.find({});
     res.render("products",{products});
+});
+
+app.get("/add-to-cart/:id",function(req,res){
+    const productId = req.params.id;
+    const cart = new Cart(req.session.cart?req.session.cart:{});
+    Product.findById(productId,function(error,product){
+        if(error){
+            return res.redirect("/products");
+        };
+        cart.add(product,productId);
+        req.session.cart = cart;
+        console.log(req.session.cart);
+        res.redirect("/products");
+    });
+});
+
+app.get("/cart",function(req,res){
+    if(!req.session.cart){
+        return res.render("cart",{products:null});
+    }
+    const cart = new Cart(req.session.cart);
+    res.render("cart",{products:cart.generateArray(),totalPrice:cart.totalPrice});
 });
 
 app.post('/create-session', async (req, res) => {
