@@ -67,7 +67,8 @@ app.get("/cart",function(req,res){
 });
 
 app.post('/create-session', async (req, res) => {
-  const session = await stripe.checkout.sessions.create({
+    const cart = new Cart(req.session.cart);
+    const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     line_items: [
       {
@@ -77,7 +78,7 @@ app.post('/create-session', async (req, res) => {
             name: 'Test Item',
             //images: ['https://i.imgur.com/EHyR2nP.png'],
           },
-          unit_amount: 2000,
+          unit_amount: cart.totalPrice*100,
         },
         quantity: 1,
       },
