@@ -5,10 +5,9 @@ const mongoose = require("mongoose");
 const stripe = require("stripe")('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
 const session = require("express-session");
 const mongoStore = require("connect-mongo")(session);
-const Cart = require("./models/cart");
 
+const Cart = require("./models/cart");
 const Product = require("./models/product");
-const cart = require("./models/cart");
 
 const domain = 'http://localhost:3030';
 
