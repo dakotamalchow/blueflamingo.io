@@ -5,9 +5,12 @@ const mongoose = require("mongoose");
 const stripe = require("stripe")('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
 const session = require("express-session");
 const mongoStore = require("connect-mongo")(session);
+const passport = require("passport");
+const passportLocal = require("passport-local");
 
 const Cart = require("./models/cart");
 const Product = require("./models/product");
+const User = require("./models/user");
 
 const domain = 'http://localhost:3030';
 
@@ -33,6 +36,12 @@ app.use(function(req,res,next){
     res.locals.session = req.session;
     next();
 });
+app.use(passport.initialize);
+app.use(passport.session);
+passport.use(new passportLocal(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.get("/",(req,res)=>{
     res.render("index");
