@@ -8,6 +8,8 @@ const mongoStore = require("connect-mongo")(session);
 const passport = require("passport");
 const passportLocal = require("passport-local");
 
+const userRoutes = require("./routes/users");
+
 const Cart = require("./models/cart");
 const Product = require("./models/product");
 const User = require("./models/user");
@@ -25,6 +27,7 @@ mongoose.connect("mongodb://localhost:27017/blueflamingo",{useNewUrlParser:true,
 app.set("views",path.join(__dirname,"views"));
 app.set("view engine","ejs");
 app.use(express.static("_seedData"));
+app.use(express.urlencoded({extended:true}));
 app.use(session({
     secret: "testSecret",
     resave: false,
@@ -36,8 +39,9 @@ app.use(function(req,res,next){
     res.locals.session = req.session;
     next();
 });
-app.use(passport.initialize);
-app.use(passport.session);
+app.use("/",userRoutes);
+app.use(passport.initialize());
+app.use(passport.session());
 passport.use(new passportLocal(User.authenticate()));
 
 passport.serializeUser(User.serializeUser());
