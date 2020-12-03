@@ -1,4 +1,5 @@
 const express = require("express");
+const passport = require("passport");
 const router = express.Router();
 const User = require("../models/user");
 
@@ -9,6 +10,13 @@ router.post("/register",async(req,res)=>{
     const {email,username,password} = req.body;
     const user = new User({email,username});
     const registedUser = await User.register(user,password);
+    res.redirect("/");
+});
+
+router.get("/login",(req,res)=>{
+    res.render("users/login");
+});
+router.post("/login",passport.authenticate("local"),(req,res)=>{
     res.redirect("/");
 });
 

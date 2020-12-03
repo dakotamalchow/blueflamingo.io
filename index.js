@@ -39,9 +39,9 @@ app.use(function(req,res,next){
     res.locals.session = req.session;
     next();
 });
-app.use("/",userRoutes);
 app.use(passport.initialize());
 app.use(passport.session());
+app.use("/",userRoutes);
 passport.use(new passportLocal(User.authenticate()));
 
 passport.serializeUser(User.serializeUser());
