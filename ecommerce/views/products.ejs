@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+</head>
+<body>
+    <h1>Products</h1>
+    <a href="/cart" style="float: right;">
+        Shopping Cart: 
+        <span><%= session.cart?session.cart.totalQuantity:0 %> </span>
+    </a>
+    <% for(let product of products){ %>
+        <div>
+            <p><%= product.name %> - $<%= product.price %> </p>
+            <img src="http://localhost:3000/<%= product.picture %>" alt="<%= product.name %>" width="150">
+            <a href="/add-to-cart/<%= product._id %> ">Add to Cart</a>
+        </div>
+    <% } %>
+</body>
+</html>
