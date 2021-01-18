@@ -20,6 +20,10 @@ app.get("/",(req,res)=>{
     res.render("index");
 });
 
+app.get("/payments",(req,res)=>{
+    res.render("payments");
+});
+
 app.get("/request-payment",(req,res)=>{
     res.render("request-payment");
 });
@@ -27,7 +31,7 @@ app.get("/request-payment",(req,res)=>{
 app.post("/request-payment",(req,res)=>{
     const {name,email,amount,notes} = req.body;
     const payment = new Payment({name,email,amount,notes});
-    res.redirect("/");
+    res.redirect("/payments");
 });
 
 app.listen(3000,()=>{
