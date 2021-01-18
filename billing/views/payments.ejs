@@ -9,5 +9,10 @@
     <h1>Blue Flamingo</h1>
     <h2>Payments</h2>
     <a href="/request-payment">Request Payment</a>
+    <% for(let payment of payments){ %>
+        <div>
+            <p><%= payment.name %> - $<%= payment.amount %></p>
+        </div>
+    <% } %>
 </body>
 </html>
