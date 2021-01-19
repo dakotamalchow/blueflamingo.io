@@ -4,13 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blue Flamingo</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const amount = <%= payment.amount %>;
+    </script>
+    <script src="/make-payment.js" defer></script>
 </head>
 <body>
     <h1>Blue Flamingo</h1>
     <h2>Make Payment</h2>
     <a href="/payments">Back to Payments</a>
-    <div>
-        <p><%= payment.name %> - $<%= payment.amount %></p>
-    </div>
+    <p><%= payment._id %> - $<%= payment.amount %></p>
+    <form action="" id="payment-form">
+        <div id="card-element"></div>
+        <button>Make Payment</button>
+    </form>
 </body>
 </html>
