@@ -6,7 +6,7 @@
     <title>Blue Flamingo</title>
     <script src="https://js.stripe.com/v3/"></script>
     <script>
-        const amount = <%= payment.amount %>;
+        const amount = "<%= payment.amount %>";
     </script>
     <script src="/make-payment.js" defer></script>
 </head>
