@@ -12,6 +12,7 @@
     <% for(let payment of payments){ %>
         <div>
             <p><%= payment.name %> - $<%= payment.amount %></p>
+            <a href="/make-payment/<%= payment._id %> ">Make Payment</a>
         </div>
     <% } %>
 </body>

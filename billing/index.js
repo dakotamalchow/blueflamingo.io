@@ -26,6 +26,12 @@ app.get("/payments",async(req,res)=>{
     res.render("payments",{payments});
 });
 
+app.get("/make-payment/:id",async(req,res)=>{
+    const paymentId = req.params.id;
+    const payment = await Payment.findById(paymentId);
+    res.render("make-payment",{payment});
+});
+
 app.get("/request-payment",(req,res)=>{
     res.render("request-payment");
 });
