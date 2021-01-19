@@ -15,5 +15,9 @@
             <a href="/make-payment/<%= payment._id %> ">Make Payment</a>
         </div>
     <% } %>
+    <form action="/delete-all?_method=DELETE" method="POST">
+        <input type="hidden" name="_method" value="DELETE">
+        <button>Delete All Payments</button>
+    </form>
 </body>
 </html>

@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
+const methodOverride = require("method-override");
 const mongoose = require("mongoose");
 const stripe = require("stripe")("sk_test_F7a54OYuDnabmUT6HN2pLiDu");
 
@@ -19,6 +20,7 @@ app.set("view engine","ejs");
 app.use(express.urlencoded({extended:true}))
 app.use(express.static("."));
 app.use(express.json());
+app.use(methodOverride("_method"));
 
 app.get("/",(req,res)=>{
     res.render("index");
@@ -58,6 +60,12 @@ app.post("/request-payment",async(req,res)=>{
     });
     res.redirect("/payments");
 });
+
+app.delete("/delete-all",async(req,res)=>{
+    const deleted = await Payment.deleteMany({});
+    console.log(deleted);
+    res.redirect("/payments");
+})
 
 app.listen(3000,()=>{
     console.log("App is listening on Port 3000");
