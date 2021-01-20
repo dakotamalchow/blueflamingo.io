@@ -1,19 +1,30 @@
 var stripe = Stripe("pk_test_osZfCwd1uI7FjnfaUqWxbu2R");
-const payment = {
-    amount: amount
-}
-const config = {
+
+const postConfig = {
     method: "POST",
     headers: {
         "Content-Type": "application/json"
     },
-    body: JSON.stringify(payment)
+    body: payment
 }
-fetch("/make-payment",config)
+
+const putCongif = {
+    method: "PUT",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: payment
+}
+
+const paymentId = JSON.parse(payment)._id;
+
+fetch("/make-payment/"+paymentId,postConfig)
 .then((result)=>{
+    // console.log("result:",result)
     return result.json();
 })
 .then((data)=>{
+    // console.log("data:",data);
     const elements = stripe.elements();
     const card = elements.create("card");
     card.mount("#card-element");
@@ -32,9 +43,17 @@ const payWithCard = (stripe,card,clientSecret)=>{
     })
     .then(function(result){
         if (result.error){
-          showError(result.error.message);
+            // showError(result.error.message);
+            console.log(result.error.message);
         } else {
-          console.log("Payment successful");
+            fetch("/update-status/"+paymentId,putCongif)
+            .then((result)=>{
+                return result.json();
+            })
+            .then((data)=>{
+                //console.log("data:",data);
+            })
+            console.log("Payment successful");
         }
     });
 };

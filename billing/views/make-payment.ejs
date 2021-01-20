@@ -6,7 +6,7 @@
     <title>Blue Flamingo</title>
     <script src="https://js.stripe.com/v3/"></script>
     <script>
-        const amount = "<%= payment.amount %>";
+        const payment = '<%- JSON.stringify(payment) %>'
     </script>
     <script src="/make-payment.js" defer></script>
 </head>
@@ -15,6 +15,9 @@
     <h2>Make Payment</h2>
     <a href="/payments">Back to Payments</a>
     <p><%= payment._id %> - $<%= payment.amount %></p>
+    <% if(payment.notes){ %> 
+        <p><%= payment.notes %> </p>
+    <% } %> 
     <form action="" id="payment-form">
         <div id="card-element"></div>
         <button>Make Payment</button>

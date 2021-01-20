@@ -31,16 +31,33 @@ app.get("/payments",async(req,res)=>{
     res.render("payments",{payments});
 });
 
+app.get("/request-payment",(req,res)=>{
+    res.render("request-payment");
+});
+
+app.post("/request-payment",async(req,res)=>{
+    const {name,email,amount,notes} = req.body;
+    const status = "SENT";
+    const payment = new Payment({name,email,amount,notes,status});
+    payment.save((err)=>{
+        if(err){
+            console.log("error:",err);
+        }
+    });
+    res.redirect("/payments");
+});
+
 app.get("/make-payment/:id",async(req,res)=>{
     const paymentId = req.params.id;
     const payment = await Payment.findById(paymentId);
     res.render("make-payment",{payment});
 });
 
-app.post("/make-payment",async(req,res)=>{
-    const amount = req.body.amount;
+app.post("/make-payment/:id",async(req,res)=>{
+    const paymentId = req.params.id;
+    const payment = await Payment.findById(paymentId);
     const paymentIntent = await stripe.paymentIntents.create({
-        amount: amount*100,
+        amount: payment.amount*100,
         currency: "usd"
     });
     res.send({
@@ -48,22 +65,20 @@ app.post("/make-payment",async(req,res)=>{
     });
 });
 
-app.get("/request-payment",(req,res)=>{
-    res.render("request-payment");
-});
-
-app.post("/request-payment",async(req,res)=>{
-    const {name,email,amount,notes} = req.body;
-    const payment = new Payment({name,email,amount,notes});
+app.put("/update-status/:id",async(req,res)=>{
+    const paymentId = req.params.id;
+    const payment = await Payment.findById(paymentId);
+    payment.status = "PAID";
     payment.save((err)=>{
-        console.log(err);
+        if(err){
+            console.log("error:",err);
+        }
     });
-    res.redirect("/payments");
-});
+    // res.redirect(303,"/payments");
+})
 
 app.delete("/delete-all",async(req,res)=>{
     const deleted = await Payment.deleteMany({});
-    console.log(deleted);
     res.redirect("/payments");
 })
 

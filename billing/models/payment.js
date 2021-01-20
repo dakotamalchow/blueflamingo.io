@@ -15,6 +15,10 @@ const paymentSchema = new mongoose.Schema({
     },
     notes:{
         type: String
+    },
+    status:{
+        type: String,
+        required: true
     }
 });
 
