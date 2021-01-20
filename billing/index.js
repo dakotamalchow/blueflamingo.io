@@ -20,7 +20,7 @@ mongoose.connect("mongodb://localhost:27017/blueflamingo",{useNewUrlParser:true,
 app.set("views",path.join(__dirname,"views"));
 app.set("view engine","ejs");
 
-app.use('/css', express.static(path.join(__dirname, 'node_modules/bostyleotstrap/dist/css')))
+app.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')))
 app.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')))
 app.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')))
 
