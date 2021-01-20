@@ -99,6 +99,20 @@ app.put("/update-status/:id",async(req,res)=>{
             console.log("error:",err);
         }
     });
+    const mailOptions = {
+        from: "billing@blueflamingo.io",
+        to: "dakotamalchow@blueflamingo.io",
+        subject: "Invoice Paid",
+        text: "Your invoice has been paid. This is a receipt for your records.",
+        html: "Your invoice has been paid. This is a receipt for your records."
+    }
+    transporter.sendMail(mailOptions,(err,info)=>{
+        if(err){
+            console.log("Error: ",err);
+        } else {
+            console.log("Email sent: ",info.response);
+        }
+    });
     // res.redirect(303,"/payments");
 })
 
