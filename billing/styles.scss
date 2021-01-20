@@ -1,0 +1,20 @@
+@import "./node_modules/bootstrap/scss/bootstrap.scss";
+
+$royalBlue: #0000FF;
+
+.btn-primary {
+    @include button-variant($royalBlue, darken($royalBlue, 7.5%), darken($royalBlue, 10%), lighten($royalBlue,5%), lighten($royalBlue, 10%), darken($royalBlue,30%));
+}
+    
+.btn-outline-primary {
+    @include button-outline-variant($royalBlue, #222222, lighten($royalBlue,5%), $royalBlue);
+}
+
+body {
+    background-color: #F5F8FA;
+    color: $royalBlue;
+}
+
+a {
+    color: $royalBlue;
+}

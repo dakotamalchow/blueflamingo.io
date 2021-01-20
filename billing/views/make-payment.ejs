@@ -15,14 +15,14 @@
 <body>
     <h1>Blue Flamingo</h1>
     <h2>Make Payment</h2>
-    <a href="/payments">Back to Payments</a>
+    <a class="btn btn-primary" href="/payments">Back to Payments</a>
     <p><%= payment._id %> - $<%= payment.amount %></p>
     <% if(payment.notes){ %> 
         <p><%= payment.notes %> </p>
     <% } %> 
     <form action="" id="payment-form">
         <div id="card-element"></div>
-        <button>Make Payment</button>
+        <button class="btn btn-primary">Make Payment</button>
     </form>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
