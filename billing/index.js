@@ -4,6 +4,8 @@ const path = require("path");
 const methodOverride = require("method-override");
 const mongoose = require("mongoose");
 const stripe = require("stripe")("sk_test_F7a54OYuDnabmUT6HN2pLiDu");
+const nodemailer = require("nodemailer");
+const aws = require("aws-sdk");
 
 const Payment = require("./models/payment");
 
@@ -21,6 +23,14 @@ app.use(express.urlencoded({extended:true}))
 app.use(express.static("."));
 app.use(express.json());
 app.use(methodOverride("_method"));
+
+aws.config.loadFromPath("./aws-config.json");
+
+const transporter = nodemailer.createTransport({
+    SES: new aws.SES({
+        apiVersion: "2010-12-01"
+    })
+});
 
 app.get("/",(req,res)=>{
     res.render("index");
@@ -42,6 +52,21 @@ app.post("/request-payment",async(req,res)=>{
     payment.save((err)=>{
         if(err){
             console.log("error:",err);
+        }
+    });
+
+    const mailOptions = {
+        from: "billing@blueflamingo.io",
+        to: "dakotamalchow@blueflamingo.io",
+        subject: "Payment Requested",
+        text: "This is a request for payment. Follow the link to pay your invoice: http://localhost:3000/make-payment/"+payment._id,
+        html: "This is a request for payment. <br><a href='http://localhost:3000/make-payment/"+payment._id+"'>Pay your invoice.</a>"
+    }
+    transporter.sendMail(mailOptions,(err,info)=>{
+        if(err){
+            console.log("Error: ",err);
+        } else {
+            console.log("Email sent: ",info.response);
         }
     });
     res.redirect("/payments");
