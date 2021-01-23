@@ -22,16 +22,15 @@ app.set("view engine","ejs");
 
 app.use("/css",express.static(path.join(__dirname,"/public/css")));
 app.use("/js",express.static(path.join(__dirname,"/public/js")));
-app.use("/bootstrap-css", express.static(path.join(__dirname, "node_modules/bootstrap/dist/css")));
-app.use("/bootstrap-js", express.static(path.join(__dirname, "node_modules/bootstrap/dist/js")));
-app.use("/jquery-js", express.static(path.join(__dirname, "node_modules/jquery/dist")));
+app.use("/bootstrap-css", express.static(path.join(__dirname,"node_modules/bootstrap/dist/css")));
+app.use("/bootstrap-js", express.static(path.join(__dirname,"node_modules/bootstrap/dist/js")));
+app.use("/jquery-js", express.static(path.join(__dirname,"node_modules/jquery/dist")));
 
 app.use(express.urlencoded({extended:true}))
-app.use(express.static("."));
 app.use(express.json());
 app.use(methodOverride("_method"));
 
-aws.config.loadFromPath("./aws-config.json");
+aws.config.loadFromPath(path.join(__dirname,"aws-config.json"));
 
 const transporter = nodemailer.createTransport({
     SES: new aws.SES({
