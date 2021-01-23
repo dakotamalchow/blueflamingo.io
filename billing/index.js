@@ -86,10 +86,9 @@ app.get("/make-payment/:id",async(req,res)=>{
 });
 
 app.post("/make-payment/:id",async(req,res)=>{
-    const paymentId = req.params.id;
-    const payment = await Payment.findById(paymentId);
+    const {amount} = req.body;
     const paymentIntent = await stripe.paymentIntents.create({
-        amount: payment.amount*100,
+        amount: amount*100,
         currency: "usd"
     });
     res.send({
