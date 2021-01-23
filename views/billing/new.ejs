@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blue Flamingo</title>
-    <%- include("partials/includes") %>
+    <%- include("../partials/includes") %>
 </head>
 <body>
     <h1>Blue Flamingo</h1>
-    <h2>Request Payment</h2>
+    <h2>Request a Payment</h2>
     <a class="btn btn-primary" href="/payments">Back to Payments</a>
-    <form action="/request-payment" method="POST">
+    <form action="/payments" method="POST">
         <div>
             <label for="name">Name</label>
             <input type="text" id="name" name="name" placeholder="John Smith" required>

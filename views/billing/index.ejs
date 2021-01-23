@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blue Flamingo</title>
-    <%- include("partials/includes") %>
+    <%- include("../partials/includes") %>
 </head>
 <body>
     <h1>Blue Flamingo</h1>
     <h2>Payments</h2>
-    <a class="btn btn-primary" href="/request-payment">Request Payment</a>
+    <a class="btn btn-primary" href="/payments/new">Request Payment</a>
     <% for(let payment of payments){ %>
         <div>
             <p><%= payment.name %> - $<%= payment.amount %> - <%= payment.status %> </p>
-            <a class="btn btn-primary" href="/make-payment/<%= payment._id %> ">Make Payment</a>
+            <a class="btn btn-primary" href="/payments/<%= payment._id %>/pay">Make Payment</a>
         </div>
     <% } %>
-    <form action="/delete-all?_method=DELETE" method="POST">
+    <form action="/payments?_method=DELETE" method="POST">
         <input type="hidden" name="_method" value="DELETE">
         <button class="btn btn-primary">Delete All Payments</button>
     </form>

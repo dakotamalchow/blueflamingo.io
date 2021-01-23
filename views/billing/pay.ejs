@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blue Flamingo</title>
-    <%- include("partials/includes") %>
+    <%- include("../partials/includes") %>
     <script src="https://js.stripe.com/v3/"></script>
     <script>
         const payment = '<%- JSON.stringify(payment) %>'
     </script>
-    <script src="/js/make-payment.js" defer></script>
+    <script src="/js/pay.js" defer></script>
 </head>
 <body>
     <h1>Blue Flamingo</h1>

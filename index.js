@@ -44,14 +44,14 @@ app.get("/",(req,res)=>{
 
 app.get("/payments",async(req,res)=>{
     const payments = await Payment.find({})
-    res.render("payments",{payments});
+    res.render("billing/index",{payments});
 });
 
-app.get("/request-payment",(req,res)=>{
-    res.render("request-payment");
+app.get("/payments/new",(req,res)=>{
+    res.render("billing/new");
 });
 
-app.post("/request-payment",async(req,res)=>{
+app.post("/payments",async(req,res)=>{
     const {name,email,amount,notes} = req.body;
     const status = "SENT";
     const payment = new Payment({name,email,amount,notes,status});
@@ -78,13 +78,13 @@ app.post("/request-payment",async(req,res)=>{
     res.redirect("/payments");
 });
 
-app.get("/make-payment/:id",async(req,res)=>{
+app.get("/payments/:id/pay",async(req,res)=>{
     const paymentId = req.params.id;
     const payment = await Payment.findById(paymentId);
-    res.render("make-payment",{payment});
+    res.render("billing/pay",{payment});
 });
 
-app.post("/make-payment/:id",async(req,res)=>{
+app.post("/payments/:id/pay",async(req,res)=>{
     const {amount} = req.body;
     const paymentIntent = await stripe.paymentIntents.create({
         amount: amount*100,
@@ -95,7 +95,7 @@ app.post("/make-payment/:id",async(req,res)=>{
     });
 });
 
-app.put("/update-status/:id",async(req,res)=>{
+app.put("/payments/:id/update",async(req,res)=>{
     const paymentId = req.params.id;
     const payment = await Payment.findById(paymentId);
     payment.status = "PAID";
@@ -121,7 +121,7 @@ app.put("/update-status/:id",async(req,res)=>{
     // res.redirect(303,"/payments");
 })
 
-app.delete("/delete-all",async(req,res)=>{
+app.delete("/payments",async(req,res)=>{
     const deleted = await Payment.deleteMany({});
     res.redirect("/payments");
 })

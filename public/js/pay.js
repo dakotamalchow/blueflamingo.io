@@ -18,7 +18,7 @@ const putCongif = {
 
 const paymentId = JSON.parse(payment)._id;
 
-fetch("/make-payment/"+paymentId,postConfig)
+fetch("/payments/"+paymentId+"/pay",postConfig)
 .then((result)=>{
     // console.log("result:",result)
     return result.json();
@@ -46,7 +46,7 @@ const payWithCard = (stripe,card,clientSecret)=>{
             // showError(result.error.message);
             console.log(result.error.message);
         } else {
-            fetch("/update-status/"+paymentId,putCongif)
+            fetch("/payments/"+paymentId+"/update",putCongif)
             .then((result)=>{
                 return result.json();
             })
