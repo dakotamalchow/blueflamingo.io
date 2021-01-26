@@ -7,18 +7,19 @@
     <%- include("../partials/includes") %>
 </head>
 <body>
-    <h1>Blue Flamingo</h1>
-    <h2>Payments</h2>
-    <a class="btn btn-primary" href="/payments/new">Request Payment</a>
-    <% for(let payment of payments){ %>
-        <div>
-            <p><%= payment.name %> - $<%= payment.amount %> - <%= payment.status %> </p>
-            <a class="btn btn-primary" href="/payments/<%= payment._id %>/pay">Make Payment</a>
-        </div>
-    <% } %>
-    <form action="/payments?_method=DELETE" method="POST">
-        <input type="hidden" name="_method" value="DELETE">
-        <button class="btn btn-primary">Delete All Payments</button>
-    </form>
+    <div class="container">
+        <h1>Blue Flamingo</h1>
+        <h2>Payments</h2>
+        <a class="btn btn-primary" href="/payments/new">Request Payment</a>
+        <% for(let payment of payments){ %>
+            <div>
+                <p><%= payment.name %> - $<%= payment.amount %> - <%= payment.status %> </p>
+                <a class="btn btn-primary" href="/payments/<%= payment._id %>/pay">Make Payment</a>
+            </div>
+        <% } %>
+        <form action="/payments?_method=DELETE" method="POST">
+            <button class="btn btn-danger">Delete All Payments</button>
+        </form>
+    </div>
 </body>
 </html>
