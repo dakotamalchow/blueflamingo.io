@@ -1,25 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blue Flamingo</title>
-    <%- include("../partials/includes") %>
-</head>
-<body>
-    <div class="container">
-        <h1>Blue Flamingo</h1>
-        <h2>Payments</h2>
-        <a class="btn btn-primary" href="/payments/new">Request Payment</a>
-        <% for(let payment of payments){ %>
-            <div>
-                <p><%= payment.name %> - $<%= payment.amount %> - <%= payment.status %> </p>
-                <a class="btn btn-primary" href="/payments/<%= payment._id %>/pay">Make Payment</a>
-            </div>
-        <% } %>
-        <form action="/payments?_method=DELETE" method="POST">
-            <button class="btn btn-danger">Delete All Payments</button>
-        </form>
-    </div>
-</body>
-</html>
+<% layout("layouts/boilerplate") %>
+<main class="container">
+    <h1>Blue Flamingo</h1>
+    <h2>Payments</h2>
+    <a class="btn btn-primary" href="/payments/new">Request Payment</a>
+    <% for(let payment of payments){ %>
+        <div>
+            <p><%= payment.name %> - $<%= payment.amount %> - <%= payment.status %> </p>
+            <a class="btn btn-primary" href="/payments/<%= payment._id %>/pay">Make Payment</a>
+        </div>
+    <% } %>
+    <form action="/payments?_method=DELETE" method="POST">
+        <button class="btn btn-danger">Delete All Payments</button>
+    </form>
+</main>

@@ -1,29 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blue Flamingo</title>
-    <%- include("../partials/includes") %>
-    <script src="https://js.stripe.com/v3/"></script>
-    <script>
-        const payment = '<%- JSON.stringify(payment) %>'
-    </script>
-    <script src="/js/pay.js" defer></script>
-</head>
-<body>
-    <div class="container">
-        <h1>Blue Flamingo</h1>
-        <h2>Make Payment</h2>
-        <a class="btn btn-primary" href="/payments">Back to Payments</a>
-        <p><%= payment._id %> - $<%= payment.amount %></p>
-        <% if(payment.notes){ %> 
-            <p><%= payment.notes %> </p>
-        <% } %> 
-        <form action="" id="payment-form">
-            <div id="card-element"></div>
-            <button class="btn btn-primary">Make Payment</button>
-        </form>
-    </div>
-</body>
-</html>
+<% layout("layouts/boilerplate") %>
+<% block("head").append('<script src="https://js.stripe.com/v3/"></script>') %>
+<main class="container">
+    <h1>Blue Flamingo</h1>
+    <h2>Make Payment</h2>
+    <a class="btn btn-primary" href="/payments">Back to Payments</a>
+    <p><%= payment._id %> - $<%= payment.amount %></p>
+    <% if(payment.notes){ %> 
+        <p><%= payment.notes %> </p>
+    <% } %> 
+    <form action="" id="payment-form">
+        <div id="card-element"></div>
+        <button class="btn btn-primary">Make Payment</button>
+    </form>
+</main>
+<script>
+    const payment = '<%- JSON.stringify(payment) %>'
+</script>
+<script src="/js/pay.js" defer></script>

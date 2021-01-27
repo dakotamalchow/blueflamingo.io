@@ -3,6 +3,7 @@ const app = express();
 const path = require("path");
 const methodOverride = require("method-override");
 const mongoose = require("mongoose");
+const ejsMate = require("ejs-mate");
 const stripe = require("stripe")("sk_test_F7a54OYuDnabmUT6HN2pLiDu");
 const nodemailer = require("nodemailer");
 const aws = require("aws-sdk");
@@ -21,6 +22,7 @@ mongoose.connect("mongodb://localhost:27017/blueflamingo",{useNewUrlParser:true,
 
 app.set("views",path.join(__dirname,"views"));
 app.set("view engine","ejs");
+app.engine("ejs",ejsMate);
 
 app.use("/css",express.static(path.join(__dirname,"/public/css")));
 app.use("/js",express.static(path.join(__dirname,"/public/js")));

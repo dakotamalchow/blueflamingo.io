@@ -1,40 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blue Flamingo</title>
-    <%- include("../partials/includes") %>
-</head>
-<body>
-    <div class="container">
-        <h1>Blue Flamingo</h1>
-        <h2>Request a Payment</h2>
-        <a class="btn btn-primary" href="/payments">Back to Payments</a>
-        <form action="/payments" method="POST">
-            <div class="mb-3">
-                <label class="form-label" for="name">Name</label>
-                <input class="form-control" type="text" id="name" name="name" placeholder="John Smith" required>
+<% layout("layouts/boilerplate") %>
+<main class="container">
+    <h1>Blue Flamingo</h1>
+    <h2>Request a Payment</h2>
+    <a class="btn btn-primary" href="/payments">Back to Payments</a>
+    <form action="/payments" method="POST">
+        <div class="mb-3">
+            <label class="form-label" for="name">Name</label>
+            <input class="form-control" type="text" id="name" name="name" placeholder="John Smith" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-control" type="email" id="email" name="email" placeholder="john.smith@jsmithcorp.com" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="amount">Amount</label>
+            <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input class="form-control" type="number" id="amount" name="amount" placeholder="0" step="0.01" required>
             </div>
-            <div class="mb-3">
-                <label class="form-label" for="email">Email</label>
-                <input class="form-control" type="email" id="email" name="email" placeholder="john.smith@jsmithcorp.com" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label" for="amount">Amount</label>
-                <div class="input-group">
-                    <span class="input-group-text">$</span>
-                    <input class="form-control" type="number" id="amount" name="amount" placeholder="0" step="0.01" required>
-                </div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label" for="notes">Notes</label>
-                <textarea class="form-control" name="notes" id="notes" cols="30" rows="10" placeholder="Enter any details here"></textarea>
-            </div>
-            <div class="mb-3">
-                <button class="btn btn-primary">Send</button>
-            </div>
-        </form>
-    </div>
-</body>
-</html>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="notes">Notes</label>
+            <textarea class="form-control" name="notes" id="notes" cols="30" rows="10" placeholder="Enter any details here"></textarea>
+        </div>
+        <div class="mb-3">
+            <button class="btn btn-primary">Send</button>
+        </div>
+    </form>
+</main>
