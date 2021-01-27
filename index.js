@@ -6,8 +6,10 @@ const mongoose = require("mongoose");
 const stripe = require("stripe")("sk_test_F7a54OYuDnabmUT6HN2pLiDu");
 const nodemailer = require("nodemailer");
 const aws = require("aws-sdk");
+const catchAsync = require("./utils/catchAsync");
 
 const Payment = require("./models/payment");
+const AppError = require("./utils/AppError");
 
 mongoose.connect("mongodb://localhost:27017/blueflamingo",{useNewUrlParser:true,useUnifiedTopology:true})
     .then(() => {
@@ -42,16 +44,16 @@ app.get("/",(req,res)=>{
     res.render("index");
 });
 
-app.get("/payments",async(req,res)=>{
+app.get("/payments",catchAsync(async(req,res)=>{
     const payments = await Payment.find({})
     res.render("billing/index",{payments});
-});
+}));
 
 app.get("/payments/new",(req,res)=>{
     res.render("billing/new");
 });
 
-app.post("/payments",async(req,res)=>{
+app.post("/payments",catchAsync(async(req,res)=>{
     const {name,email,amount,notes} = req.body;
     const status = "SENT";
     const payment = new Payment({name,email,amount,notes,status});
@@ -76,15 +78,15 @@ app.post("/payments",async(req,res)=>{
         }
     });
     res.redirect("/payments");
-});
+}));
 
-app.get("/payments/:id/pay",async(req,res)=>{
+app.get("/payments/:id/pay",catchAsync(async(req,res)=>{
     const paymentId = req.params.id;
     const payment = await Payment.findById(paymentId);
     res.render("billing/pay",{payment});
-});
+}));
 
-app.post("/payments/:id/pay",async(req,res)=>{
+app.post("/payments/:id/pay",catchAsync(async(req,res)=>{
     const {amount} = req.body;
     const paymentIntent = await stripe.paymentIntents.create({
         amount: amount*100,
@@ -93,9 +95,9 @@ app.post("/payments/:id/pay",async(req,res)=>{
     res.send({
         clientSecret: paymentIntent.client_secret
     });
-});
+}));
 
-app.put("/payments/:id/update",async(req,res)=>{
+app.put("/payments/:id/update",catchAsync(async(req,res)=>{
     const paymentId = req.params.id;
     const payment = await Payment.findById(paymentId);
     payment.status = "PAID";
@@ -119,12 +121,22 @@ app.put("/payments/:id/update",async(req,res)=>{
         }
     });
     // res.redirect(303,"/payments");
-})
+}));
 
-app.delete("/payments",async(req,res)=>{
+app.delete("/payments",catchAsync(async(req,res)=>{
     const deleted = await Payment.deleteMany({});
     res.redirect("/payments");
-})
+}));
+
+app.all("*",(req,res,next)=>{
+    next(new AppError(404,"Page not found"));
+});
+
+app.use((err,req,res,next)=>{
+    const {status=500} = err;
+    if(!err.message) err.message = "Error encountered";
+    res.status(status).render("error",{err});
+});
 
 app.listen(3000,()=>{
     console.log("App is listening on Port 3000");

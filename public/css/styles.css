@@ -9992,4 +9992,8 @@ a {
   color: #0030F0;
 }
 
+.wrap-text {
+  overflow-wrap: break-word;
+}
+
 /*# sourceMappingURL=styles.css.map */
