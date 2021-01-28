@@ -1,15 +1,15 @@
 <% layout("layouts/boilerplate") %>
 <main class="container">
     <h1>Blue Flamingo</h1>
-    <h2>Payments</h2>
-    <a class="btn btn-primary" href="/payments/new">Request Payment</a>
-    <% for(let payment of payments){ %>
+    <h2>Invoices</h2>
+    <a class="btn btn-primary" href="/invoices/new">Create New Invoice</a>
+    <% for(let invoice of invoices){ %>
         <div>
-            <p><%= payment.name %> - $<%= payment.amount %> - <%= payment.status %> </p>
-            <a class="btn btn-primary" href="/payments/<%= payment._id %>/pay">Make Payment</a>
+            <p><%= invoice.name %> - $<%= invoice.amount %> - <%= invoice.status %> </p>
+            <a class="btn btn-primary" href="/invoices/<%= invoice._id %>/pay">Pay Invoice</a>
         </div>
     <% } %>
-    <form action="/payments?_method=DELETE" method="POST">
-        <button class="btn btn-danger">Delete All Payments</button>
+    <form action="/invoices?_method=DELETE" method="POST">
+        <button class="btn btn-danger">Delete All Invoices</button>
     </form>
 </main>

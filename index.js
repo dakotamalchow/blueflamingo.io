@@ -9,7 +9,7 @@ const nodemailer = require("nodemailer");
 const aws = require("aws-sdk");
 const catchAsync = require("./utils/catchAsync");
 
-const Payment = require("./models/payment");
+const Invoice = require("./models/invoice");
 const AppError = require("./utils/AppError");
 
 mongoose.connect("mongodb://localhost:27017/blueflamingo",{useNewUrlParser:true,useUnifiedTopology:true})
@@ -46,20 +46,20 @@ app.get("/",(req,res)=>{
     res.render("index");
 });
 
-app.get("/payments",catchAsync(async(req,res)=>{
-    const payments = await Payment.find({})
-    res.render("billing/index",{payments});
+app.get("/invoices",catchAsync(async(req,res)=>{
+    const invoices = await Invoice.find({})
+    res.render("billing/index",{invoices});
 }));
 
-app.get("/payments/new",(req,res)=>{
+app.get("/invoices/new",(req,res)=>{
     res.render("billing/new");
 });
 
-app.post("/payments",catchAsync(async(req,res)=>{
+app.post("/invoices",catchAsync(async(req,res)=>{
     const {name,email,amount,notes} = req.body;
     const status = "SENT";
-    const payment = new Payment({name,email,amount,notes,status});
-    payment.save((err)=>{
+    const invoice = new Invoice({name,email,amount,notes,status});
+    invoice.save((err)=>{
         if(err){
             console.log("error:",err);
         }
@@ -68,9 +68,9 @@ app.post("/payments",catchAsync(async(req,res)=>{
     const mailOptions = {
         from: "billing@blueflamingo.io",
         to: "dakotamalchow@blueflamingo.io",
-        subject: "Payment Requested",
-        text: "This is a request for payment. Follow the link to pay your invoice: http://localhost:3000/make-payment/"+payment._id,
-        html: "This is a request for payment. <br><a href='http://localhost:3000/make-payment/"+payment._id+"'>Pay your invoice.</a>"
+        subject: "Invoice",
+        text: "This is your invoice. Follow the link to pay now: http://localhost:3000/invoices/"+invoice._id+"/pay",
+        html: "This is your invoice. <br><a href='http://localhost:3000/invoices/"+invoice._id+"/pay'>Pay now.</a>"
     }
     transporter.sendMail(mailOptions,(err,info)=>{
         if(err){
@@ -79,16 +79,16 @@ app.post("/payments",catchAsync(async(req,res)=>{
             console.log("Email sent: ",info.response);
         }
     });
-    res.redirect("/payments");
+    res.redirect("/invoices");
 }));
 
-app.get("/payments/:id/pay",catchAsync(async(req,res)=>{
-    const paymentId = req.params.id;
-    const payment = await Payment.findById(paymentId);
-    res.render("billing/pay",{payment});
+app.get("/invoices/:id/pay",catchAsync(async(req,res)=>{
+    const invoiceId = req.params.id;
+    const invoice = await Invoice.findById(invoiceId);
+    res.render("billing/pay",{invoice});
 }));
 
-app.post("/payments/:id/pay",catchAsync(async(req,res)=>{
+app.post("/invoices/:id/pay",catchAsync(async(req,res)=>{
     const {amount} = req.body;
     const paymentIntent = await stripe.paymentIntents.create({
         amount: amount*100,
@@ -99,11 +99,11 @@ app.post("/payments/:id/pay",catchAsync(async(req,res)=>{
     });
 }));
 
-app.put("/payments/:id/update",catchAsync(async(req,res)=>{
-    const paymentId = req.params.id;
-    const payment = await Payment.findById(paymentId);
-    payment.status = "PAID";
-    payment.save((err)=>{
+app.put("/invoices/:id/update",catchAsync(async(req,res)=>{
+    const invoiceId = req.params.id;
+    const invoice = await Invoice.findById(invoiceId);
+    invoice.status = "PAID";
+    invoice.save((err)=>{
         if(err){
             console.log("error:",err);
         }
@@ -122,12 +122,12 @@ app.put("/payments/:id/update",catchAsync(async(req,res)=>{
             console.log("Email sent: ",info.response);
         }
     });
-    // res.redirect(303,"/payments");
+    // res.redirect(303,"/invoices");
 }));
 
-app.delete("/payments",catchAsync(async(req,res)=>{
-    const deleted = await Payment.deleteMany({});
-    res.redirect("/payments");
+app.delete("/invoices",catchAsync(async(req,res)=>{
+    const deleted = await Invoice.deleteMany({});
+    res.redirect("/invoices");
 }));
 
 app.all("*",(req,res,next)=>{

@@ -2,18 +2,18 @@
 <% block("head").append('<script src="https://js.stripe.com/v3/"></script>') %>
 <main class="container">
     <h1>Blue Flamingo</h1>
-    <h2>Make Payment</h2>
-    <a class="btn btn-primary" href="/payments">Back to Payments</a>
-    <p><%= payment._id %> - $<%= payment.amount %></p>
-    <% if(payment.notes){ %> 
-        <p><%= payment.notes %> </p>
+    <h2>Pay Invoice</h2>
+    <a class="btn btn-primary" href="/invoices">Back to Invoices</a>
+    <p><%= invoice._id %> - $<%= invoice.amount %></p>
+    <% if(invoice.notes){ %> 
+        <p><%= invoice.notes %> </p>
     <% } %> 
     <form action="" id="payment-form">
         <div id="card-element"></div>
-        <button class="btn btn-primary">Make Payment</button>
+        <button class="btn btn-primary">Pay Invoice</button>
     </form>
 </main>
 <script>
-    const payment = '<%- JSON.stringify(payment) %>'
+    const invoice = '<%- JSON.stringify(invoice) %>'
 </script>
 <script src="/js/pay.js" defer></script>

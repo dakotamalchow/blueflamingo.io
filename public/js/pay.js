@@ -5,7 +5,7 @@ const postConfig = {
     headers: {
         "Content-Type": "application/json"
     },
-    body: payment
+    body: invoice
 }
 
 const putCongif = {
@@ -13,12 +13,12 @@ const putCongif = {
     headers: {
         "Content-Type": "application/json"
     },
-    body: payment
+    body: invoice
 }
 
-const paymentId = JSON.parse(payment)._id;
+const invoiceId = JSON.parse(invoice)._id;
 
-fetch("/payments/"+paymentId+"/pay",postConfig)
+fetch("/invoices/"+invoiceId+"/pay",postConfig)
 .then((result)=>{
     // console.log("result:",result)
     return result.json();
@@ -46,7 +46,7 @@ const payWithCard = (stripe,card,clientSecret)=>{
             // showError(result.error.message);
             console.log(result.error.message);
         } else {
-            fetch("/payments/"+paymentId+"/update",putCongif)
+            fetch("/invoices/"+invoiceId+"/update",putCongif)
             .then((result)=>{
                 return result.json();
             })
