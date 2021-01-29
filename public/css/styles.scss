@@ -1,6 +1,6 @@
 @import "../../node_modules/bootstrap/scss/bootstrap.scss";
 
-$royalBlue: #0030F0;
+$royalBlue: #0040F0;
 
 .btn-primary {
     @include button-variant($royalBlue, darken($royalBlue, 7.5%), darken($royalBlue, 10%), lighten($royalBlue,5%), lighten($royalBlue, 10%), darken($royalBlue,30%));
