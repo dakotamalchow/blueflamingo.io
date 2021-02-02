@@ -7,6 +7,7 @@ const aws = require("aws-sdk");
 
 const catchAsync = require("../utils/catchAsync");
 const Invoice = require("../models/invoice");
+const {isLoggedIn} = require("../utils/middleware");
 
 aws.config.loadFromPath(path.join(__dirname,"../aws-config.json"));
 
@@ -16,16 +17,16 @@ const transporter = nodemailer.createTransport({
     })
 });
 
-router.get("/",catchAsync(async(req,res)=>{
+router.get("/",isLoggedIn,catchAsync(async(req,res)=>{
     const invoices = await Invoice.find({})
     res.render("billing/index",{invoices});
 }));
 
-router.get("/new",(req,res)=>{
+router.get("/new",isLoggedIn,(req,res)=>{
     res.render("billing/new");
 });
 
-router.post("/",catchAsync(async(req,res)=>{
+router.post("/",isLoggedIn,catchAsync(async(req,res)=>{
     console.log(req.body);
     const {name,email,amount,notes} = req.body;
     const status = "SENT";
@@ -70,7 +71,7 @@ router.post("/:id/pay",catchAsync(async(req,res)=>{
     });
 }));
 
-router.put("/:id/update",catchAsync(async(req,res)=>{
+router.put("/:id/update",isLoggedIn,catchAsync(async(req,res)=>{
     const invoiceId = req.params.id;
     const invoice = await Invoice.findById(invoiceId);
     invoice.status = "PAID";
@@ -96,7 +97,7 @@ router.put("/:id/update",catchAsync(async(req,res)=>{
     // res.redirect(303,"/invoices");
 }));
 
-router.delete("/",catchAsync(async(req,res)=>{
+router.delete("/",isLoggedIn,catchAsync(async(req,res)=>{
     const deleted = await Invoice.deleteMany({});
     res.redirect("/invoices");
 }));

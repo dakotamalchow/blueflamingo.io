@@ -10,11 +10,6 @@ const userSchema = new Schema({
     businessName:{
         type: String
     },
-    // email:{
-    //     type: String,
-    //     required: true,
-    //     unique: true
-    // },
     invoices:[
         {
             type: Schema.Types.ObjectId,
