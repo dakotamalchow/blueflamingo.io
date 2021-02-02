@@ -4,9 +4,14 @@ const path = require("path");
 const methodOverride = require("method-override");
 const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
+const session = require("express-session");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
 
 const AppError = require("./utils/AppError");
+const User = require("./models/user");
 const invoiceRoutes = require("./routes/invoices");
+const userRoutes = require("./routes/users");
 
 mongoose.connect("mongodb://localhost:27017/blueflamingo",
     {useNewUrlParser:true,useUnifiedTopology:true})
@@ -30,7 +35,20 @@ app.use("/jquery-js", express.static(path.join(__dirname,"node_modules/jquery/di
 app.use(express.urlencoded({extended:true}))
 app.use(express.json());
 app.use(methodOverride("_method"));
+app.use(session({
+    secret:"BlueFlamingoTest",
+    resave:false,
+    saveUninitialized:true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+//use email to login instead of a username (set in user model as well)
+passport.use(new LocalStrategy({usernameField:"email"},User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use("/invoices",invoiceRoutes);
+app.use("/",userRoutes);
 
 app.get("/",(req,res)=>{
     res.render("index");

@@ -1,18 +1,20 @@
 const mongoose = require("mongoose");
+const passportLocalMongoose = require("passport-local-mongoose");
 const {Schema} = mongoose;
 
 const userSchema = new Schema({
     name:{
         type: String,
-        require: true
-    },
-    email:{
-        type: String,
-        require: true
+        required: true
     },
     businessName:{
         type: String
     },
+    // email:{
+    //     type: String,
+    //     required: true,
+    //     unique: true
+    // },
     invoices:[
         {
             type: Schema.Types.ObjectId,
@@ -26,5 +28,8 @@ const userSchema = new Schema({
         }
     ]
 });
+
+//use email to login instead of a username (set in index.js as well)
+userSchema.plugin(passportLocalMongoose,{usernameField:"email"});
 
 module.exports = mongoose.model("User",userSchema);

@@ -1,0 +1,18 @@
+<% layout("layouts/boilerplate") %>
+<main class="container">
+    <h1>Blue Flamingo</h1>
+    <h2>Login</h2>
+    <form action="/login" method="POST">
+        <div class="mb-3">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-control" type="text" id="email" name="email" placeholder="johnsmith@gmail.com" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="password">Password</label>
+            <input class="form-control" type="password" id="password" name="password" required>
+        </div>
+        <div class="mb-3">
+            <button class="btn btn-primary">Login</button>
+        </div>
+    </form>
+</main>
