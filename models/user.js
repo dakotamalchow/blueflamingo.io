@@ -9,19 +9,7 @@ const userSchema = new Schema({
     },
     businessName:{
         type: String
-    },
-    invoices:[
-        {
-            type: Schema.Types.ObjectId,
-            ref: "Invoice"
-        }
-    ],
-    customers:[
-        {
-            type: Schema.Types.ObjectId,
-            ref: "Customer"
-        }
-    ]
+    }
 });
 
 //use email to login instead of a username (set in index.js as well)

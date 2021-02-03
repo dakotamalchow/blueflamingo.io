@@ -14,7 +14,7 @@ const invoiceRoutes = require("./routes/invoices");
 const userRoutes = require("./routes/users");
 
 mongoose.connect("mongodb://localhost:27017/blueflamingo",
-    {useNewUrlParser:true,useUnifiedTopology:true})
+    {useNewUrlParser:true,useUnifiedTopology:true,useCreateIndex:true,useFindAndModify:false})
     .then(() => {
         console.log("Mongo connection open");
     })
