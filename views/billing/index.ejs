@@ -4,12 +4,10 @@
     <h2>Invoices</h2>
     <a class="btn btn-primary" href="/invoices/new">Create New Invoice</a>
     <% for(let invoice of invoices){ %>
+        <hr>
         <div>
             <p><%= invoice.name %> - $<%= invoice.amount %> - <%= invoice.status %> </p>
             <a class="btn btn-primary" href="/invoices/<%= invoice._id %>/pay">Pay Invoice</a>
         </div>
     <% } %>
-    <form action="/invoices?_method=DELETE" method="POST">
-        <button class="btn btn-danger">Delete All Invoices</button>
-    </form>
 </main>
