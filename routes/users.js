@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
+const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu')
 
 const catchAsync = require("../utils/catchAsync");
 const User = require("../models/user");
-const { nextTick } = require("process");
 
 router.get("/register",(req,res)=>{
     res.render("users/register");
@@ -12,13 +12,34 @@ router.get("/register",(req,res)=>{
 
 router.post("/register",catchAsync(async(req,res,next)=>{
     const {name,businessName,email,password} = req.body;
-    const user = new User({name,businessName,email});
+    const account = await stripe.accounts.create({
+        type:"express",
+        country:"US",
+        email,
+        capabilities:{
+            card_payments:{requested:true},
+            transfers:{requested:true}
+        }
+    });
+    const user = new User({name,businessName,email,stripeAccount:account.id});
     const registeredUser = await User.register(user,password);
     req.login(registeredUser,err=>{
         if(err) {return next(err);}
-        res.redirect("/invoices");
     });
+    const accountLinks = await stripe.accountLinks.create({
+        account:account.id,
+        refresh_url:"http://localhost:3000",
+        return_url:"http://localhost:3000",
+        type:"account_onboarding"
+      });
+      res.redirect(accountLinks.url);
 }));
+
+router.delete("/:id/delete",async(req,res)=>{
+    const {id} = req.params;
+    const deleted = await stripe.accounts.del(id);
+    res.send("deleted");
+});
 
 router.get("/login",(req,res)=>{
     res.render("users/login");

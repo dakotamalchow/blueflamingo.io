@@ -7,8 +7,16 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    email:{
+        type: String,
+        required: true
+    },
     businessName:{
         type: String
+    },
+    stripeAccount:{
+        type: String,
+        required: true
     }
 });
 
