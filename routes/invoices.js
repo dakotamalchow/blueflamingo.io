@@ -7,6 +7,7 @@ const aws = require("aws-sdk");
 
 const catchAsync = require("../utils/catchAsync");
 const Invoice = require("../models/invoice");
+const Customer = require("../models/customer");
 const {isLoggedIn} = require("../utils/middleware");
 
 aws.config.loadFromPath(path.join(__dirname,"../aws-config.json"));
@@ -18,7 +19,7 @@ const transporter = nodemailer.createTransport({
 });
 
 router.get("/",isLoggedIn,catchAsync(async(req,res)=>{
-    const invoices = await Invoice.find({user:res.locals.currentUser})
+    const invoices = await Invoice.find({user:res.locals.currentUser});
     res.render("billing/index",{invoices});
 }));
 
@@ -27,31 +28,48 @@ router.get("/new",isLoggedIn,(req,res)=>{
 });
 
 router.post("/",isLoggedIn,catchAsync(async(req,res)=>{
-    console.log(req.body);
     const {name,email,amount,notes} = req.body;
     const user = res.locals.currentUser;
-    const status = "SENT";
-    const invoice = new Invoice({user,name,email,amount,notes,status});
+    const stripeCustomer = await stripe.customers.create({
+        name,
+        email
+    });
+    const customer = new Customer({user,name,email,stripeCustomer:stripeCustomer.id});
+    await stripe.invoiceItems.create({
+        customer: customer.stripeCustomer,
+        amount: amount*100,
+        currency: "usd",
+        description: notes
+    });
+    const stripeInvoice = await stripe.invoices.create({
+        customer: customer.stripeCustomer,
+        transfer_data:{
+            destination:user.stripeAccount
+        },
+        collection_method: "send_invoice",
+        days_until_due: 30
+    });
+    const invoice = new Invoice({user,customer:customer.id,stripeInvoice:stripeInvoice.id});
     invoice.save((err)=>{
         if(err){
             console.log("error:",err);
         }
     });
-
-    const mailOptions = {
-        from: "billing@blueflamingo.io",
-        to: "dakotamalchow@blueflamingo.io",
-        subject: "Invoice",
-        text: "This is your invoice. Follow the link to pay now: http://localhost:3000/invoices/"+invoice._id+"/pay",
-        html: "This is your invoice. <br><a href='http://localhost:3000/invoices/"+invoice._id+"/pay'>Pay now.</a>"
-    }
-    transporter.sendMail(mailOptions,(err,info)=>{
-        if(err){
-            console.log("Error: ",err);
-        } else {
-            console.log("Email sent: ",info.response);
-        }
-    });
+    await stripe.invoices.sendInvoice(invoice.stripeInvoice);
+    // const mailOptions = {
+    //     from: "billing@blueflamingo.io",
+    //     to: "dakotamalchow@blueflamingo.io",
+    //     subject: "Invoice",
+    //     text: "This is your invoice. Follow the link to pay now: http://localhost:3000/invoices/"+invoice._id+"/pay",
+    //     html: "This is your invoice. <br><a href='http://localhost:3000/invoices/"+invoice._id+"/pay'>Pay now.</a>"
+    // }
+    // transporter.sendMail(mailOptions,(err,info)=>{
+    //     if(err){
+    //         console.log("Error: ",err);
+    //     } else {
+    //         console.log("Email sent: ",info.response);
+    //     }
+    // });
     res.redirect("/invoices");
 }));
 

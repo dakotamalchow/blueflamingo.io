@@ -12,6 +12,10 @@ const customerSchema = new Schema({
     email: {
         type: String,
         required: true
+    },
+    stripeCustomer: {
+        type: String,
+        required: true
     }
 });
 

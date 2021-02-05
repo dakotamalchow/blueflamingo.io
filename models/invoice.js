@@ -7,25 +7,11 @@ const invoiceSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User"
     },
-    // customer:{
-    //     type: Schema.Types.ObjectId,
-    //     ref: "Customer",
-    // },
-    name:{
-        type: String,
-        required: true
+    customer:{
+        type: Schema.Types.ObjectId,
+        ref: "Customer",
     },
-    email:{
-        type: String,
-        required: true
-    },
-    amount:{
-        type: Number,
-    },
-    notes:{
-        type: String
-    },
-    status:{
+    stripeInvoice:{
         type: String,
         required: true
     }
