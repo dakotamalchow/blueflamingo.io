@@ -26,6 +26,7 @@ app.set("views",path.join(__dirname,"views"));
 app.set("view engine","ejs");
 app.engine("ejs",ejsMate);
 
+app.use("/imgs",express.static(path.join(__dirname,"/public/imgs")));
 app.use("/css",express.static(path.join(__dirname,"/public/css")));
 app.use("/js",express.static(path.join(__dirname,"/public/js")));
 app.use("/bootstrap-css", express.static(path.join(__dirname,"node_modules/bootstrap/dist/css")));

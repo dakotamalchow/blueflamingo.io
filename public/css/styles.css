@@ -9992,6 +9992,10 @@ a {
   color: #0040F0;
 }
 
+section {
+  background-color: white;
+}
+
 .wrap-text {
   overflow-wrap: break-word;
 }
