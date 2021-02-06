@@ -1,0 +1,10 @@
+<% layout("layouts/boilerplate") %>
+<main class="container">
+    <h1>Blue Flamingo</h1>
+    <h2>Invoice</h2>
+    <p>Billed to: <%= stripeInvoice.customer_email %></p>
+    <p>Name: <%= stripeInvoice.customer_name %></p>
+    <p>Notes: <%= stripeInvoice.description %></p>
+    <p>Amount: $<%= (stripeInvoice.amount_due/100).toFixed(2) %></p>
+    <p>Status: <%= stripeInvoice.status %></p>
+</main>

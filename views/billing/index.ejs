@@ -3,11 +3,11 @@
     <h1>Blue Flamingo</h1>
     <h2>Invoices</h2>
     <a class="btn btn-primary" href="/invoices/new">Create New Invoice</a>
-    <% for(let invoice of invoices){ %>
+    <% for(let stripeInvoice of stripeInvoices){ %>
         <hr>
         <div>
-            <p><%= invoice.name %> - $<%= invoice.amount %> - <%= invoice.status %> </p>
-            <a class="btn btn-primary" href="/invoices/<%= invoice._id %>/pay">Pay Invoice</a>
+            <p><%= stripeInvoice.customer_name %> - $<%= (stripeInvoice.amount_due/100).toFixed(2) %> - <%= stripeInvoice.status %></p>
+            <a class="btn btn-primary" href="/invoices/<%= stripeInvoice.metadata.invoiceId %>">View Details</a>
         </div>
     <% } %>
 </main>
