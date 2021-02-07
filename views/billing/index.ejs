@@ -2,13 +2,12 @@
 <main class="container">
     <h1>Blue Flamingo</h1>
     <h2>Invoices</h2>
-    <a class="btn btn-primary" href="/invoices/new">Create New Invoice</a>
     <% for(let stripeInvoice of stripeInvoices){ %>
         <hr>
-        <div>
+        <a href="/invoices/<%= stripeInvoice.metadata.invoiceId %>">
             <p>#<%= stripeInvoice.metadata.invoiceNumber %> - <%= stripeInvoice.status %></p>
             <p><%= stripeInvoice.customer_name %> - $<%= (stripeInvoice.amount_due/100).toFixed(2) %></p>
-            <a class="btn btn-primary" href="/invoices/<%= stripeInvoice.metadata.invoiceId %>">View Details</a>
-        </div>
+        </a>
     <% } %>
+    <a class="btn btn-primary fixed-bottom-right" href="/invoices/new">Create New Invoice</a>
 </main>

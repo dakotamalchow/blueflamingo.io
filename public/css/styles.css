@@ -9987,12 +9987,22 @@ body {
   background-color: #F6F8FA;
 }
 
+a {
+  color: black;
+}
+
 section {
   background-color: white;
 }
 
 .wrap-text {
   overflow-wrap: break-word;
+}
+
+.fixed-bottom-right {
+  position: fixed;
+  bottom: 30px;
+  right: 20px;
 }
 
 /*# sourceMappingURL=styles.css.map */

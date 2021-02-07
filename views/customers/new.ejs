@@ -2,7 +2,7 @@
 <main class="container">
     <h1>Blue Flamingo</h1>
     <h2>Create a New Customer</h2>
-    <a class="btn btn-danger" href="/invoices">Back to Invoices</a>
+    <hr>
     <form action="/customers" method="POST">
         <div class="mb-3">
             <label class="form-label" for="name">Name</label>
@@ -12,7 +12,8 @@
             <label class="form-label" for="email">Email</label>
             <input class="form-control" type="email" id="email" name="email" placeholder="john.smith@jsmithcorp.com" required>
         </div>
-        <div class="mb-3">
+        <div class="mb-3 text-center">
+            <a class="btn btn-danger" href="/invoices">Cancel</a>
             <button class="btn btn-primary">Create</button>
         </div>
     </form>

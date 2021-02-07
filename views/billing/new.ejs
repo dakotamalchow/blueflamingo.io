@@ -2,8 +2,9 @@
 <main class="container">
     <h1>Blue Flamingo</h1>
     <h2>Create a New Invoice</h2>
-    <a class="btn btn-danger" href="/invoices">Back to Invoices</a>
+    <hr>
     <a class="btn btn-primary" href="/customers/new">Create a New Customer</a>
+    <hr>
     <form action="/invoices" method="POST">
         <div class="mb-3">
             <select class="custom-select" name="customerId" id="customerId">
@@ -24,7 +25,8 @@
             <label class="form-label" for="notes">Notes</label>
             <textarea class="form-control" name="notes" id="notes" cols="30" rows="10" placeholder="Enter any details here"></textarea>
         </div>
-        <div class="mb-3">
+        <div class="mb-3 text-center">
+            <a class="btn btn-danger" href="/invoices">Cancel</a>
             <button class="btn btn-primary">Send</button>
         </div>
     </form>

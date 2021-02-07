@@ -12,11 +12,10 @@ $flamingoBlue: #0040F0;
 
 body {
     background-color: #F6F8FA;
-    // color: $flamingoBlue;
 }
 
 a {
-    // color: $flamingoBlue;
+    color: black;
 }
 
 section {
@@ -25,4 +24,10 @@ section {
 
 .wrap-text{
     overflow-wrap: break-word;
+}
+
+.fixed-bottom-right{
+    position: fixed;
+    bottom: 30px;
+    right: 20px;
 }
