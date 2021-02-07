@@ -2,15 +2,16 @@
 <main class="container">
     <h1>Blue Flamingo</h1>
     <h2>Create a New Invoice</h2>
-    <a class="btn btn-primary" href="/invoices">Back to Invoicess</a>
+    <a class="btn btn-danger" href="/invoices">Back to Invoices</a>
+    <a class="btn btn-primary" href="/customers/new">Create a New Customer</a>
     <form action="/invoices" method="POST">
         <div class="mb-3">
-            <label class="form-label" for="name">Name</label>
-            <input class="form-control" type="text" id="name" name="name" placeholder="John Smith" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="email">Email</label>
-            <input class="form-control" type="email" id="email" name="email" placeholder="john.smith@jsmithcorp.com" required>
+            <select class="custom-select" name="customerId" id="customerId">
+                <option>Choose a Customer</option>
+                <% for(let customer of customers){ %>
+                    <option value="<%= customer._id %>"><%= customer.name %> (<%= customer.email %>)</option>
+                <% } %> 
+            </select>
         </div>
         <div class="mb-3">
             <label class="form-label" for="amount">Amount</label>

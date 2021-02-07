@@ -20,7 +20,6 @@ const transporter = nodemailer.createTransport({
 
 router.get("/",isLoggedIn,catchAsync(async(req,res)=>{
     const invoices = await Invoice.find({user:res.locals.currentUser});
-    console.log("invoices",invoices);
     let stripeInvoices = [];
     for (let invoice of invoices){
         let stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
@@ -28,27 +27,18 @@ router.get("/",isLoggedIn,catchAsync(async(req,res)=>{
             stripeInvoices.push(stripeInvoice);
         };
     };
-    res.render("billing/index",{stripeInvoices,invoices});
+    res.render("billing/index",{stripeInvoices});
 }));
 
-router.get("/new",isLoggedIn,(req,res)=>{
-    res.render("billing/new");
-});
+router.get("/new",isLoggedIn,catchAsync(async(req,res)=>{
+    const customers = await Customer.find({});
+    res.render("billing/new",{customers});
+}));
 
 router.post("/",isLoggedIn,catchAsync(async(req,res)=>{
-    const {name,email,amount,notes} = req.body;
+    const {amount,notes,customerId} = req.body;
     const user = res.locals.currentUser;
-
-    const customer = new Customer({user,name,email});
-    const stripeCustomer = await stripe.customers.create({
-        name,
-        email,
-        metadata:{
-            customerId: customer.id
-        }
-    });
-    customer.stripeCustomer = stripeCustomer.id;
-    customer.save();
+    const customer = await Customer.findById(customerId);
     
     const invoiceNumber = user.increaseInvoiceCount();
     const invoice = new Invoice({user,customer,invoiceNumber});
@@ -66,7 +56,8 @@ router.post("/",isLoggedIn,catchAsync(async(req,res)=>{
         collection_method: "send_invoice",
         days_until_due: 30,
         metadata:{
-            invoiceId: invoice.id
+            invoiceId: invoice.id,
+            invoiceNumber: invoiceNumber
         }
     });
     invoice.stripeInvoice = stripeInvoice.id;

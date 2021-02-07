@@ -11,6 +11,7 @@ const LocalStrategy = require("passport-local");
 const AppError = require("./utils/AppError");
 const User = require("./models/user");
 const invoiceRoutes = require("./routes/invoices");
+const customerRoutes = require("./routes/customers");
 const userRoutes = require("./routes/users");
 
 mongoose.connect("mongodb://localhost:27017/blueflamingo",
@@ -54,6 +55,7 @@ app.use((req,res,next)=>{
 });
 
 app.use("/invoices",invoiceRoutes);
+app.use("/customers",customerRoutes);
 app.use("/",userRoutes);
 
 app.get("/",(req,res)=>{
