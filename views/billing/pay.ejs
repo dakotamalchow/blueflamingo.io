@@ -2,7 +2,6 @@
 <% block("head").append('<script src="https://js.stripe.com/v3/"></script>') %>
 <% block("head").append('<script src="/js/pay.js" defer></script>') %>
 <main class="container">
-    <h1>Blue Flamingo</h1>
     <h2>Pay Invoice</h2>
     <a class="btn btn-primary" href="/invoices">Back to Invoices</a>
     <p><%= invoice._id %> - $<%= invoice.amount %></p>
