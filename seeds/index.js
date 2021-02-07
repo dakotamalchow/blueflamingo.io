@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
+const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
 
 const Invoice = require("../models/invoice");
+const Customer = require("../models/customer");
 const User = require("../models/user");
 
 mongoose.connect("mongodb://localhost:27017/blueflamingo",
@@ -14,30 +16,76 @@ mongoose.connect("mongodb://localhost:27017/blueflamingo",
         console.log("Error connecting to Mongo: " + error);
     });
 
-passport.use(new LocalStrategy({usernameField:"email"},User.authenticate()))
+passport.use(new LocalStrategy({usernameField:"email"},User.authenticate()));
 
-const createNewUser = async(name,businessName,email,password)=>{
-    const user = new User({name,businessName,email});
-    const registeredUser = await User.register(user,password);
-    return registeredUser;
+const resetAllData = async(user)=>{
+    const invoices = await Invoice.find({user});
+    for(let invoice of invoices){
+        await stripe.invoices.voidInvoice(invoice.stripeInvoice);
+    };
+    await Invoice.deleteMany({user});
+    const customers = await Customer.find({user});
+    for(let customer of customers){
+        await stripe.customers.del(customer.stripeCustomer);
+    };
+    await Customer.deleteMany({user});
 };
 
-const createNewInvoice = async(user,name,email,amount,notes,status)=>{
-    const invoice = new Invoice({user,name,email,amount,notes,status});
+const createNewCustomer = async(user,name,email)=>{
+    const customer = new Customer({user,name,email});
+    const stripeCustomer = await stripe.customers.create({
+        name,
+        email,
+        metadata:{
+            customerId: customer.id
+        }
+    });
+    customer.stripeCustomer = stripeCustomer.id;
+    await customer.save();
+    return customer;
+};
+
+const createNewInvoice = async(user,customer,amount,notes)=>{
+    const invoiceNumber = user.increaseInvoiceCount();
+    const invoice = new Invoice({user,customer,invoiceNumber});
+    await stripe.invoiceItems.create({
+        customer: customer.stripeCustomer,
+        amount: amount*100,
+        currency: "usd",
+        description: notes
+    });
+    const stripeInvoice = await stripe.invoices.create({
+        customer: customer.stripeCustomer,
+        transfer_data:{
+            destination:user.stripeAccount
+        },
+        collection_method: "send_invoice",
+        days_until_due: 30,
+        metadata:{
+            invoiceId: invoice.id,
+            invoiceNumber: invoiceNumber
+        }
+    });
+    invoice.stripeInvoice = stripeInvoice.id;
     await invoice.save();
-    return invoice;
-}
+    await stripe.invoices.sendInvoice(invoice.stripeInvoice);
+};
 
 const seedDatabase = async()=>{
     console.log("seeding...");
-    await Invoice.deleteMany({});
-    await User.deleteMany({});
-    const richardsConstruction = await createNewUser("Richard Malchow","Richard's Construction","richardsconstruction@gmail.com","ilovefood123");
-    const tessasPlumbing = await createNewUser("Tessa Malchow","Tessa's Plumbing","tessasplumbing@gmail.com","ilovethepark123");
-    await createNewInvoice(richardsConstruction._id,"Dakota Malchow","dakotamalchow@gmail.com",500,"Work done on 1 story house","PAID");
-    await createNewInvoice(richardsConstruction._id,"Tessa's Plumbing'","tessasplumbing@gmail.com",250,"Work done on doghouse","SENT");
-    await createNewInvoice(tessasPlumbing._id,"Dakota Malchow","dakotamalchow@gmail.com",300,"Work done on 1 story house","PAID");
-    await createNewInvoice(tessasPlumbing._id,"Richard's Construction","richardsconstruction@gmail.com",350,"Work done at commercial building","SENT");
+    const richardsConstruction = await User.findOne({businessName:"Richard's Construction"});
+    await resetAllData(richardsConstruction);
+    console.log("Deleted old data");
+    const dakota = await createNewCustomer(richardsConstruction,"Dakota Malchow","dakotamalchow@gmail.com");
+    console.log("Created new customer Dakota");
+    const tessa = await createNewCustomer(richardsConstruction,"Tessa Malchow","tessamalchow@gmail.com");
+    console.log("Created new customer Tessa");
+    await createNewInvoice(richardsConstruction,dakota,500,"Installed new front and back door");
+    console.log("Created invoice 1");
+    await createNewInvoice(richardsConstruction,tessa,250,"Put shingles on dog house");
+    console.log("Created invoice 2");
+    await createNewInvoice(richardsConstruction,dakota,2200,"Installed new windows");
+    console.log("Created invoice 3");
 };
 
 const closeConnections = ()=>{
@@ -47,4 +95,4 @@ const closeConnections = ()=>{
 };
 
 setTimeout(seedDatabase,2500);
-setTimeout(closeConnections,5000);
+setTimeout(closeConnections,12500);
