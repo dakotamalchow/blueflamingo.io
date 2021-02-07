@@ -74,40 +74,4 @@ router.get("/:id",isLoggedIn,catchAsync(async(req,res)=>{
     res.render("billing/details",{stripeInvoice});
 }));
 
-router.get("/:id/pay",catchAsync(async(req,res)=>{
-    const invoiceId = req.params.id;
-    const invoice = await Invoice.findById(invoiceId);
-    const intent = await stripe.paymentIntents.create({
-        amount: invoice.amount*100,
-        currency: "usd",
-    });
-    res.render("billing/pay",{invoice,client_secret:intent.client_secret});
-}));
-
-router.post("/:id/update",isLoggedIn,catchAsync(async(req,res)=>{
-    const invoiceId = req.params.id;
-    const invoice = await Invoice.findById(invoiceId);
-    invoice.status = "PAID";
-    invoice.save((err)=>{
-        if(err){
-            console.log("error:",err);
-        }
-    });
-    const mailOptions = {
-        from: "billing@blueflamingo.io",
-        to: "dakotamalchow@blueflamingo.io",
-        subject: "Invoice Paid",
-        text: "Your invoice has been paid. This is a receipt for your records.",
-        html: "Your invoice has been paid. This is a receipt for your records."
-    }
-    transporter.sendMail(mailOptions,(err,info)=>{
-        if(err){
-            console.log("Error: ",err);
-        } else {
-            console.log("Email sent: ",info.response);
-        }
-    });
-    // res.redirect(303,"/invoices");
-}));
-
 module.exports = router;
