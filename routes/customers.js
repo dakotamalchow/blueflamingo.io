@@ -6,6 +6,12 @@ const catchAsync = require("../utils/catchAsync");
 const Customer = require("../models/customer");
 const {isLoggedIn} = require("../utils/middleware");
 
+router.get("/",isLoggedIn,catchAsync(async(req,res)=>{
+    const user = res.locals.currentUser;
+    const customers = await Customer.find({user});
+    res.render("customers/index",{customers});
+}));
+
 router.get("/new",isLoggedIn,(req,res)=>{
     res.render("customers/new");
 });

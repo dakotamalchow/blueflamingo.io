@@ -1,0 +1,9 @@
+<% layout("layouts/boilerplate") %>
+<main class="container">
+    <h2>Customers</h2>
+    <% for(let customer of customers){ %>
+        <hr>
+        <p><%= customer.name %> - <%= customer.email %></p>
+    <% } %>
+    <a class="btn btn-primary fixed-bottom-right" href="/customers/new">Create New Customer</a>
+</main>
