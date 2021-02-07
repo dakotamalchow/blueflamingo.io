@@ -50,7 +50,8 @@ router.post("/",isLoggedIn,catchAsync(async(req,res)=>{
     customer.stripeCustomer = stripeCustomer.id;
     customer.save();
     
-    const invoice = new Invoice({user,customer});
+    const invoiceNumber = user.increaseInvoiceCount();
+    const invoice = new Invoice({user,customer,invoiceNumber});
     await stripe.invoiceItems.create({
         customer: customer.stripeCustomer,
         amount: amount*100,

@@ -14,6 +14,10 @@ const invoiceSchema = new Schema({
     stripeInvoice:{
         type: String,
         required: true
+    },
+    invoiceNumber:{
+        type: String,
+        required: true
     }
 });
 

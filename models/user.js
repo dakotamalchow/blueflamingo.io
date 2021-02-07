@@ -17,8 +17,16 @@ const userSchema = new Schema({
     stripeAccount:{
         type: String,
         required: true
+    },
+    invoiceCount:{
+        type: Number,
+        default: 0
     }
 });
+
+userSchema.methods.increaseInvoiceCount = function(){
+    return this.invoiceCount+=1;
+};
 
 //use email to login instead of a username (set in index.js as well)
 userSchema.plugin(passportLocalMongoose,{usernameField:"email"});
