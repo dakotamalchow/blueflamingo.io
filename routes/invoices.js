@@ -67,7 +67,7 @@ router.post("/",isLoggedIn,catchAsync(async(req,res)=>{
     res.redirect("/invoices");
 }));
 
-router.get("/:id",catchAsync(async(req,res)=>{
+router.get("/:id",isLoggedIn,catchAsync(async(req,res)=>{
     const invoiceId = req.params.id;
     const invoice = await Invoice.findById(invoiceId);
     const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);

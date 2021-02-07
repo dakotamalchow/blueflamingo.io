@@ -4,12 +4,13 @@ const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu')
 
 const catchAsync = require("../utils/catchAsync");
 const Customer = require("../models/customer");
+const {isLoggedIn} = require("../utils/middleware");
 
-router.get("/new",(req,res)=>{
+router.get("/new",isLoggedIn,(req,res)=>{
     res.render("customers/new");
 });
 
-router.post("/",catchAsync(async(req,res,next)=>{
+router.post("/",isLoggedIn,catchAsync(async(req,res,next)=>{
     const {name,email} = req.body;
     const user = res.locals.currentUser;
     const customer = new Customer({user,name,email});
