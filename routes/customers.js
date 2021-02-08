@@ -54,4 +54,14 @@ router.get("/:id/edit",isLoggedIn,catchAsync(async(req,res)=>{
     res.render("customers/edit",{stripeCustomer});
 }));
 
+router.post("/:id",isLoggedIn,validateCustomerReqBody,catchAsync(async(req,res)=>{
+    const customerId = req.params.id;
+    const {name,email} = req.body;
+    const customer = await Customer.findByIdAndUpdate(customerId,{name,email},{new:true});
+    await stripe.customers.update(customer.stripeCustomer,
+        {name,email}
+    );
+    res.redirect(`/customers/${customer._id}`);
+}));
+
 module.exports = router;
