@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router({mergeParams:true});
 const path = require("path");
 const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
-const nodemailer = require("nodemailer");
 const aws = require("aws-sdk");
 
 const catchAsync = require("../utils/catchAsync");
@@ -11,12 +10,6 @@ const Customer = require("../models/customer");
 const {isLoggedIn} = require("../utils/middleware");
 
 aws.config.loadFromPath(path.join(__dirname,"../aws-config.json"));
-
-const transporter = nodemailer.createTransport({
-    SES: new aws.SES({
-        apiVersion: "2010-12-01"
-    })
-});
 
 router.get("/",isLoggedIn,catchAsync(async(req,res)=>{
     const user = res.locals.currentUser;
