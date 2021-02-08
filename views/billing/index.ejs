@@ -1,12 +1,13 @@
 <% layout("layouts/boilerplate") %>
 <main class="container">
     <h2>Invoices</h2>
+    <hr>
     <% for(let stripeInvoice of stripeInvoices){ %>
-        <hr>
         <a href="/invoices/<%= stripeInvoice.metadata.invoiceId %>">
             <p>#<%= stripeInvoice.metadata.invoiceNumber %> - <%= stripeInvoice.status %></p>
             <p><%= stripeInvoice.customer_name %> - $<%= (stripeInvoice.amount_due/100).toFixed(2) %></p>
         </a>
+        <hr>
     <% } %>
     <a class="btn btn-primary fixed-bottom-right" href="/invoices/new">Create New Invoice</a>
 </main>

@@ -1,0 +1,11 @@
+<% layout("layouts/boilerplate") %>
+<main class="container">
+    <h2>Customer Details</h2>
+    <hr>
+    <a class="btn btn-danger" href="/customers">Back to Customers</a>
+    <hr>
+    <p>Name: <%= stripeCustomer.name %></p>
+    <p>Email: <%= stripeCustomer.email %></p>
+    <hr>
+    <a class="btn btn-primary" href="/customers/<%= stripeCustomer.metadata.customerId %>/edit">Edit</a>
+</main>

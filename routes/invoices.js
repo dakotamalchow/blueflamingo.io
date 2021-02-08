@@ -19,13 +19,12 @@ const transporter = nodemailer.createTransport({
 });
 
 router.get("/",isLoggedIn,catchAsync(async(req,res)=>{
-    const invoices = await Invoice.find({user:res.locals.currentUser});
+    const user = res.locals.currentUser;
+    const invoices = await Invoice.find({user});
     let stripeInvoices = [];
     for (let invoice of invoices){
         let stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
-        if(stripeInvoice.transfer_data.destination===res.locals.currentUser.stripeAccount){
-            stripeInvoices.push(stripeInvoice);
-        };
+        stripeInvoices.push(stripeInvoice);
     };
     res.render("billing/index",{stripeInvoices});
 }));

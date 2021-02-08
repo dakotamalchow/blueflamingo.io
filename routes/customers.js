@@ -9,7 +9,12 @@ const {isLoggedIn} = require("../utils/middleware");
 router.get("/",isLoggedIn,catchAsync(async(req,res)=>{
     const user = res.locals.currentUser;
     const customers = await Customer.find({user});
-    res.render("customers/index",{customers});
+    let stripeCustomers = [];
+    for (let customer of customers){
+        let stripeCustomer = await stripe.customers.retrieve(customer.stripeCustomer);
+        stripeCustomers.push(stripeCustomer);
+    };
+    res.render("customers/index",{stripeCustomers});
 }));
 
 router.get("/new",isLoggedIn,(req,res)=>{
@@ -30,6 +35,20 @@ router.post("/",isLoggedIn,catchAsync(async(req,res,next)=>{
     customer.stripeCustomer = stripeCustomer.id;
     await customer.save();
     res.redirect("/invoices/new");
+}));
+
+router.get("/:id",isLoggedIn,catchAsync(async(req,res)=>{
+    const customerId = req.params.id;
+    const customer = await Customer.findById(customerId);
+    const stripeCustomer = await stripe.customers.retrieve(customer.stripeCustomer);
+    res.render("customers/details",{stripeCustomer});
+}));
+
+router.get("/:id/edit",isLoggedIn,catchAsync(async(req,res)=>{
+    const customerId = req.params.id;
+    const customer = await Customer.findById(customerId);
+    const stripeCustomer = await stripe.customers.retrieve(customer.stripeCustomer);
+    res.render("customers/edit",{stripeCustomer});
 }));
 
 module.exports = router;
