@@ -22,11 +22,14 @@ router.get("/",isLoggedIn,catchAsync(async(req,res)=>{
     const user = res.locals.currentUser;
     const invoices = await Invoice.find({user});
     let stripeInvoices = [];
+    const invoiceStatus = req.query.status;
     for (let invoice of invoices){
         let stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
-        stripeInvoices.push(stripeInvoice);
+        if(!invoiceStatus || (invoiceStatus===stripeInvoice.status)){
+            stripeInvoices.push(stripeInvoice);
+        }
     };
-    res.render("billing/index",{stripeInvoices});
+    res.render("billing/index",{stripeInvoices,invoiceStatus});
 }));
 
 router.get("/new",isLoggedIn,catchAsync(async(req,res)=>{

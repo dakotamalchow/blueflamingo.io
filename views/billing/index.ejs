@@ -2,6 +2,15 @@
 <main class="container">
     <h2>Invoices</h2>
     <hr>
+    <form action="" method="GET">
+        <div class="mb-3">
+            <select class="custom-select" name="status" id="status" onchange="this.form.submit()">
+                <option value="" <%= invoiceStatus===""?"selected":"" %>>All</option>
+                <option value="open" <%= invoiceStatus==="open"?"selected":"" %>>Unpaid</option>
+            </select>
+        </div>
+    </form>
+    <hr>
     <% for(let stripeInvoice of stripeInvoices){ %>
         <a href="/invoices/<%= stripeInvoice.metadata.invoiceId %>">
             <p>#<%= stripeInvoice.metadata.invoiceNumber %> - <%= stripeInvoice.status %></p>
