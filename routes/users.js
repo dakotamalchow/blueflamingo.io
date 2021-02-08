@@ -6,8 +6,14 @@ const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu')
 const catchAsync = require("../utils/catchAsync");
 const User = require("../models/user");
 
-router.get("/register",(req,res)=>{
-    res.render("users/register");
+router.get("/register/:id",(req,res)=>{
+    const {id} = req.params;
+    if(id==="richard123"){
+        res.render("users/register");
+    }
+    else{
+        res.redirect("/login");
+    }
 });
 
 router.post("/register",catchAsync(async(req,res,next)=>{
