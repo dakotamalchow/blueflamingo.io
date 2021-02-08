@@ -9928,17 +9928,6 @@ h3 {
     border-color: #dee2e6;
   }
 }
-/*
-$flamingoBlue: #0040F0;
-
-.btn-primary {
-    @include button-variant($flamingoBlue, darken($flamingoBlue, 7.5%), darken($flamingoBlue, 10%), lighten($flamingoBlue,5%), lighten($flamingoBlue, 10%), darken($flamingoBlue,30%));
-}
-
-.btn-outline-primary {
-    @include button-outline-variant($flamingoBlue, #222222, lighten($flamingoBlue,5%), $flamingoBlue);
-}
-*/
 body {
   background-color: #F6F8FA;
 }
@@ -9959,6 +9948,10 @@ section {
   position: fixed;
   bottom: 30px;
   right: 20px;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.75);
 }
 
 /*# sourceMappingURL=styles.css.map */

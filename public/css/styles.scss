@@ -1,15 +1,15 @@
 $primary: #0040F0;
 @import "../../node_modules/bootstrap/scss/bootstrap.scss";
 
-body {
+body{
     background-color: #F6F8FA;
 }
 
-a {
+a{
     color: black;
 }
 
-section {
+section{
     background-color: white;
 }
 
@@ -21,4 +21,8 @@ section {
     position: fixed;
     bottom: 30px;
     right: 20px;
+}
+
+.navbar-dark .navbar-nav .nav-link{
+    color: rgba(255,255,255,.75);
 }
