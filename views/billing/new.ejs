@@ -2,8 +2,6 @@
 <main class="container">
     <h2>Create a New Invoice</h2>
     <hr>
-    <a class="btn btn-primary" href="/customers/new">Create a New Customer</a>
-    <hr>
     <form action="/invoices" method="POST">
         <div class="mb-3">
             <select class="custom-select" name="customerId" id="customerId">
@@ -13,6 +11,8 @@
                 <% } %> 
             </select>
         </div>
+        <a class="btn btn-primary" href="/customers/new">Create a New Customer</a>
+        <hr>
         <div class="mb-3">
             <label class="form-label" for="amount">Amount</label>
             <div class="input-group">
@@ -22,7 +22,7 @@
         </div>
         <div class="mb-3">
             <label class="form-label" for="notes">Notes</label>
-            <textarea class="form-control" name="notes" id="notes" cols="30" rows="10" placeholder="Enter any details here"></textarea>
+            <textarea class="form-control" name="notes" id="notes" cols="30" rows="5" placeholder="Enter any details here"></textarea>
         </div>
         <div class="mb-3 text-center">
             <a class="btn btn-danger" href="/invoices">Cancel</a>

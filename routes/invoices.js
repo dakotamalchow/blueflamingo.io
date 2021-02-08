@@ -34,6 +34,7 @@ router.get("/",isLoggedIn,catchAsync(async(req,res)=>{
 
 router.get("/new",isLoggedIn,catchAsync(async(req,res)=>{
     const customers = await Customer.find({});
+    req.session.returnTo = req.originalUrl;
     res.render("billing/new",{customers});
 }));
 

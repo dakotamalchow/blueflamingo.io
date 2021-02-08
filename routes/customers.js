@@ -8,6 +8,7 @@ const {isLoggedIn} = require("../utils/middleware");
 
 router.get("/",isLoggedIn,catchAsync(async(req,res)=>{
     const user = res.locals.currentUser;
+    req.session.returnTo = req.originalUrl;
     const customers = await Customer.find({user});
     let stripeCustomers = [];
     for (let customer of customers){
@@ -18,7 +19,9 @@ router.get("/",isLoggedIn,catchAsync(async(req,res)=>{
 }));
 
 router.get("/new",isLoggedIn,(req,res)=>{
-    res.render("customers/new");
+    const returnToUrl = req.session.returnTo || "/customers";
+    delete req.session.returnTo;
+    res.render("customers/new",{returnToUrl});
 });
 
 router.post("/",isLoggedIn,catchAsync(async(req,res,next)=>{
