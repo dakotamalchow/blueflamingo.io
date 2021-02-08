@@ -11,6 +11,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "joi": "^17.4.0",
+    "joi-oid": "^1.1.2",
     "jquery": "^3.5.1",
     "method-override": "^3.0.0",
     "mongoose": "^5.11.12",
