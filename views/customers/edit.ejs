@@ -2,7 +2,7 @@
 <main class="container">
     <h2>Edit Customer</h2>
     <hr>
-    <form action="/customers/<%= stripeCustomer.metadata.customerId %>" method="POST">
+    <form action="/customers/<%= stripeCustomer.metadata.customerId %>" method="POST" class="validated-form" novalidate>
         <div class="mb-3">
             <label class="form-label" for="name">Name</label>
             <input class="form-control" type="text" id="name" name="name" value="<%= stripeCustomer.name %>" required>

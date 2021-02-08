@@ -1,7 +1,7 @@
 <% layout("layouts/boilerplate") %>
 <main class="container">
     <h2>Login</h2>
-    <form action="/login" method="POST">
+    <form action="/login" method="POST" class="validated-form" novalidate>
         <div class="mb-3">
             <label class="form-label" for="email">Email</label>
             <input class="form-control" type="text" id="email" name="email" placeholder="johnsmith@gmail.com" required>
