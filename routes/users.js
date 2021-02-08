@@ -5,6 +5,7 @@ const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu')
 
 const catchAsync = require("../utils/catchAsync");
 const User = require("../models/user");
+const {validateUserReqBody} = require("../utils/middleware");
 
 router.get("/register/:id",(req,res)=>{
     const {id} = req.params;
@@ -16,7 +17,7 @@ router.get("/register/:id",(req,res)=>{
     }
 });
 
-router.post("/register",catchAsync(async(req,res,next)=>{
+router.post("/register",validateUserReqBody,catchAsync(async(req,res,next)=>{
     const {name,businessName,email,password} = req.body;
     const account = await stripe.accounts.create({
         type:"express",
@@ -45,7 +46,7 @@ router.get("/login",(req,res)=>{
     res.render("users/login");
 });
 
-router.post("/login",passport.authenticate("local"),(req,res)=>{
+router.post("/login",passport.authenticate("local",{failureRedirect:"/login"}),(req,res)=>{
     const redirectUrl = req.session.returnTo || "/invoices";
     delete req.session.returnTo;
     res.redirect(redirectUrl);

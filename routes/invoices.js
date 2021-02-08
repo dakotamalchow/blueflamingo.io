@@ -7,7 +7,7 @@ const aws = require("aws-sdk");
 const catchAsync = require("../utils/catchAsync");
 const Invoice = require("../models/invoice");
 const Customer = require("../models/customer");
-const {isLoggedIn} = require("../utils/middleware");
+const {isLoggedIn,validateInvoiceReqBody} = require("../utils/middleware");
 
 aws.config.loadFromPath(path.join(__dirname,"../aws-config.json"));
 
@@ -31,8 +31,8 @@ router.get("/new",isLoggedIn,catchAsync(async(req,res)=>{
     res.render("billing/new",{customers});
 }));
 
-router.post("/",isLoggedIn,catchAsync(async(req,res)=>{
-    const {amount,notes,customerId} = req.body;
+router.post("/",isLoggedIn,validateInvoiceReqBody,catchAsync(async(req,res)=>{
+    const {customerId,amount,notes} = req.body;
     const user = res.locals.currentUser;
     const customer = await Customer.findById(customerId);
     
