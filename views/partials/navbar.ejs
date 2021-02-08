@@ -5,8 +5,13 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-            <a class="nav-item nav-link" href="/invoices">Invoices</a>
-            <a class="nav-item nav-link" href="/customers">Customers</a>
+            <% if(currentUser){ %> 
+                <a class="nav-item nav-link" href="/invoices">Invoices</a>
+                <a class="nav-item nav-link" href="/customers">Customers</a>
+                <a class="nav-item nav-link" href="/logout">Logout</a>
+            <% } else { %> 
+                <a class="nav-item nav-link" href="/login">Login</a>
+            <% } %> 
         </div>
     </div>
 </nav>
