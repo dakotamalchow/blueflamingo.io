@@ -7,6 +7,7 @@ const aws = require("aws-sdk");
 const catchAsync = require("../utils/catchAsync");
 const Invoice = require("../models/invoice");
 const Customer = require("../models/customer");
+const User = require("../models/user");
 const {isLoggedIn,validateInvoiceReqBody} = require("../utils/middleware");
 
 aws.config.loadFromPath(path.join(__dirname,"../aws-config.json"));
@@ -36,7 +37,8 @@ router.post("/",isLoggedIn,validateInvoiceReqBody,catchAsync(async(req,res)=>{
     const user = res.locals.currentUser;
     const customer = await Customer.findById(customerId);
     
-    const invoiceNumber = user.increaseInvoiceCount();
+    const invoiceCount = user.increaseInvoiceCount();
+    const invoiceNumber = String(invoiceCount).padStart(4,"0");
     const invoice = new Invoice({user,customer,invoiceNumber});
     await stripe.invoiceItems.create({
         customer: customer.stripeCustomer,

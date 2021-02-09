@@ -20,12 +20,15 @@ const userSchema = new Schema({
     },
     invoiceCount:{
         type: Number,
-        default: 0
+        default: 0,
+        required: true
     }
 });
 
 userSchema.methods.increaseInvoiceCount = function(){
-    return this.invoiceCount+=1;
+    this.invoiceCount+=1;
+    this.save();
+    return this.invoiceCount;
 };
 
 //use email to login instead of a username (set in index.js as well)

@@ -20,9 +20,9 @@ passport.use(new LocalStrategy({usernameField:"email"},User.authenticate()));
 
 const resetAllData = async(user)=>{
     const invoices = await Invoice.find({user});
-    for(let invoice of invoices){
-        await stripe.invoices.voidInvoice(invoice.stripeInvoice);
-    };
+    // for(let invoice of invoices){
+    //     await stripe.invoices.voidInvoice(invoice.stripeInvoice);
+    // };
     await Invoice.deleteMany({user});
     const customers = await Customer.find({user});
     for(let customer of customers){
@@ -46,7 +46,8 @@ const createNewCustomer = async(user,name,email)=>{
 };
 
 const createNewInvoice = async(user,customer,amount,notes)=>{
-    const invoiceNumber = user.increaseInvoiceCount();
+    const invoiceCount = user.increaseInvoiceCount();
+    const invoiceNumber = String(invoiceCount).padStart(4,"0");
     const invoice = new Invoice({user,customer,invoiceNumber});
     await stripe.invoiceItems.create({
         customer: customer.stripeCustomer,
