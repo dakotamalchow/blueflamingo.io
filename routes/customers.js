@@ -37,6 +37,7 @@ router.post("/",isLoggedIn,validateCustomerReqBody,catchAsync(async(req,res,next
     });
     customer.stripeCustomer = stripeCustomer.id;
     await customer.save();
+    req.flash("success","Successfully created new customer");
     res.redirect("/invoices/new");
 }));
 
@@ -61,6 +62,7 @@ router.post("/:id",isLoggedIn,validateCustomerReqBody,catchAsync(async(req,res)=
     await stripe.customers.update(customer.stripeCustomer,
         {name,email}
     );
+    req.flash("success","Customer successfully saved");
     res.redirect(`/customers/${customer._id}`);
 }));
 

@@ -7,6 +7,7 @@ const ejsMate = require("ejs-mate");
 const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
+const flash = require("connect-flash");
 
 const AppError = require("./utils/AppError");
 const User = require("./models/user");
@@ -42,6 +43,8 @@ app.use(session({
     resave:false,
     saveUninitialized:true
 }));
+app.use(flash());
+
 app.use(passport.initialize());
 app.use(passport.session());
 //use email to login instead of a username (set in user model as well)
@@ -51,6 +54,8 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use((req,res,next)=>{
     res.locals.currentUser = req.user;
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
     next();
 });
 

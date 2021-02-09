@@ -39,6 +39,7 @@ router.post("/register",validateUserReqBody,catchAsync(async(req,res,next)=>{
         return_url:"http://localhost:3000",
         type:"account_onboarding"
       });
+      req.flash("success","Welcome, account successfully created");
       res.redirect(accountLinks.url);
 }));
 
@@ -54,6 +55,7 @@ router.post("/login",passport.authenticate("local",{failureRedirect:"/login"}),(
 
 router.get("/logout",(req,res)=>{
     req.logOut();
+    req.flash("success","User logged out");
     res.redirect("/");
 });
 

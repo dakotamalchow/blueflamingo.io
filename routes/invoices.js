@@ -60,6 +60,7 @@ router.post("/",isLoggedIn,validateInvoiceReqBody,catchAsync(async(req,res)=>{
     await invoice.save();
 
     await stripe.invoices.sendInvoice(invoice.stripeInvoice);
+    req.flash("success","Successfully created and sent invoice");
     res.redirect("/invoices");
 }));
 
