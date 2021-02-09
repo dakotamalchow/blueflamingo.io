@@ -1,32 +1,30 @@
 <% layout("layouts/boilerplate") %>
-<main class="container">
-    <h2>Create a New Invoice</h2>
+<h2>Create a New Invoice</h2>
+<hr>
+<form action="/invoices" method="POST" class="validated-form" novalidate>
+    <div class="mb-3">
+        <select class="custom-select" name="customerId" id="customerId" required>
+            <option value="">Choose a Customer</option>
+            <% for(let customer of customers){ %>
+                <option value="<%= customer._id %>"><%= customer.name %> (<%= customer.email %>)</option>
+            <% } %> 
+        </select>
+    </div>
+    <a class="btn btn-primary" href="/customers/new">Create a New Customer</a>
     <hr>
-    <form action="/invoices" method="POST" class="validated-form" novalidate>
-        <div class="mb-3">
-            <select class="custom-select" name="customerId" id="customerId" required>
-                <option value="">Choose a Customer</option>
-                <% for(let customer of customers){ %>
-                    <option value="<%= customer._id %>"><%= customer.name %> (<%= customer.email %>)</option>
-                <% } %> 
-            </select>
+    <div class="mb-3">
+        <label class="form-label" for="amount">Amount</label>
+        <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input class="form-control" type="number" id="amount" name="amount" placeholder="0.00" step="0.01" required>
         </div>
-        <a class="btn btn-primary" href="/customers/new">Create a New Customer</a>
-        <hr>
-        <div class="mb-3">
-            <label class="form-label" for="amount">Amount</label>
-            <div class="input-group">
-                <span class="input-group-text">$</span>
-                <input class="form-control" type="number" id="amount" name="amount" placeholder="0.00" step="0.01" required>
-            </div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="notes">Notes</label>
-            <textarea class="form-control" name="notes" id="notes" cols="30" rows="5" placeholder="Enter any details here"></textarea>
-        </div>
-        <div class="mb-3 text-center">
-            <a class="btn btn-danger" href="/invoices">Cancel</a>
-            <button class="btn btn-primary">Send</button>
-        </div>
-    </form>
-</main>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="notes">Notes</label>
+        <textarea class="form-control" name="notes" id="notes" cols="30" rows="5" placeholder="Enter any details here"></textarea>
+    </div>
+    <div class="mb-3 text-center">
+        <a class="btn btn-danger" href="/invoices">Cancel</a>
+        <button class="btn btn-primary">Send</button>
+    </div>
+</form>

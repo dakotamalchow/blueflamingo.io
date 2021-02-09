@@ -1,19 +1,17 @@
 <% layout("layouts/boilerplate") %>
-<main class="container">
-    <h2>Create a New Customer</h2>
-    <hr>
-    <form action="/customers" method="POST" class="validated-form" novalidate>
-        <div class="mb-3">
-            <label class="form-label" for="name">Name</label>
-            <input class="form-control" type="text" id="name" name="name" placeholder="John Smith" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="email">Email</label>
-            <input class="form-control" type="email" id="email" name="email" placeholder="john.smith@jsmithcorp.com" required>
-        </div>
-        <div class="mb-3 text-center">
-            <a class="btn btn-danger" href="<%= returnToUrl %> ">Cancel</a>
-            <button class="btn btn-primary">Create</button>
-        </div>
-    </form>
-</main>
+<h2>Create a New Customer</h2>
+<hr>
+<form action="/customers" method="POST" class="validated-form" novalidate>
+    <div class="mb-3">
+        <label class="form-label" for="name">Name</label>
+        <input class="form-control" type="text" id="name" name="name" placeholder="John Smith" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="email">Email</label>
+        <input class="form-control" type="email" id="email" name="email" placeholder="john.smith@jsmithcorp.com" required>
+    </div>
+    <div class="mb-3 text-center">
+        <a class="btn btn-danger" href="<%= returnToUrl %> ">Cancel</a>
+        <button class="btn btn-primary">Create</button>
+    </div>
+</form>

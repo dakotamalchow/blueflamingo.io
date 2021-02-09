@@ -1,15 +1,13 @@
 <% layout("layouts/boilerplate") %>
-<main class="container">
-    <h2>Invoice #<%= stripeInvoice.metadata.invoiceNumber %> Details</h2>
-    <hr>
-    <a class="btn btn-danger" href="/invoices">Back to Invoices</a>
-    <hr>
-    <p>Billed to: <%= stripeInvoice.customer_email %></p>
-    <p>Name: <%= stripeInvoice.customer_name %></p>
-    <hr>
-    <p>Amount: $<%= (stripeInvoice.amount_due/100).toFixed(2) %></p>
-    <p>Status: <%= stripeInvoice.status %></p>
-    <hr>
-    <p>Notes: <%= stripeInvoice.description %></p>
-    <hr>
-</main>
+<h2>Invoice #<%= stripeInvoice.metadata.invoiceNumber %> Details</h2>
+<hr>
+<a class="btn btn-danger" href="/invoices">Back to Invoices</a>
+<hr>
+<p>Billed to: <%= stripeInvoice.customer_email %></p>
+<p>Name: <%= stripeInvoice.customer_name %></p>
+<hr>
+<p>Amount: $<%= (stripeInvoice.amount_due/100).toFixed(2) %></p>
+<p>Status: <%= stripeInvoice.status %></p>
+<hr>
+<p>Notes: <%= stripeInvoice.description %></p>
+<hr>

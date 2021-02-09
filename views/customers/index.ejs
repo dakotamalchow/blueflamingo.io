@@ -1,12 +1,10 @@
 <% layout("layouts/boilerplate") %>
-<main class="container">
-    <h2>Customers</h2>
+<h2>Customers</h2>
+<hr>
+<% for(let stripeCustomer of stripeCustomers){ %>
+    <a href="/customers/<%= stripeCustomer.metadata.customerId %>">
+        <p><%= stripeCustomer.name %> - <%= stripeCustomer.email %></p>
+    </a>
     <hr>
-    <% for(let stripeCustomer of stripeCustomers){ %>
-        <a href="/customers/<%= stripeCustomer.metadata.customerId %>">
-            <p><%= stripeCustomer.name %> - <%= stripeCustomer.email %></p>
-        </a>
-        <hr>
-    <% } %>
-    <a class="btn btn-primary fixed-bottom-right" href="/customers/new">Create New Customer</a>
-</main>
+<% } %>
+<a class="btn btn-primary fixed-bottom-right" href="/customers/new">Create New Customer</a>
