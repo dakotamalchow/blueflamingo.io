@@ -9,7 +9,9 @@
         <div class="text-center">
             <p>Online billing geared towards small business owners</p>
             <p>Currently in beta mode</p>
-            <a class="btn btn-primary" href="/login">Login</a>
+            <% if(!currentUser){ %> 
+                <a class="btn btn-primary" href="/login">Login</a>
+            <% } %> 
         </div>
     </div>
 </div>

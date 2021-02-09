@@ -47,7 +47,7 @@ router.get("/login",(req,res)=>{
     res.render("users/login");
 });
 
-router.post("/login",passport.authenticate("local",{failureRedirect:"/login"}),(req,res)=>{
+router.post("/login",passport.authenticate("local",{failureRedirect:"/login",failureFlash:true}),(req,res)=>{
     const redirectUrl = req.session.returnTo || "/invoices";
     delete req.session.returnTo;
     res.redirect(redirectUrl);
