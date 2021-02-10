@@ -1,7 +1,15 @@
 <% layout("layouts/boilerplate") %>
-<h2>Invoice #<%= stripeInvoice.metadata.invoiceNumber %> Details</h2>
-<hr>
-<a class="btn btn-danger" href="/invoices">Back to Invoices</a>
+<div class="row">
+    <div class="col-2 col-sm-1">
+        <a class="btn btn-danger align-self-start" href="/invoices">
+            <span class="oi oi-arrow-thick-left" title="arrow thick left" aria-hidden="true"></span>
+        </a>
+    </div>
+    <div class="col">
+        <h2 class="text-center">Invoice #<%= stripeInvoice.metadata.invoiceNumber %> Details</h2>
+    </div>
+    <div class="col-2 col-sm-1"></div>
+</div>
 <hr>
 <p>Billed to: <%= stripeInvoice.customer_email %></p>
 <p>Name: <%= stripeInvoice.customer_name %></p>

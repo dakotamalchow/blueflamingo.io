@@ -1,17 +1,26 @@
 <% layout("layouts/boilerplate") %>
-<h2>Edit Customer</h2>
+<div class="row">
+    <div class="col-2 col-sm-1">
+        <a class="btn btn-danger align-self-start" href="/customers/<%= stripeCustomer.metadata.customerId %>">
+            <span class="oi oi-arrow-thick-left" title="arrow thick left" aria-hidden="true"></span>
+        </a>
+    </div>
+    <div class="col">
+        <h2 class="text-center">Edit Customer</h2>
+    </div>
+    <div class="col-2 col-sm-1"></div>
+</div>
 <hr>
 <form action="/customers/<%= stripeCustomer.metadata.customerId %>" method="POST" class="validated-form" novalidate>
     <div class="mb-3">
-        <label class="form-label" for="name">Name</label>
+        <label class="form-label h4" for="name">Name</label>
         <input class="form-control" type="text" id="name" name="name" value="<%= stripeCustomer.name %>" required>
     </div>
     <div class="mb-3">
-        <label class="form-label" for="email">Email</label>
+        <label class="form-label h4" for="email">Email</label>
         <input class="form-control" type="email" id="email" name="email" value="<%= stripeCustomer.email %>" required>
     </div>
     <div class="mb-3 text-center">
-        <a class="btn btn-danger" href="/customers/<%= stripeCustomer.metadata.customerId %>">Cancel</a>
-        <button class="btn btn-primary">Save</button>
+        <button class="btn btn-primary btn-lg">Save</button>
     </div>
 </form>

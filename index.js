@@ -31,9 +31,7 @@ app.engine("ejs",ejsMate);
 app.use("/imgs",express.static(path.join(__dirname,"/public/imgs")));
 app.use("/css",express.static(path.join(__dirname,"/public/css")));
 app.use("/js",express.static(path.join(__dirname,"/public/js")));
-app.use("/bootstrap-css", express.static(path.join(__dirname,"node_modules/bootstrap/dist/css")));
-app.use("/bootstrap-js", express.static(path.join(__dirname,"node_modules/bootstrap/dist/js")));
-app.use("/jquery-js", express.static(path.join(__dirname,"node_modules/jquery/dist")));
+app.use("/", express.static(path.join(__dirname,"node_modules")));
 
 app.use(express.urlencoded({extended:true}))
 app.use(express.json());

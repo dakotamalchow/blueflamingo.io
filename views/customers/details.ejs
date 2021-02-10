@@ -1,9 +1,19 @@
 <% layout("layouts/boilerplate") %>
-<h2>Customer Details</h2>
-<hr>
-<a class="btn btn-danger" href="/customers">Back to Customers</a>
+<div class="row">
+    <div class="col-2 col-sm-1">
+        <a class="btn btn-danger align-self-start" href="/customers">
+            <span class="oi oi-arrow-thick-left" title="arrow thick left" aria-hidden="true"></span>
+        </a>
+    </div>
+    <div class="col">
+        <h2 class="text-center">Customer Details</h2>
+    </div>
+    <div class="col-2 col-sm-1"></div>
+</div>
 <hr>
 <p>Name: <%= stripeCustomer.name %></p>
 <p>Email: <%= stripeCustomer.email %></p>
 <hr>
-<a class="btn btn-primary" href="/customers/<%= stripeCustomer.metadata.customerId %>/edit">Edit</a>
+<div class="text-center">
+    <a class="btn btn-primary btn-lg" href="/customers/<%= stripeCustomer.metadata.customerId %>/edit">Edit</a>
+</div>
