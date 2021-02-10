@@ -12,6 +12,7 @@ const updateTotal = function(){
     for(let amount of lineItemAmounts){
         newTotal += parseFloat(amount.value);
     };
+    if(!newTotal) newTotal = 0;
     total.innerText = newTotal.toFixed(2);
 };
 
