@@ -10,7 +10,9 @@
     </div>
     <div class="col-2 col-sm-1"></div>
 </div>
-<p class="text-center">Status: <%= stripeInvoice.status %></p>
+<div class="row">
+    <span class="mx-auto px-2 h5 rounded text-white" id="invoice-status"><%= stripeInvoice.status %></span>
+</div>
 <hr>
 <h4>Sent To</h4>
 <p class="form-control"><%= stripeInvoice.customer_name %> (<%= stripeInvoice.customer_email %>)</p>
@@ -18,8 +20,8 @@
 <h4>Line Items</h4>
 <% for(let lineItem of stripeInvoice.lines.data){ %>
     <div class="row justify-content-between mx-0">
-        <p class="col form-control mr-2"><%= lineItem.description %></p>
-        <p class="col-3 form-control ml-2">$<%= (lineItem.amount/100).toFixed(2) %></p>
+        <p class="col form-control mb-2 mr-2"><%= lineItem.description %></p>
+        <p class="col-3 col-md-2 form-control mb-2 ml-2 text-right">$<%= (lineItem.amount/100).toFixed(2) %></p>
     </div>
 <% } %>
 <hr>
@@ -39,4 +41,4 @@
 <hr>
 <h5>Notes</h5>
 <p class="form-control"><%= stripeInvoice.description %></p>
-<hr>
+<% block("scripts").append('<script src="/js/invoice-status.js"></script>') %> 
