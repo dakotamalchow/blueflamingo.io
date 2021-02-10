@@ -32,7 +32,7 @@ router.get("/new",isLoggedIn,catchAsync(async(req,res)=>{
     res.render("billing/new",{customers});
 }));
 
-router.post("/",isLoggedIn,catchAsync(async(req,res)=>{
+router.post("/",isLoggedIn,validateInvoiceReqBody,catchAsync(async(req,res)=>{
     const {customerId,lineItems,notes} = req.body;
     const user = res.locals.currentUser;
     const customer = await Customer.findById(customerId);

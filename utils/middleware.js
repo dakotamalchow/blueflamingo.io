@@ -10,10 +10,24 @@ module.exports.isLoggedIn = (req,res,next)=>{
     next();
 };
 
+/*
+lineItems: {
+    item1: { description: 'test item 1', amount: '1.00' },
+    item2: { description: 'test item 2', amount: '2.00' },
+    ...
+}
+*/
+
 const invoiceReqBodySchema = Joi.object({
     customerId: Joi.objectId().required(),
-    amount: Joi.number().min(0).precision(2).required(),
-    notes: Joi.string()
+    lineItems: Joi.object().pattern(
+        Joi.string().required(),
+        Joi.object({
+            description: Joi.string().required(),
+            amount: Joi.number().min(0).precision(2).required()
+        }).required()
+    ).required(),
+    notes: Joi.string().allow("")
 });
 
 module.exports.validateInvoiceReqBody = (req,res,next)=>{
@@ -43,7 +57,7 @@ module.exports.validateCustomerReqBody = (req,res,next)=>{
 
 const userReqBodySchema = Joi.object({
     name: Joi.string().required(),
-    businessName: Joi.string(),
+    businessName: Joi.string().allow(""),
     email: Joi.string().email().required(),
     password: Joi.string().min(8).required()
 });
