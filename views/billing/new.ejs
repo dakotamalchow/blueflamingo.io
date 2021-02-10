@@ -3,6 +3,7 @@
 <hr>
 <form action="/invoices" method="POST" class="validated-form" novalidate>
     <div class="mb-3">
+        <label class="form-label" for="customerId">Send To</label>
         <select class="custom-select" name="customerId" id="customerId" required>
             <option value="">Choose a Customer</option>
             <% for(let customer of customers){ %>
@@ -12,19 +13,29 @@
     </div>
     <a class="btn btn-primary" href="/customers/new">Create a New Customer</a>
     <hr>
-    <div class="mb-3">
-        <label class="form-label" for="amount">Amount</label>
-        <div class="input-group">
-            <span class="input-group-text">$</span>
-            <input class="form-control" type="number" id="amount" name="amount" placeholder="0.00" step="0.01" required>
+    <div class="mb-3" id="line-items">
+        <label class="form-label" for="amount">Line Items</label>
+        <!-- items will be added here -->
         </div>
     </div>
+    <button class="btn btn-danger" id="remove-item-button" type="button" hidden>Remove Item</button>
+    <button class="btn btn-primary" id="add-item-button" type="button">Add Item</button>
+    <hr>
+    <div class="row justify-content-between">
+        <div class="col h3">Total:</div>
+        <div class="col text-right h3">
+            <span>$</span>
+            <span id="total"></span>
+        </div>
+    </div>
+    <hr>
     <div class="mb-3">
         <label class="form-label" for="notes">Notes</label>
-        <textarea class="form-control" name="notes" id="notes" cols="30" rows="5" placeholder="Enter any details here"></textarea>
+        <textarea class="form-control" name="notes" id="notes" cols="30" rows="3" placeholder="Enter any details here"></textarea>
     </div>
     <div class="mb-3 text-center">
         <a class="btn btn-danger" href="/invoices">Cancel</a>
         <button class="btn btn-primary">Send</button>
     </div>
 </form>
+<% block("scripts").append('<script src="/js/add-item.js"></script>') %> 

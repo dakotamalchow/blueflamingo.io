@@ -32,25 +32,30 @@ router.get("/new",isLoggedIn,catchAsync(async(req,res)=>{
     res.render("billing/new",{customers});
 }));
 
-router.post("/",isLoggedIn,validateInvoiceReqBody,catchAsync(async(req,res)=>{
-    const {customerId,amount,notes} = req.body;
+router.post("/",isLoggedIn,catchAsync(async(req,res)=>{
+    const {customerId,lineItems,notes} = req.body;
     const user = res.locals.currentUser;
     const customer = await Customer.findById(customerId);
     
     const invoiceCount = user.increaseInvoiceCount();
     const invoiceNumber = String(invoiceCount).padStart(4,"0");
     const invoice = new Invoice({user,customer,invoiceNumber});
-    await stripe.invoiceItems.create({
-        customer: customer.stripeCustomer,
-        amount: amount*100,
-        currency: "usd",
-        description: notes
-    });
+    //lineItems comes back as nested objects, so this returns an array
+    for(let item of Object.values(lineItems)){
+        const stripeAmount = parseFloat(item.amount)*100;
+        await stripe.invoiceItems.create({
+            customer: customer.stripeCustomer,
+            amount: stripeAmount,
+            currency: "usd",
+            description: item.description
+        });
+    };
     const stripeInvoice = await stripe.invoices.create({
         customer: customer.stripeCustomer,
         transfer_data:{
             destination:user.stripeAccount
         },
+        description: notes,
         collection_method: "send_invoice",
         days_until_due: 30,
         metadata:{
