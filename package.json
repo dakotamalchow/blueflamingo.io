@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@sendgrid/mail": "^7.4.2",
     "aws-sdk": "^2.829.0",
     "bootstrap": "^4.6.0",
     "connect-flash": "^0.1.1",
