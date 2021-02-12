@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
     <link href="/open-iconic/font/css/open-iconic-bootstrap.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
     <main class="container">
@@ -23,13 +24,33 @@
             </div>
         <% } %>
         <hr>
+        <!-- <div class="row justify-content-between">
+            <h4 class="col">Total:</h4>
+            <h4 class="col text-right">$<%= (stripeInvoice.amount_due/100).toFixed(2) %></h4>
+        </div>
+        <div class="row justify-content-between">
+            <h4 class="col">Paid:</h4>
+            <h4 class="col text-right">$<%= (stripeInvoice.amount_paid/100).toFixed(2) %></h4>
+        </div>
+        <hr> -->
         <div class="row justify-content-between">
             <h3 class="col">Due:</h3>
             <h3 class="col text-right">$<%= (stripeInvoice.amount_remaining/100).toFixed(2) %></h3>
         </div>
         <hr>
+        <form action="/invoices/<%= stripeInvoice.metadata.invoiceId %>/pay" method="POST" id="payment-form">
+            <!-- <label for="card-element">
+                Credit or debit card
+            </label> -->
+            <div id="card-element">
+                <!-- Elements will create input elements here -->
+            </div>
+            <div id="card-errors" role="alert"></div>
+            <button class="btn btn-primary">Pay Invoice</button>
+        </form 
     </main>
     <script src="/jquery/dist/jquery.slim.min.js"></script>
     <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/pay-invoice.js"></script>
 </body>
 </html>

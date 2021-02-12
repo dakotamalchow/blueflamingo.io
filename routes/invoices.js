@@ -157,4 +157,17 @@ router.get("/:id/pay",async(req,res)=>{
     res.render("billing/pay",{stripeInvoice,userName});
 });
 
+router.post("/:id/pay",async(req,res)=>{
+    const invoiceId = req.params.id;
+    const paymentMethodId = req.body.stripePaymentMethod;
+    console.log("req.body",req.body);
+    console.log("req.body.stripePaymentMethod",req.body.stripePaymentMethod);
+    console.log("paymentMethodId",paymentMethodId);
+    const invoice = await Invoice.findById(invoiceId);
+    const customer = await Customer.findById(invoice.customer);
+    const stripeCustomerId = customer.stripeCustomer;
+    await stripe.paymentMethods.attach(paymentMethodId,{customer:stripeCustomerId});
+    await stripe.invoices.pay(invoice.stripeInvoice,{payment_method:paymentMethodId});
+});
+
 module.exports = router;
