@@ -1,15 +1,7 @@
 const stripe = Stripe("pk_test_osZfCwd1uI7FjnfaUqWxbu2R");
 const elements = stripe.elements();
 
-const style = {
-    base: {
-      // Add your base input styles here. For example:
-      fontSize: '16px',
-      color: '#32325d',
-    },
-};
-
-const card = elements.create("card",{style});
+const card = elements.create("card");
 card.mount("#card-element");
 card.on("change",({error})=>{
     let displayError = document.querySelector("#card-errors");
