@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" style="font-family: sans-serif;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Flamingo</title>
+</head>
+<body style="background-color: #F6F8FA;">
+    <div style="padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto; max-width: 1200px;">
+        <p style="font-size: 2rem; text-align: center; margin-top: 0; margin-bottom: 0.5rem;">Invoice #<%= stripeInvoice.metadata.invoiceNumber %></p>
+        <p style="font-size: 1.75rem; text-align: center; margin-top: 0; margin-bottom: 0.5rem;"><%= userName %></p>
+        <div style="text-align: center;">
+            <span style="font-size: 1.25rem; margin-top: 0; padding: 0.1rem 1rem; color: #FFF; background-color: <%= statusColor %>; border-radius: 0.25rem;"><%= stripeInvoice.status %></span>
+        </div>
+        <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
+        <p style="font-size: 1.5rem; margin-top: 0; margin-bottom: 0.5rem;">Sent To</p>
+        <p style="font-size: 1rem;"><%= stripeInvoice.customer_name %> (<%= stripeInvoice.customer_email %>)</p>
+        <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
+        <p style="font-size: 1.5rem; margin-top: 0; margin-bottom: 0.5rem;">Line Items</p>
+        <table>
+            <% for(let lineItem of stripeInvoice.lines.data){ %>
+                <tr>
+                    <td style="width: 100%; font-size: 1rem;"><%= lineItem.description %></td>
+                    <td style="text-align: right; font-size: 1rem;">$<%= (lineItem.amount/100).toFixed(2) %></td>
+                </tr>
+            <% } %>
+        </table>
+        <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
+        <table>
+            <tr>
+                <td style="width: 100%; font-size: 1.5rem; margin-top: 0; margin-bottom: 0.5rem;">
+                    Total:
+                </td>
+                <td style="text-align: right; font-size: 1.5rem; margin-top: 0; margin-bottom: 0.5rem;">
+                    $<%= (stripeInvoice.amount_due/100).toFixed(2) %>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 100%; font-size: 1.5rem; margin-top: 0; margin-bottom: 0.5rem;">
+                    Paid:
+                </td>
+                <td style="text-align: right; font-size: 1.5rem; margin-top: 0; margin-bottom: 0.5rem;">
+                    $<%= (stripeInvoice.amount_paid/100).toFixed(2) %>
+                </td>
+            </tr>
+        </table>
+        <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
+        <table>
+            <tr>
+                </td>
+                <td style="width: 100%; font-size: 1.75rem; margin-top: 0; margin-bottom: 0.5rem;">
+                    Due:
+                </td>
+                </td>
+                <td style="text-align: right; font-size: 1.75rem; margin-top: 0; margin-bottom: 0.5rem;">
+                    $<%= (stripeInvoice.amount_remaining/100).toFixed(2) %>
+                </td>
+            </tr>
+        </table>
+        <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
+        <p style="font-size: 1.25rem;">Notes</p>
+        <p><%= stripeInvoice.description %></p>
+        <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
+        <div style="text-align: center; margin-top: 3rem; margin-bottom: 3rem;">
+            <a style="text-decoration: none; color: #FFF; background-color: #0040F0; padding: 0.5rem 3rem; border-radius: 0.25rem; font-size: 1.25rem;" href="blueflamingo.io/invoices/<%= stripeInvoice.metadata.invoiceId %>/pay">Pay Invoice</a>
+        </div>
+        <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
+        <p style="text-align: center;">Powered by <a href="blueflamingo.io">Blue Flamingo</a></p>
+    </div>
+</body>
+</html>

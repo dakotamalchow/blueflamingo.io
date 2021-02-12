@@ -1,16 +1,20 @@
 const express = require("express");
 const router = express.Router({mergeParams:true});
 const path = require("path");
+const fs = require("fs");
+const ejs = require("ejs");
 const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
 const aws = require("aws-sdk");
+const sgMail = require("@sendgrid/mail");
+require("dotenv").config();
 
 const catchAsync = require("../utils/catchAsync");
 const Invoice = require("../models/invoice");
 const Customer = require("../models/customer");
-const User = require("../models/user");
 const {isLoggedIn,validateInvoiceReqBody} = require("../utils/middleware");
 
 aws.config.loadFromPath(path.join(__dirname,"../aws-config.json"));
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 router.get("/",isLoggedIn,catchAsync(async(req,res)=>{
     const user = res.locals.currentUser;
@@ -77,5 +81,71 @@ router.get("/:id",isLoggedIn,catchAsync(async(req,res)=>{
     const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
     res.render("billing/details",{stripeInvoice});
 }));
+
+router.post("/:id/send",async(req,res)=>{
+    const invoiceId = req.params.id;
+    // const user = res.locals.currentUser;
+    // const userName = user.businessName || user.name;
+    const userName = "Richard's Construction";
+    const invoice = await Invoice.findById(invoiceId);
+    const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
+    const invoiceTemplate = fs.readFileSync("views/email/invoice.ejs",{encoding:"utf-8"});
+    let statusColor = "";
+    switch(stripeInvoice.status){
+        case "draft":
+            //secondary - grey
+            statusColor += "#6c757d";
+            break;
+        case "open":
+            //success - green
+            statusColor += "#28a745";
+            break;
+        case "paid":
+            //primary - blue
+            statusColor += "#0040F0";
+            break;
+        default:
+            //danger - red
+            statusColor += "#dc3545"
+    };
+    const msg = {
+        to:"dakotamalchow@gmail.com",
+        from:"billing@blueflamingo.io",
+        subject:`New Invoice from ${userName}`,
+        text:`${userName} sent you a new invoice for $${(stripeInvoice.amount_due/100).toFixed(2)}. Please visit blueflamingo.io/invoices/${stripeInvoice.metadata.invoiceId}/pay to pay your invoice.`,
+        html:ejs.render(invoiceTemplate,{stripeInvoice,userName,statusColor})
+    };
+    await sgMail.send(msg);
+    res.send("Email sent");
+});
+
+router.get("/:id/test",async(req,res)=>{
+    const invoiceId = req.params.id;
+    // const user = res.locals.currentUser;
+    // const userName = user.businessName || user.name;
+    const userName = "Richard's Construction";
+    const invoice = await Invoice.findById(invoiceId);
+    const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
+    const invoiceTemplate = fs.readFileSync("views/email/invoice.ejs",{encoding:"utf-8"});
+    let statusColor = "";
+    switch(stripeInvoice.status){
+        case "draft":
+            //secondary - grey
+            statusColor += "#6c757d";
+            break;
+        case "open":
+            //success - green
+            statusColor += "#28a745";
+            break;
+        case "paid":
+            //primary - blue
+            statusColor += "#0040F0";
+            break;
+        default:
+            //danger - red
+            statusColor += "#dc3545"
+    };
+    res.send(ejs.render(invoiceTemplate,{stripeInvoice,userName,statusColor}));
+});
 
 module.exports = router;
