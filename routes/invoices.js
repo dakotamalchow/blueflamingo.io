@@ -148,4 +148,13 @@ router.get("/:id/test",async(req,res)=>{
     res.send(ejs.render(invoiceTemplate,{stripeInvoice,userName,statusColor}));
 });
 
+router.get("/:id/pay",async(req,res)=>{
+    const invoiceId = req.params.id;
+    const invoice = await Invoice.findById(invoiceId);
+    const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
+    //need to add userName to stripeInvoice metadata and retreive it from there
+    userName = "Richard's Construction";
+    res.render("billing/pay",{stripeInvoice,userName});
+});
+
 module.exports = router;
