@@ -40,6 +40,7 @@ module.exports.createInvoiceDraft = async(customerId,lineItems,notes,user)=>{
     });
     invoice.stripeInvoice = stripeInvoice.id;
     await invoice.save();
+    return invoice;
 };
 
 module.exports.sendEmailInvoice = async(invoiceId)=>{
