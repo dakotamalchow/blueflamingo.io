@@ -8,7 +8,7 @@
 <body style="background-color: #F6F8FA;">
     <div style="padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto; max-width: 1200px;">
         <p style="font-size: 2rem; text-align: center; margin-top: 0; margin-bottom: 0.5rem;">Invoice #<%= stripeInvoice.metadata.invoiceNumber %></p>
-        <p style="font-size: 1.75rem; text-align: center; margin-top: 0; margin-bottom: 0.5rem;"><%= userName %></p>
+        <p style="font-size: 1.75rem; text-align: center; margin-top: 0; margin-bottom: 0.5rem;"><%= stripeInvoice.metadata.userName %></p>
         <div style="text-align: center;">
             <span style="font-size: 1.25rem; margin-top: 0; padding: 0.1rem 1rem; color: #FFF; background-color: <%= statusColor %>; border-radius: 0.25rem;"><%= stripeInvoice.status %></span>
         </div>
