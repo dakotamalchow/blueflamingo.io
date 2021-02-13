@@ -1,4 +1,3 @@
-const { Schemas } = require("aws-sdk");
 const mongoose = require("mongoose");
 const {Schema} = mongoose;
 
