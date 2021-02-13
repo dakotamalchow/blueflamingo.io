@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router({mergeParams:true});
-const path = require("path");
 const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
-const aws = require("aws-sdk");
 const sgMail = require("@sendgrid/mail");
 require("dotenv").config();
 
@@ -12,7 +10,6 @@ const Customer = require("../models/customer");
 const {isLoggedIn,validateInvoiceReqBody} = require("../utils/middleware");
 const {createInvoiceDraft,sendEmailInvoice} = require("../controllers/invoices");
 
-aws.config.loadFromPath(path.join(__dirname,"../aws-config.json"));
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 router.get("/",isLoggedIn,catchAsync(async(req,res)=>{
