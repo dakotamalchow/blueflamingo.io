@@ -68,13 +68,13 @@ router.get("/:id/pay",catchAsync(async(req,res)=>{
 
 router.post("/:id/pay",catchAsync(async(req,res)=>{
     const invoiceId = req.params.id;
-    console.log(req.body);
     const paymentMethodId = req.body.stripePaymentMethod;
     const invoice = await Invoice.findById(invoiceId);
     const customer = await Customer.findById(invoice.customer);
     const stripeCustomerId = customer.stripeCustomer;
     await stripe.paymentMethods.attach(paymentMethodId,{customer:stripeCustomerId});
     await stripe.invoices.pay(invoice.stripeInvoice,{payment_method:paymentMethodId});
+    req.flash("success","Thank you for your payment!");
     res.redirect(`/invoices/${invoiceId}/pay`);
 }));
 
