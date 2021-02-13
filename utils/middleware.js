@@ -10,64 +10,57 @@ module.exports.isLoggedIn = (req,res,next)=>{
     next();
 };
 
-/*
-lineItems: {
-    item1: { description: 'test item 1', amount: '1.00' },
-    item2: { description: 'test item 2', amount: '2.00' },
-    ...
-}
-*/
-
-const invoiceReqBodySchema = Joi.object({
-    customerId: Joi.objectId().required(),
-    lineItems: Joi.object().pattern(
-        Joi.string().required(),
-        Joi.object({
-            description: Joi.string().required(),
-            amount: Joi.number().min(0).precision(2).required()
-        }).required()
-    ).required(),
-    notes: Joi.string().allow("")
-});
+const validateReqBody = (req,res,next,schema)=>{
+    const {error} = schema.validate(req.body);
+    if(error){
+        const message = error.details.map(el=>el.message).join(",");
+        throw new AppError(400,message);
+    }else{
+        next();
+    };
+};
 
 module.exports.validateInvoiceReqBody = (req,res,next)=>{
-    const {error} = invoiceReqBodySchema.validate(req.body);
-    if(error){
-        const message = error.details.map(el=>el.message).join(",");
-        throw new AppError(400,message);
-    }else{
-        next();
-    };
+    /*lineItems: {
+        item1: { description: 'test item 1', amount: '1.00' },
+        item2: { description: 'test item 2', amount: '2.00' },
+        ...
+    }*/
+    const InvoiceReqBodySchema = Joi.object({
+        customerId: Joi.objectId().required(),
+        lineItems: Joi.object().pattern(
+            Joi.string().required(),
+            Joi.object({
+                description: Joi.string().required(),
+                amount: Joi.number().min(0).precision(2).required()
+            }).required()
+        ).required(),
+        notes: Joi.string().allow("")
+    });
+    validateReqBody(req,res,next,InvoiceReqBodySchema);
 };
 
-const customerReqBodySchema = Joi.object({
-    name: Joi.string().required(),
-    email: Joi.string().email().required()
-});
+module.exports.validatePayInvoiceReqBody = (req,res,next)=>{
+    const payInvoiceReqBodySchema = Joi.object({
+        stripePaymentMethod: Joi.string().required()
+    });    
+    validateReqBody(req,res,next,payInvoiceReqBodySchema);
+};
 
 module.exports.validateCustomerReqBody = (req,res,next)=>{
-    const {error} = customerReqBodySchema.validate(req.body);
-    if(error){
-        const message = error.details.map(el=>el.message).join(",");
-        throw new AppError(400,message);
-    }else{
-        next();
-    };
+    const customerReqBodySchema = Joi.object({
+        name: Joi.string().required(),
+        email: Joi.string().email().required()
+    });
+    validateReqBody(req,res,next,customerReqBodySchema);
 };
 
-const userReqBodySchema = Joi.object({
-    name: Joi.string().required(),
-    businessName: Joi.string().allow(""),
-    email: Joi.string().email().required(),
-    password: Joi.string().min(8).required()
-});
-
 module.exports.validateUserReqBody = (req,res,next)=>{
-    const {error} = userReqBodySchema.validate(req.body);
-    if(error){
-        const message = error.details.map(el=>el.message).join(",");
-        throw new AppError(400,message);
-    }else{
-        next();
-    };
+    const userReqBodySchema = Joi.object({
+        name: Joi.string().required(),
+        businessName: Joi.string().allow(""),
+        email: Joi.string().email().required(),
+        password: Joi.string().min(8).required()
+    });
+    validateReqBody(req,res,next,userReqBodySchema);
 };

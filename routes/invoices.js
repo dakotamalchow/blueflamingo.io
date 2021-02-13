@@ -53,21 +53,22 @@ router.get("/:id",isLoggedIn,catchAsync(async(req,res)=>{
     res.render("billing/details",{stripeInvoice});
 }));
 
-router.post("/:id/send",async(req,res)=>{
+router.post("/:id/send",isLoggedIn,catchAsync(async(req,res)=>{
     sendEmailInvoice(req.params.id);
     res.send("Email sent");
-});
+}));
 
-router.get("/:id/pay",async(req,res)=>{
+router.get("/:id/pay",catchAsync(async(req,res)=>{
     const invoiceId = req.params.id;
     const invoice = await Invoice.findById(invoiceId);
     const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
     const userName = stripeInvoice.metadata.userName;
     res.render("billing/pay",{stripeInvoice,userName});
-});
+}));
 
-router.post("/:id/pay",async(req,res)=>{
+router.post("/:id/pay",catchAsync(async(req,res)=>{
     const invoiceId = req.params.id;
+    console.log(req.body);
     const paymentMethodId = req.body.stripePaymentMethod;
     const invoice = await Invoice.findById(invoiceId);
     const customer = await Customer.findById(invoice.customer);
@@ -75,6 +76,6 @@ router.post("/:id/pay",async(req,res)=>{
     await stripe.paymentMethods.attach(paymentMethodId,{customer:stripeCustomerId});
     await stripe.invoices.pay(invoice.stripeInvoice,{payment_method:paymentMethodId});
     res.redirect(`/invoices/${invoiceId}/pay`);
-});
+}));
 
 module.exports = router;
