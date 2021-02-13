@@ -1,6 +1,5 @@
 let backgroundColor = "";
 const invoiceStatusSpan = document.querySelector("#invoice-status");
-console.log(invoiceStatusSpan.innerText)
 
 switch(invoiceStatusSpan.innerText){
     case "draft":
