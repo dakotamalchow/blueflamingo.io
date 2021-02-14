@@ -9,7 +9,61 @@ const Customer = require("../models/customer");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-module.exports.createInvoiceDraft = async(customerId,lineItems,notes,user)=>{
+const sendEmailInvoice = async(invoiceId)=>{
+    const invoice = await Invoice.findById(invoiceId);
+    const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
+    const invoiceTemplate = fs.readFileSync("views/email/invoice.ejs",{encoding:"utf-8"});
+    let statusColor = "";
+    switch(stripeInvoice.status){
+        case "draft":
+            //secondary - grey
+            statusColor += "#6c757d";
+            break;
+        case "open":
+            //success - green
+            statusColor += "#28a745";
+            break;
+        case "paid":
+            //primary - blue
+            statusColor += "#0040F0";
+            break;
+        default:
+            //danger - red
+            statusColor += "#dc3545"
+    };
+    const msg = {
+        to:"dakotamalchow@gmail.com",
+        from:"billing@blueflamingo.io",
+        subject:`New Invoice from ${stripeInvoice.metadata.userName}`,
+        text:`${stripeInvoice.metadata.userName} sent you a new invoice for $${(stripeInvoice.amount_due/100).toFixed(2)}. Please visit blueflamingo.io/invoices/${stripeInvoice.metadata.invoiceId}/pay to pay your invoice.`,
+        html:ejs.render(invoiceTemplate,{stripeInvoice,statusColor})
+    };
+    await sgMail.send(msg);
+};
+
+module.exports.index = async(req,res)=>{
+    const user = res.locals.currentUser;
+    const invoices = await Invoice.find({user});
+    let stripeInvoices = [];
+    const invoiceStatus = req.query.status;
+    for (let invoice of invoices){
+        let stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
+        if(!invoiceStatus || (invoiceStatus===stripeInvoice.status)){
+            stripeInvoices.push(stripeInvoice);
+        };
+    };
+    res.render("billing/index",{stripeInvoices,invoiceStatus});
+};
+
+module.exports.newForm = async(req,res)=>{
+    const customers = await Customer.find({});
+    req.session.returnTo = req.originalUrl;
+    res.render("billing/new",{customers});
+};
+
+module.exports.createInvoice = async(req,res)=>{
+    const {customerId,lineItems,notes} = req.body;
+    const user = res.locals.currentUser;
     const customer = await Customer.findById(customerId);
     const invoiceCount = user.increaseInvoiceCount();
     const invoiceNumber = String(invoiceCount).padStart(4,"0");
@@ -40,37 +94,40 @@ module.exports.createInvoiceDraft = async(customerId,lineItems,notes,user)=>{
     });
     invoice.stripeInvoice = stripeInvoice.id;
     await invoice.save();
-    return invoice;
+    await stripe.invoices.finalizeInvoice(stripeInvoice.id);
+    await sendEmailInvoice(invoice._id);
+    req.flash("success","Successfully created and sent invoice");
+    res.redirect("/invoices");
 };
 
-module.exports.sendEmailInvoice = async(invoiceId)=>{
+module.exports.invoiceDetails = async(req,res)=>{
+    const invoiceId = req.params.id;
     const invoice = await Invoice.findById(invoiceId);
     const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
-    const invoiceTemplate = fs.readFileSync("views/email/invoice.ejs",{encoding:"utf-8"});
-    let statusColor = "";
-    switch(stripeInvoice.status){
-        case "draft":
-            //secondary - grey
-            statusColor += "#6c757d";
-            break;
-        case "open":
-            //success - green
-            statusColor += "#28a745";
-            break;
-        case "paid":
-            //primary - blue
-            statusColor += "#0040F0";
-            break;
-        default:
-            //danger - red
-            statusColor += "#dc3545"
-    };
-    const msg = {
-        to:"dakotamalchow@gmail.com",
-        from:"billing@blueflamingo.io",
-        subject:`New Invoice from ${stripeInvoice.metadata.userName}`,
-        text:`${stripeInvoice.metadata.userName} sent you a new invoice for $${(stripeInvoice.amount_due/100).toFixed(2)}. Please visit blueflamingo.io/invoices/${stripeInvoice.metadata.invoiceId}/pay to pay your invoice.`,
-        html:ejs.render(invoiceTemplate,{stripeInvoice,statusColor})
-    };
-    await sgMail.send(msg);
+    res.render("billing/details",{stripeInvoice});
+};
+
+module.exports.sendInvoiceEmail = async(req,res)=>{
+    sendEmailInvoice(req.params.id);
+    res.send("Email sent");
+};
+
+module.exports.customerInvoiceView = async(req,res)=>{
+    const invoiceId = req.params.id;
+    const invoice = await Invoice.findById(invoiceId);
+    const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
+    const userName = stripeInvoice.metadata.userName;
+    res.render("billing/pay",{stripeInvoice,userName});
+};
+
+module.exports.payInvoice = async(req,res)=>{
+    const invoiceId = req.params.id;
+    const paymentMethodId = req.body.stripePaymentMethod;
+    const invoice = await Invoice.findById(invoiceId);
+    const customer = await Customer.findById(invoice.customer);
+    const stripeCustomerId = customer.stripeCustomer;
+    await stripe.paymentMethods.attach(paymentMethodId,{customer:stripeCustomerId});
+    await stripe.invoices.pay(invoice.stripeInvoice,{payment_method:paymentMethodId});
+    req.flash("success","Thank you for your payment!");
+    res.redirect(`/invoices/${invoiceId}/pay`);
 };
