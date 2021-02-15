@@ -4,7 +4,6 @@ const Plan = require("../models/plan");
 
 module.exports.setupPlans = async()=>{
     const plan = await Plan.findOne({name:"Standard"});
-    console.log(plan);
     if(plan == null){
         const product = await stripe.products.create({
             name: 'Standard Plan',

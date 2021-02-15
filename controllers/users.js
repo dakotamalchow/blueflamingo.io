@@ -37,14 +37,14 @@ module.exports.purchasePlan = async(req,res)=>{
 
     const stripeCustomer = await stripe.customers.create({
         name: user.name,
-        email: user.email,
+        email: user.email
     });
     const stripeCustomerId = stripeCustomer.id;
     user.stripeCustomer = stripeCustomerId;
     await user.save();
 
     const accountLinks = await stripe.accountLinks.create({
-        account:account.id,
+        account:stripeAccount.id,
         refresh_url:"http://localhost:3000",
         return_url:"http://localhost:3000",
         type:"account_onboarding"
@@ -57,10 +57,11 @@ module.exports.purchasePlan = async(req,res)=>{
             default_payment_method: paymentMethodId
           }
     });
-    const plan = Plan.findOne({name:"Standard"});
+    const plan = await Plan.findOne({name:"Standard"});
+    console.log("plan",plan);
     const subscription = await stripe.subscriptions.create({
         customer: stripeCustomerId,
-        items: [{ price_data: plan.stripePrice }]
+        items: [{ price: plan.stripePrice }]
     });
     res.redirect(accountLinks.url);
 };
