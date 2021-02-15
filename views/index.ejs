@@ -10,7 +10,13 @@
             <p>Online billing geared towards small business owners</p>
             <p>Currently in beta mode</p>
             <% if(!currentUser){ %> 
-                <a class="btn btn-primary" href="/login">Login</a>
+                <hr> 
+                <div class="mb-3">
+                    <a class="btn btn-primary" href="/login">Login</a>
+                </div>
+                <div class="mb-3">
+                    <a href="/register"><u>Don't have an account? Create one today!</u></a>
+                </div>
             <% } %> 
         </div>
     </div>
