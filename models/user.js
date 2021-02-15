@@ -14,9 +14,15 @@ const userSchema = new Schema({
     businessName:{
         type: String
     },
+    plan:{
+        type: Schema.Types.ObjectId,
+        ref: "Plan"
+    },
     stripeAccount:{
         type: String,
-        required: true
+    },
+    stripeCustomer:{
+        type: String
     },
     invoiceCount:{
         type: Number,

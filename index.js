@@ -10,6 +10,7 @@ const LocalStrategy = require("passport-local");
 const flash = require("connect-flash");
 
 const AppError = require("./utils/AppError");
+const initData = require("./utils/initData");
 const User = require("./models/user");
 const invoiceRoutes = require("./routes/invoices");
 const customerRoutes = require("./routes/customers");
@@ -50,10 +51,11 @@ passport.use(new LocalStrategy({usernameField:"email"},User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use((req,res,next)=>{
+app.use(async(req,res,next)=>{
     res.locals.currentUser = req.user;
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
+    await initData.setupPlans();
     next();
 });
 

@@ -3,12 +3,16 @@ const router = express.Router();
 const passport = require("passport");
 
 const catchAsync = require("../utils/catchAsync");
-const {validateUserReqBody} = require("../utils/middleware");
+const {isLoggedIn,validateUserReqBody} = require("../utils/middleware");
 const users = require("../controllers/users");
 
 router.get("/register",users.registerForm);
 
 router.post("/register",validateUserReqBody,catchAsync(users.registerUser));
+
+router.get("/register/purchase-plan",isLoggedIn,users.purchasePlanForm);
+
+router.post("/register/purchase-plan",isLoggedIn,catchAsync(users.purchasePlan));
 
 router.get("/login",users.loginForm);
 
