@@ -18,6 +18,9 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Plan"
     },
+    stripeSubscription:{
+        type: String
+    },
     stripeAccount:{
         type: String,
     },

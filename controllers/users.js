@@ -41,7 +41,6 @@ module.exports.purchasePlan = async(req,res)=>{
     });
     const stripeCustomerId = stripeCustomer.id;
     user.stripeCustomer = stripeCustomerId;
-    await user.save();
 
     const accountLinks = await stripe.accountLinks.create({
         account:stripeAccount.id,
@@ -63,6 +62,9 @@ module.exports.purchasePlan = async(req,res)=>{
         customer: stripeCustomerId,
         items: [{ price: plan.stripePrice }]
     });
+    user.stripeSubscription = subscription.id;
+    await user.save();
+
     res.redirect(accountLinks.url);
 };
 

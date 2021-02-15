@@ -1,0 +1,22 @@
+<% layout("layouts/boilerplate") %>
+<h2>Settings</h2>
+<hr>
+<h3>User Info</h3>
+<% if(user.businessName){ %> 
+    <p><%= user.businessName %> </p>
+<% } %> 
+<p><%= user.name %> </p>
+<p><%= user.email %> </p>
+<hr>
+<h3>Subscription Info</h3>
+<% if(stripeSubscription.status == "active"){ %> 
+    <p>$<%= (stripeSubscription.items.data[0].price.unit_amount/100).toFixed(2) %>/month</p>
+    <p>Next bill date: <%= new Date(stripeSubscription.current_period_end*1000).toDateString() %></p>
+    <form action="/settings/cancel-subscription" method="POST">
+        <button class="btn btn-danger">Cancel Subscription</button>
+    </form>
+<% } else{ %> 
+    <p>Not active</p>
+    
+<% } %> 
+<hr>

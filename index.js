@@ -15,6 +15,7 @@ const User = require("./models/user");
 const invoiceRoutes = require("./routes/invoices");
 const customerRoutes = require("./routes/customers");
 const userRoutes = require("./routes/users");
+const settingRoutes = require("./routes/settings");
 
 mongoose.connect("mongodb://dakota:blueFlamingo@localhost:27017/blueflamingo?authSource=admin",
     {useNewUrlParser:true,useUnifiedTopology:true,useCreateIndex:true,useFindAndModify:false})
@@ -62,6 +63,7 @@ app.use(async(req,res,next)=>{
 app.use("/invoices",invoiceRoutes);
 app.use("/customers",customerRoutes);
 app.use("/",userRoutes);
+app.use("/settings",settingRoutes);
 
 app.get("/",(req,res)=>{
     res.render("index");
