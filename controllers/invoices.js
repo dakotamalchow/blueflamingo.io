@@ -63,7 +63,6 @@ module.exports.newForm = async(req,res)=>{
 
 module.exports.createInvoice = async(req,res)=>{
     const {customerId,lineItems,notes} = req.body;
-    console.log(req.body);
     const user = res.locals.currentUser;
     const customer = await Customer.findById(customerId);
     const invoiceCount = user.increaseInvoiceCount();
