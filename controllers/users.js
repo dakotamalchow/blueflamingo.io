@@ -73,15 +73,15 @@ module.exports.completeAccount = async(req,res)=>{
         return res.redirect("/invoices");
     }
     else{
-    const accountLinks = await stripe.accountLinks.create({
-        account:stripeAccount.id,
-        refresh_url:"http://localhost:3000/register/complete-account",
-        return_url:"http://localhost:3000/register/complete-account",
-        type:"account_onboarding"
-    });
-    const url = accountLinks.url;
+        const accountLinks = await stripe.accountLinks.create({
+            account:stripeAccount.id,
+            refresh_url:"http://localhost:3000/register/complete-account",
+            return_url:"http://localhost:3000/register/complete-account",
+            type:"account_onboarding"
+        });
+        const url = accountLinks.url;
+        return res.render("users/complete-account",{url});
     };
-    res.render("users/complete-account",{url});
 };
 
 module.exports.loginForm = (req,res)=>{
