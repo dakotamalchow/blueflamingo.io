@@ -18,6 +18,9 @@ module.exports.registerUser = async(req,res,next)=>{
         type:"express",
         country:"US",
         email: user.email,
+        business_profile:{
+            name:businessName
+        },
         capabilities:{
             card_payments:{requested:true},
             transfers:{requested:true}

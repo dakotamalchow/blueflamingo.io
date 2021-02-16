@@ -7,6 +7,10 @@ const settings = require("../controllers/settings");
 
 router.get("/",isLoggedIn,hasPlan,catchAsync(settings.index));
 
+router.get("/edit-user",isLoggedIn,hasPlan,settings.editUserForm);
+
+router.post("/edit-user",isLoggedIn,hasPlan,catchAsync(settings.editUser));
+
 router.post("/cancel-subscription",isLoggedIn,hasPlan,catchAsync(settings.cancelSubscrption));
 
 module.exports = router;
