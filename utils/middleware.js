@@ -10,6 +10,22 @@ module.exports.isLoggedIn = (req,res,next)=>{
     next();
 };
 
+module.exports.hasPlan = (req,res,next)=>{
+    const user = res.locals.currentUser;
+    if(!user.plan){
+        return res.redirect("/register/purchase-plan");
+    };
+    next();
+};
+
+module.exports.isAccountComplete = (req,res,next)=>{
+    const user = res.locals.currentUser;
+    if(!user.isAccountComplete){
+        return res.redirect("/register/complete-account");
+    };
+    next();
+};
+
 const validateReqBody = (req,res,next,schema)=>{
     const {error} = schema.validate(req.body);
     if(error){

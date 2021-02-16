@@ -31,6 +31,11 @@ const userSchema = new Schema({
         type: Number,
         default: 0,
         required: true
+    },
+    isAccountComplete:{
+        type: Boolean,
+        default: false,
+        requred: true
     }
 });
 

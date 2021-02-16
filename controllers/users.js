@@ -14,16 +14,6 @@ module.exports.registerUser = async(req,res,next)=>{
     req.login(registeredUser,err=>{
         if(err) {return next(err);}
     });
-    req.flash("success","Welcome, account successfully created");
-    res.redirect("/register/purchase-plan");
-};
-
-module.exports.purchasePlanForm = (req,res)=>{
-    res.render("users/purchase-plan");
-};
-
-module.exports.purchasePlan = async(req,res)=>{
-    const user = res.locals.currentUser;
     const stripeAccount = await stripe.accounts.create({
         type:"express",
         country:"US",
@@ -34,38 +24,64 @@ module.exports.purchasePlan = async(req,res)=>{
         }
     });
     user.stripeAccount = stripeAccount.id;
-
     const stripeCustomer = await stripe.customers.create({
         name: user.name,
         email: user.email
     });
-    const stripeCustomerId = stripeCustomer.id;
-    user.stripeCustomer = stripeCustomerId;
+    user.stripeCustomer = stripeCustomer.id;
+    await user.save();
+    req.flash("success","Account successfully created");
+    res.redirect("/register/purchase-plan");
+};
 
-    const accountLinks = await stripe.accountLinks.create({
-        account:stripeAccount.id,
-        refresh_url:"http://localhost:3000",
-        return_url:"http://localhost:3000",
-        type:"account_onboarding"
-    });
+module.exports.purchasePlanForm = (req,res)=>{
+    res.render("users/purchase-plan");
+};
 
+module.exports.purchasePlan = async(req,res)=>{
+    const user = res.locals.currentUser;
     const paymentMethodId = req.body.stripePaymentMethod;
-    await stripe.paymentMethods.attach(paymentMethodId,{customer:stripeCustomerId});
-    await stripe.customers.update(stripeCustomerId,{
+    await stripe.paymentMethods.attach(paymentMethodId,{customer:user.stripeCustomer});
+    await stripe.customers.update(user.stripeCustomer,{
         invoice_settings: {
             default_payment_method: paymentMethodId
           }
     });
     const plan = await Plan.findOne({name:"Standard"});
-    console.log("plan",plan);
     const subscription = await stripe.subscriptions.create({
-        customer: stripeCustomerId,
+        customer: user.stripeCustomer,
         items: [{ price: plan.stripePrice }]
     });
+    user.plan = plan;
     user.stripeSubscription = subscription.id;
     await user.save();
+    req.flash("success","Plan purchased successfully");
+    res.redirect("/register/complete-account");
+};
 
-    res.redirect(accountLinks.url);
+module.exports.completeAccount = (req,res)=>{
+    res.rend("users/complete-account");
+};
+
+module.exports.completeAccount = async(req,res)=>{
+    const user = res.locals.currentUser;
+    const stripeAccount = await stripe.accounts.retrieve(user.stripeAccount);
+    if(stripeAccount.charges_enabled && stripeAccount.details_submitted){
+        user.isAccountComplete = true;
+        await user.save();
+        req.flash("success","Registration process complete");
+        return res.redirect("/invoices");
+    }
+    else{
+    const accountLinks = await stripe.accountLinks.create({
+        account:stripeAccount.id,
+        refresh_url:"http://localhost:3000/register/complete-account",
+        return_url:"http://localhost:3000/register/complete-account",
+        type:"account_onboarding"
+    });
+    const url = accountLinks.url;
+    };
+    res.render("users/complete-account",{url});
 };
 
 module.exports.loginForm = (req,res)=>{
