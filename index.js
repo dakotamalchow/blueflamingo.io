@@ -69,6 +69,10 @@ app.get("/",(req,res)=>{
     res.render("index");
 });
 
+app.get("/pricing-and-details",(req,res)=>{
+    res.render("pricing-and-details");
+});
+
 app.all("*",(req,res,next)=>{
     next(new AppError(404,"Page not found"));
 });
