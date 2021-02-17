@@ -9,7 +9,7 @@ const Customer = require("../models/customer");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const sendEmailInvoice = async(invoiceId)=>{
+const sendEmailInvoice = async(invoiceId,emailType)=>{
     const invoice = await Invoice.findById(invoiceId);
     const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
     const invoiceTemplate = fs.readFileSync("views/email/invoice.ejs",{encoding:"utf-8"});
@@ -31,11 +31,21 @@ const sendEmailInvoice = async(invoiceId)=>{
             //danger - red
             statusColor += "#dc3545"
     };
+    let subject = "";
+    let text = "";
+    if(emailType="invoice"){
+        subject = `New Invoice from ${stripeInvoice.metadata.userName}`;
+        text = `${stripeInvoice.metadata.userName} sent you a new invoice for $${(stripeInvoice.amount_due/100).toFixed(2)}. Please visit blueflamingo.io/invoices/${stripeInvoice.metadata.invoiceId}/pay to pay your invoice.`;
+    }
+    else if(emailType="receipt"){
+        subject = `Receipt from ${stripeInvoice.metadata.userName}`;
+        text = `This is a confirmation confirming that your invoice from ${stripeInvoice.metadata.userName} has been paid.`;
+    };
     const msg = {
         to:"dakotamalchow@gmail.com",
         from:"billing@blueflamingo.io",
-        subject:`New Invoice from ${stripeInvoice.metadata.userName}`,
-        text:`${stripeInvoice.metadata.userName} sent you a new invoice for $${(stripeInvoice.amount_due/100).toFixed(2)}. Please visit blueflamingo.io/invoices/${stripeInvoice.metadata.invoiceId}/pay to pay your invoice.`,
+        subject:subject,
+        text:text,
         html:ejs.render(invoiceTemplate,{stripeInvoice,statusColor})
     };
     await sgMail.send(msg);
@@ -95,7 +105,7 @@ module.exports.createInvoice = async(req,res)=>{
     invoice.stripeInvoice = stripeInvoice.id;
     await invoice.save();
     await stripe.invoices.finalizeInvoice(stripeInvoice.id);
-    await sendEmailInvoice(invoice._id);
+    await sendEmailInvoice(invoice._id,"invoice");
     req.flash("success","Successfully created and sent invoice");
     res.redirect("/invoices");
 };
@@ -108,7 +118,7 @@ module.exports.invoiceDetails = async(req,res)=>{
 };
 
 module.exports.sendInvoiceEmail = async(req,res)=>{
-    sendEmailInvoice(req.params.id);
+    sendEmailInvoice(req.params.id,"invoice");
     res.send("Email sent");
 };
 
@@ -128,6 +138,7 @@ module.exports.payInvoice = async(req,res)=>{
     const stripeCustomerId = customer.stripeCustomer;
     await stripe.paymentMethods.attach(paymentMethodId,{customer:stripeCustomerId});
     await stripe.invoices.pay(invoice.stripeInvoice,{payment_method:paymentMethodId});
+    sendEmailInvoice(invoiceId,"receipt");
     req.flash("success","Thank you for your payment!");
     res.redirect(`/invoices/${invoiceId}/pay`);
 };
