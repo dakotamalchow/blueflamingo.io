@@ -10,6 +10,7 @@ const Customer = require("../models/customer");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const sendEmailInvoice = async(invoiceId,emailType)=>{
+    console.log("emailType",emailType);
     const invoice = await Invoice.findById(invoiceId);
     const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
     const invoiceTemplate = fs.readFileSync("views/email/invoice.ejs",{encoding:"utf-8"});
@@ -33,13 +34,13 @@ const sendEmailInvoice = async(invoiceId,emailType)=>{
     };
     let subject = "";
     let text = "";
-    if(emailType="invoice"){
-        subject = `New Invoice from ${stripeInvoice.metadata.userName}`;
-        text = `${stripeInvoice.metadata.userName} sent you a new invoice for $${(stripeInvoice.amount_due/100).toFixed(2)}. Please visit blueflamingo.io/invoices/${stripeInvoice.metadata.invoiceId}/pay to pay your invoice.`;
+    if(emailType=="invoice"){
+        subject = `New Invoice from ${stripeInvoice.metadata.userName} #${stripeInvoice.metadata.invoiceNumber}`;
+        text = `${stripeInvoice.metadata.userName} sent you a new invoice for $${(stripeInvoice.amount_due/100).toFixed(2)}. Please visit https://blueflamingo.io/invoices/${stripeInvoice.metadata.invoiceId}/pay to pay your invoice.`;
     }
-    else if(emailType="receipt"){
-        subject = `Receipt from ${stripeInvoice.metadata.userName}`;
-        text = `This is a confirmation confirming that your invoice from ${stripeInvoice.metadata.userName} has been paid.`;
+    else if(emailType=="receipt"){
+        subject = `Receipt from ${stripeInvoice.metadata.userName} #${stripeInvoice.metadata.invoiceNumber}`;
+        text = `This is a confirmation that invoice #${stripeInvoice.metadata.invoiceNumber} from ${stripeInvoice.metadata.userName} has been paid.`;
     };
     const msg = {
         to:"dakotamalchow@gmail.com",
@@ -139,6 +140,6 @@ module.exports.payInvoice = async(req,res)=>{
     await stripe.paymentMethods.attach(paymentMethodId,{customer:stripeCustomerId});
     await stripe.invoices.pay(invoice.stripeInvoice,{payment_method:paymentMethodId});
     await sendEmailInvoice(invoiceId,"receipt");
-    req.flash("success","Thank you for your payment!");
+    req.flash("success","Thank you for your payment! You will receive an email confirmation shortly.");
     res.redirect(`/invoices/${invoiceId}/pay`);
 };

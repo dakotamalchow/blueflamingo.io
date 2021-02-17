@@ -61,10 +61,12 @@
         <p style="font-size: 1.25rem;">Notes</p>
         <p><%= stripeInvoice.description %></p>
         <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
-        <div style="text-align: center; margin-top: 3rem; margin-bottom: 3rem;">
-            <a style="text-decoration: none; color: #FFF; background-color: #0040F0; padding: 0.5rem 3rem; border-radius: 0.25rem; font-size: 1.25rem;" href="blueflamingo.io/invoices/<%= stripeInvoice.metadata.invoiceId %>/pay">Pay Invoice</a>
-        </div>
-        <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
+        <% if(stripeInvoice.amount_remaining){ %>
+            <div style="text-align: center; margin-top: 3rem; margin-bottom: 3rem;">
+                <a style="text-decoration: none; color: #FFF; background-color: #0040F0; padding: 0.5rem 3rem; border-radius: 0.25rem; font-size: 1.25rem;" href="blueflamingo.io/invoices/<%= stripeInvoice.metadata.invoiceId %>/pay">Pay Invoice</a>
+            </div>
+            <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
+        <% } %> 
         <p style="text-align: center;">Powered by <a href="blueflamingo.io">Blue Flamingo</a></p>
     </div>
 </body>
