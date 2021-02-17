@@ -118,7 +118,7 @@ module.exports.invoiceDetails = async(req,res)=>{
 };
 
 module.exports.sendInvoiceEmail = async(req,res)=>{
-    sendEmailInvoice(req.params.id,"invoice");
+    await sendEmailInvoice(req.params.id,"invoice");
     res.send("Email sent");
 };
 
@@ -138,7 +138,7 @@ module.exports.payInvoice = async(req,res)=>{
     const stripeCustomerId = customer.stripeCustomer;
     await stripe.paymentMethods.attach(paymentMethodId,{customer:stripeCustomerId});
     await stripe.invoices.pay(invoice.stripeInvoice,{payment_method:paymentMethodId});
-    sendEmailInvoice(invoiceId,"receipt");
+    await sendEmailInvoice(invoiceId,"receipt");
     req.flash("success","Thank you for your payment!");
     res.redirect(`/invoices/${invoiceId}/pay`);
 };
