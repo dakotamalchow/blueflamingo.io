@@ -76,7 +76,8 @@ module.exports.validateUserReqBody = (req,res,next)=>{
         name: Joi.string().required(),
         businessName: Joi.string().allow(""),
         email: Joi.string().email().required(),
-        password: Joi.string().required()
+        password: Joi.string().required(),
+        confirmPassword: Joi.string().required()
     });
     validateReqBody(req,res,next,userReqBodySchema);
 };
