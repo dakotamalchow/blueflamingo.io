@@ -99,7 +99,7 @@ module.exports.createInvoice = async(req,res)=>{
         metadata:{
             invoiceId: invoice.id,
             invoiceNumber: invoiceNumber,
-            userName: user.businessName
+            userName: user.businessName||user.name
         }
     });
     invoice.stripeInvoice = stripeInvoice.id;
