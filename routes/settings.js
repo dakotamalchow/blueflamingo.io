@@ -13,4 +13,8 @@ router.post("/edit-user",isLoggedIn,hasPlan,catchAsync(settings.editUser));
 
 router.post("/cancel-subscription",isLoggedIn,hasPlan,catchAsync(settings.cancelSubscrption));
 
+router.get("/edit-payment-method",isLoggedIn,hasPlan,settings.editPaymentMethodForm);
+
+router.post("/edit-payment-method",isLoggedIn,hasPlan,catchAsync(settings.editPaymentMethod));
+
 module.exports = router;

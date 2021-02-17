@@ -3,10 +3,10 @@
 <hr>
 <h3>User Info</h3>
 <% if(user.businessName){ %> 
-    <p><%= user.businessName %> </p>
+    <p>Business Name: <%= user.businessName %> </p>
 <% } %> 
-<p><%= user.name %> </p>
-<p><%= user.email %> </p>
+<p>Name: <%= user.name %> </p>
+<p>Email: <%= user.email %> </p>
 <a class="btn btn-primary" href="/settings/edit-user">Edit</a>
 <hr>
 <h3>Subscription Info</h3>
@@ -18,6 +18,9 @@
     </form>
 <% } else{ %> 
     <p>Not active</p>
-    
 <% } %> 
+<hr>
+<h3>Payment Method</h3>
+<p>Card on file: <%= stripePaymentMethod.card.brand[0].toUpperCase()+stripePaymentMethod.card.brand.substring(1) %>****<%= stripePaymentMethod.card.last4 %> </p>
+<a class="btn btn-primary" href="/settings/edit-payment-method">Edit</a>
 <hr>

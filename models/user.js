@@ -27,6 +27,9 @@ const userSchema = new Schema({
     stripeCustomer:{
         type: String
     },
+    stripePaymentMethod:{
+        type: String
+    },
     invoiceCount:{
         type: Number,
         default: 0,

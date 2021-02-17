@@ -55,6 +55,7 @@ module.exports.purchasePlan = async(req,res)=>{
         customer: user.stripeCustomer,
         items: [{ price: plan.stripePrice }]
     });
+    user.stripePaymentMethod = paymentMethodId;
     user.plan = plan;
     user.stripeSubscription = subscription.id;
     await user.save();

@@ -3,7 +3,8 @@ const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
 module.exports.index = async(req,res)=>{
     const user = res.locals.currentUser;
     const stripeSubscription = await stripe.subscriptions.retrieve(user.stripeSubscription);
-    res.render("settings/index",{user,stripeSubscription});
+    const stripePaymentMethod = await stripe.paymentMethods.retrieve(user.stripePaymentMethod);
+    res.render("settings/index",{user,stripeSubscription,stripePaymentMethod});
 };
 
 module.exports.editUserForm = (req,res)=>{
@@ -30,5 +31,24 @@ module.exports.cancelSubscrption = async(req,res)=>{
     const user = res.locals.currentUser;
     await stripe.subscriptions.del(user.stripeSubscription);
     req.flash("success","Subscription was successfully canceled");
+    res.redirect("/settings");
+};
+
+module.exports.editPaymentMethodForm = (req,res)=>{
+    res.render("settings/edit-payment-method");
+};
+
+module.exports.editPaymentMethod = async(req,res)=>{
+    const user = res.locals.currentUser;
+    const paymentMethodId = req.body.stripePaymentMethod;
+    await stripe.paymentMethods.attach(paymentMethodId,{customer:user.stripeCustomer});
+    await stripe.customers.update(user.stripeCustomer,{
+        invoice_settings: {
+            default_payment_method: paymentMethodId
+          }
+    });
+    user.stripePaymentMethod = paymentMethodId;
+    await user.save();
+    req.flash("success","Payment method successfully saved");
     res.redirect("/settings");
 };
