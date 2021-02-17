@@ -7,8 +7,30 @@ module.exports.registerForm = (req,res)=>{
     res.render("users/register");
 };
 
+const validatePassword = (password)=>{
+    let errorMessage = "";
+    if(password.length<8){
+        errorMessage+="Password must be at least 8 characters long. ";
+    };
+    if(!/[A-Za-z]/.test(password)){
+        errorMessage+="Password must contain at least one letter. ";
+    };
+    if(!/\d/.test(password)){
+        errorMessage+="Password must contain at least one number. ";
+    };
+    if(errorMessage){
+        return errorMessage
+    };
+    return true;
+};
+
 module.exports.registerUser = async(req,res,next)=>{
     const {name,businessName,email,password} = req.body;
+    const isPasswordValid = validatePassword(password);
+    if(isPasswordValid!=true){
+        req.flash("error",isPasswordValid);
+        return res.redirect("/register");
+    };
     const user = new User({name,businessName,email});
     const registeredUser = await User.register(user,password);
     req.login(registeredUser,err=>{
