@@ -20,8 +20,8 @@ module.exports.newForm = (req,res)=>{
     res.render("customers/new",{returnToUrl});
 };
 
-module.exports.createCustomer = async(req,res,next)=>{
-    const {name,email} = req.body;
+module.exports.createCustomer = async(req,res)=>{
+    const {name,email,returnToUrl} = req.body;
     const user = res.locals.currentUser;
     const customer = new Customer({user,name,email});
     const stripeCustomer = await stripe.customers.create({
@@ -34,7 +34,7 @@ module.exports.createCustomer = async(req,res,next)=>{
     customer.stripeCustomer = stripeCustomer.id;
     await customer.save();
     req.flash("success","Successfully created new customer");
-    res.redirect("/invoices/new");
+    res.redirect(returnToUrl);
 };
 
 module.exports.customerDetails = async(req,res)=>{

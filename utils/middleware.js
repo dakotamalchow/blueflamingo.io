@@ -66,7 +66,8 @@ module.exports.validatePayInvoiceReqBody = (req,res,next)=>{
 module.exports.validateCustomerReqBody = (req,res,next)=>{
     const customerReqBodySchema = Joi.object({
         name: Joi.string().required(),
-        email: Joi.string().email().required()
+        email: Joi.string().email().required(),
+        returnToUrl: Joi.string()
     });
     validateReqBody(req,res,next,customerReqBodySchema);
 };
