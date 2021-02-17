@@ -23,4 +23,3 @@
 <h3>Payment Method</h3>
 <p>Card on file: <%= stripePaymentMethod.card.brand[0].toUpperCase()+stripePaymentMethod.card.brand.substring(1) %>****<%= stripePaymentMethod.card.last4 %> </p>
 <a class="btn btn-primary" href="/settings/edit-payment-method">Edit</a>
-<hr>
