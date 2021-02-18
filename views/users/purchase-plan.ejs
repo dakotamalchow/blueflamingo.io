@@ -16,11 +16,18 @@
 <p class="text-center">You will billed $40.00 once a month on or around today's date, but can cancel at any time</p>
 <hr>
 <form action="/register/purchase-plan" method="POST" id="payment-form">
-    <label class="form-label" for="card-element">
-        Credit or debit card information
-    </label>
-    <div class="mb-3 form-control" id="card-element">
-        <!-- Elements will create input elements here -->
+    <label class="form-label" for="card-element">Credit or debit card information</label>
+    <div class="mb-3 form-control" id="cardNumber"></div>
+    <div class="mb-3 form-row">
+        <div class="col-4">
+            <div class="form-control" id="cardExpiry"></div>
+        </div>
+        <div class="col-3">
+            <div class="form-control" id="cardCvc"></div>
+        </div>
+        <div class="col-5">
+            <input class="form-control" type="number" id="postalCode" placeholder="Postal Code">
+        </div>
     </div>
     <div class="mb-3" id="card-errors" role="alert"></div>
     <div class="mb-3">
