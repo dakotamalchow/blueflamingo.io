@@ -10,7 +10,6 @@ const Customer = require("../models/customer");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const sendEmailInvoice = async(invoiceId,emailType)=>{
-    console.log("emailType",emailType);
     const invoice = await Invoice.findById(invoiceId);
     const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
     const invoiceTemplate = fs.readFileSync("views/email/invoice.ejs",{encoding:"utf-8"});
