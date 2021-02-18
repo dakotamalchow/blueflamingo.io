@@ -1,11 +1,11 @@
 const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
 
 const Plan = require("../models/plan");
+const BlueFlamingo = require("../models/blueFlamingo");
 
 let isDataSetup = false;
 
 const setupPlans = async()=>{
-    console.log("setting up plans...");
     const product = await stripe.products.create({
         name: 'Standard Plan'
     });
@@ -20,7 +20,6 @@ const setupPlans = async()=>{
 };
 
 const setupCoupons = async()=>{
-    console.log("setting up coupons...");
     await stripe.coupons.create({
         duration: "once",
         id: "free-month",
@@ -30,9 +29,28 @@ const setupCoupons = async()=>{
 
 module.exports.setupData = async()=>{
     if(!isDataSetup){
-        await setupPlans();
-        await setupCoupons();
-        isDataSetup = true;
-        console.log("data is now setup");
+        if(!await BlueFlamingo.exists({name:"Blue Flamingo"})){
+            const blueFlamingo = new BlueFlamingo({name:"Blue Flamingo"});
+            await setupPlans();
+            await setupCoupons();
+            blueFlamingo.hasPlans = true;
+            blueFlamingo.hasCoupons = true;
+            await blueFlamingo.save();
+            isDataSetup = true;
+        }
+        else{
+            const blueFlamingo = await BlueFlamingo.findOne({name:"Blue Flamingo"});
+            if(!blueFlamingo.hasPlans){
+                await setupPlans();
+                blueFlamingo.hasPlans = true;
+                await blueFlamingo.save();
+            };
+            if(!blueFlamingo.hasCoupons){
+                await setupCoupons();
+                blueFlamingo.hasCoupons = true;
+                await blueFlamingo.save();
+            };
+            isDataSetup = true;
+        };
     };
-}
+};
