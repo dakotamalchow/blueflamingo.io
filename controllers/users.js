@@ -87,7 +87,7 @@ module.exports.purchasePlan = async(req,res)=>{
         coupon: couponId
     });
     user.stripePaymentMethod = paymentMethodId;
-    user.plan = plan;
+    user.plan = plan.name;
     user.stripeSubscription = subscription.id;
     await user.save();
     req.flash("success","Plan purchased successfully");

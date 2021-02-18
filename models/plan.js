@@ -8,7 +8,6 @@ const planSchema = new Schema({
     },
     stripePrice:{
         type: String,
-        required: true
     }
 });
 

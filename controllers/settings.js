@@ -1,5 +1,7 @@
 const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
 
+const Plan = require("../models/plan");
+
 module.exports.index = async(req,res)=>{
     const user = res.locals.currentUser;
     const stripeSubscription = await stripe.subscriptions.retrieve(user.stripeSubscription);
@@ -30,7 +32,7 @@ module.exports.editUser = async(req,res)=>{
 module.exports.cancelSubscrption = async(req,res)=>{
     const user = res.locals.currentUser;
     user.plan = "";
-    user.save();
+    await user.save();
     await stripe.subscriptions.del(user.stripeSubscription);
     req.flash("success","Subscription was successfully canceled");
     res.redirect("/settings");
