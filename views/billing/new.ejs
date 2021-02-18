@@ -12,8 +12,15 @@
 </div>
 <hr>
 <form action="/invoices" method="POST" class="validated-form" novalidate>
+    <div class="row justify-content-between mb-3">
+        <div class="col-5">
+            <label class="form-label h4" for="customerId">Send To</label>
+        </div>
+        <div class="col">
+            <a class="btn btn-primary float-right" href="/customers/new">Create a New Customer</a>
+        </div>
+    </div>
     <div class="mb-3">
-        <label class="form-label h4" for="customerId">Send To</label>
         <select class="custom-select" name="customerId" id="customerId" required>
             <option value="">Choose a Customer</option>
             <% for(let customer of customers){ %>
@@ -21,22 +28,26 @@
             <% } %> 
         </select>
     </div>
-    <a class="btn btn-primary btn" href="/customers/new">Create a New Customer</a>
     <hr>
+    <div class="row justify-content-between mb-3">
+        <div class="col">
+            <label class="form-label h4" for="amount">Line Items</label>
+        </div>
+        <div class="col">
+            <button class="btn btn-primary float-right" id="add-item-button" type="button">Add Item</button>
+        </div>
+    </div>
     <div class="mb-3" id="line-items">
-        <label class="form-label h4" for="amount">Line Items</label>
-        <div class="row ml-0 mb-2 line-item">
-            <input class="form-control col-7" type="text" name="lineItems[item0][description]" placeholder="Description" required>
-            <div class="input-group col-5">
+        <div class="form-row ml-0 mb-2 line-item">
+            <input class="form-control col-7 col-sm-8 col-md-9 col-lg-10" type="text" name="lineItems[item0][description]" placeholder="Description" required>
+            <div class="input-group col-5 col-sm-4 col-md-3 col-lg-2">
                 <span class="input-group-text">$</span>
                 <input class="form-control line-item-amount" type="number" id="amountInput0" name="lineItems[item0][amount]" placeholder="0.00" step="0.01" required>
             </div>
         </div>
         <!-- additional items will be added here -->
     </div>
-    </div>
-    <button class="btn btn-danger btn" id="remove-item-button" type="button" hidden>Remove Item</button>
-    <button class="btn btn-primary btn" id="add-item-button" type="button">Add Item</button>
+    <button class="btn btn-danger" id="remove-item-button" type="button" hidden>Remove Item</button>
     <hr>
     <div class="row justify-content-between">
         <div class="col h3">Total:</div>
@@ -48,7 +59,7 @@
     <hr>
     <div class="mb-3">
         <label class="form-label h5" for="notes">Notes</label>
-        <textarea class="form-control" name="notes" id="notes" cols="30" rows="3" placeholder="Enter any details here"></textarea>
+        <textarea class="form-control" name="notes" id="notes" cols="30" rows="3" placeholder="Enter any details here (optional)"></textarea>
     </div>
     <div class="mb-3 text-center">
         <button class="btn btn-primary btn-lg">Send</button>
