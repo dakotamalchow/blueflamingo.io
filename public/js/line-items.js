@@ -21,11 +21,11 @@ const amountInput0 = document.querySelector("#amountInput0");
 amountInput0.addEventListener("change",updateTotal);
 
 /*
-<div class="row ml-0 mb-2 line-item">
-    <input class="form-control col-7" type="text" name="lineItems[item#][description]" placeholder="Description" required>
-    <div class="input-group col-5">
+<div class="form-row ml-0 mb-2 line-item">
+    <input class="form-control col-7 col-sm-8 col-md-9 col-lg-10" type="text" name="lineItems[item#][description]" placeholder="Description" required>
+    <div class="input-group col-5 col-sm-4 col-md-3 col-lg-2">
         <span class="input-group-text">$</span>
-        <input class="form-control line-item-amount" type="number" name="lineItems[item#][amount]" placeholder="0.00" step="0.01" required>
+        <input class="form-control line-item-amount" type="number" name="lineItems[item#][amount]" placeholder="0.00" step="0.01" min="0" required>
     </div>
 </div>
 */
@@ -34,17 +34,17 @@ const addLineItem = function(){
     lineItemCount+=1;
 
     const itemDiv = document.createElement("div");
-    itemDiv.classList.add("row","ml-0","mb-2","line-item");
+    itemDiv.classList.add("form-row","ml-0","mb-2","line-item");
 
     const descriptionInput = document.createElement("input");
-    descriptionInput.classList.add("form-control","col-7");
+    descriptionInput.classList.add("form-control","col-7","col-sm-8","col-md-9","col-lg-10");
     descriptionInput.setAttribute("type","text");
     descriptionInput.setAttribute("name",`lineItems[item${lineItemCount}][description]`);
     descriptionInput.setAttribute("placeholder","Description");
     descriptionInput.setAttribute("required",true);
 
     const inputGroup = document.createElement("div");
-    inputGroup.classList.add("input-group","col-5");
+    inputGroup.classList.add("input-group","col-5","col-sm-4","col-md-3","col-lg-2");
 
     const dollarSignSpan = document.createElement("span");
     dollarSignSpan.classList.add("input-group-text");
@@ -56,6 +56,7 @@ const addLineItem = function(){
     amountInput.setAttribute("name",`lineItems[item${lineItemCount}][amount]`);
     amountInput.setAttribute("placeholder","0.00");
     amountInput.setAttribute("step","0.01");
+    amountInput.setAttribute("min","0");
     amountInput.setAttribute("required",true);
     amountInput.addEventListener("change",updateTotal);
 
