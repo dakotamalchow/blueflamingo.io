@@ -54,11 +54,23 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use(async(req,res,next)=>{
-    res.locals.currentUser = req.user;
-    res.locals.success = req.flash("success");
-    res.locals.error = req.flash("error");
-    await initData.setupData();
-    next();
+    let err = "";
+    dns.lookup("google.com",(dsnErr)=>{
+        console.log("Checking connection");
+        if(dsnErr && dsnErr.code=="ENOTFOUND"){
+            console.log("Couldn't connect");
+            err = new AppError(404,"Couldn't connect to the internet. Please check your connection.");
+        };
+    });
+    setTimeout(async()=>{
+        res.locals.currentUser = req.user;
+        res.locals.success = req.flash("success");
+        res.locals.error = req.flash("error");
+        await initData.setupData();
+        console.log("NEXT");
+        next(err);
+    },10);
+    
 });
 
 app.use("/invoices",invoiceRoutes);
@@ -82,17 +94,8 @@ app.use((err,req,res,next)=>{
     const {status=500} = err;
     if(!err.message){
         err.message = "Error encountered";
-    }
-    else{
-        dns.lookup("google.com",(dsnErr)=>{
-            if(dsnErr && dsnErr.code=="ENOTFOUND"){
-                err.message = "Couldn't connect to the internet. Please check your connection.";
-            };
-        });
     };
-    setTimeout(function(){
-        res.status(status).render("error",{err});
-    },100);
+    res.status(status).render("error",{err});
 });
 
 app.listen(3000,()=>{
