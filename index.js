@@ -8,6 +8,7 @@ const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const flash = require("connect-flash");
+const dns = require("dns");
 
 const AppError = require("./utils/AppError");
 const initData = require("./utils/initData");
@@ -79,8 +80,19 @@ app.all("*",(req,res,next)=>{
 
 app.use((err,req,res,next)=>{
     const {status=500} = err;
-    if(!err.message) err.message = "Error encountered";
-    res.status(status).render("error",{err});
+    if(!err.message){
+        err.message = "Error encountered";
+    }
+    else{
+        dns.lookup("google.com",(dsnErr)=>{
+            if(dsnErr && dsnErr.code=="ENOTFOUND"){
+                err.message = "Couldn't connect to the internet. Please check your connection.";
+            };
+        });
+    };
+    setTimeout(function(){
+        res.status(status).render("error",{err});
+    },100);
 });
 
 app.listen(3000,()=>{
