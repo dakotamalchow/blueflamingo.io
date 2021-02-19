@@ -9,8 +9,7 @@ router.get("/",isLoggedIn,hasPlan,isAccountComplete,catchAsync(invoices.index));
 
 router.get("/new",isLoggedIn,hasPlan,isAccountComplete,catchAsync(invoices.newForm));
 
-//validateInvoiceReqBody
-router.post("/",isLoggedIn,hasPlan,isAccountComplete,catchAsync(invoices.createInvoice));
+router.post("/",isLoggedIn,hasPlan,isAccountComplete,validateInvoiceReqBody,catchAsync(invoices.createInvoice));
 
 router.get("/:id",isLoggedIn,hasPlan,isAccountComplete,catchAsync(invoices.invoiceDetails));
 

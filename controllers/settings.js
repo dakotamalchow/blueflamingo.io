@@ -1,7 +1,5 @@
 const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
 
-const Plan = require("../models/plan");
-
 module.exports.index = async(req,res)=>{
     const user = res.locals.currentUser;
     const stripeSubscription = await stripe.subscriptions.retrieve(user.stripeSubscription);

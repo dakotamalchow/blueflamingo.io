@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
-const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
 
 const catchAsync = require("../utils/catchAsync");
 const {isLoggedIn,hasPlan,validateUserReqBody} = require("../utils/middleware");
