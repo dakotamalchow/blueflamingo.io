@@ -56,9 +56,7 @@ passport.deserializeUser(User.deserializeUser());
 app.use(async(req,res,next)=>{
     let err = "";
     dns.lookup("google.com",(dsnErr)=>{
-        console.log("Checking connection");
         if(dsnErr && dsnErr.code=="ENOTFOUND"){
-            console.log("Couldn't connect");
             err = new AppError(404,"Couldn't connect to the internet. Please check your connection.");
         };
     });
@@ -67,7 +65,6 @@ app.use(async(req,res,next)=>{
         res.locals.success = req.flash("success");
         res.locals.error = req.flash("error");
         await initData.setupData();
-        console.log("NEXT");
         next(err);
     },10);
     
