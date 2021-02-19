@@ -1,3 +1,4 @@
+const { number } = require("joi");
 const mongoose = require("mongoose");
 const {Schema} = mongoose;
 
@@ -15,6 +16,27 @@ const invoiceSchema = new Schema({
         required: true
     },
     invoiceNumber:{
+        type: String,
+        required: true
+    },
+    amount:{
+        due:{
+            type: Number,
+            required: true
+        },
+        paid:{
+            type: Number,
+            required: true
+        },
+        remaining:{
+            type: Number,
+            required: true
+        }
+    },
+    notes:{
+        type: String
+    },
+    status:{
         type: String,
         required: true
     }

@@ -1,15 +1,15 @@
 <% layout("layouts/boilerplate") %>
 <% block("header-scripts").append('<script src="https://js.stripe.com/v3/"></script>') %>
 <div>
-    <h2 class="text-center">Invoice #<%= stripeInvoice.metadata.invoiceNumber %></h2>
+    <h2 class="text-center">Invoice #<%= invoice.invoiceNumber %></h2>
     <h3 class="text-center"><%= userName %></h3>
 </div>
 <div class="row">
-    <span class="mx-auto px-3 h5 rounded text-white" id="invoice-status"><%= stripeInvoice.status %></span>
+    <span class="mx-auto px-3 h5 rounded text-white" id="invoice-status"><%= invoice.status %></span>
 </div>
 <hr>
 <h4>Billable To</h4>
-<p><%= stripeInvoice.customer_name %> (<%= stripeInvoice.customer_email %>)</p>
+<p><%= invoice.customer.name %> (<%= invoice.customer.email %>)</p>
 <hr>
 <h4>Line Items</h4>
 <% for(let lineItem of stripeInvoice.lines.data){ %>
@@ -21,20 +21,20 @@
 <hr>
 <div class="row justify-content-between">
     <h4 class="col">Total:</h4>
-    <h4 class="col text-right">$<%= (stripeInvoice.amount_due/100).toFixed(2) %></h4>
+    <h4 class="col text-right">$<%= (invoice.amount.due/100).toFixed(2) %></h4>
 </div>
 <div class="row justify-content-between">
     <h4 class="col">Paid:</h4>
-    <h4 class="col text-right">$<%= (stripeInvoice.amount_paid/100).toFixed(2) %></h4>
+    <h4 class="col text-right">$<%= (invoice.amount.paid/100).toFixed(2) %></h4>
 </div>
 <hr>
 <div class="row justify-content-between">
     <h3 class="col">Due:</h3>
-    <h3 class="col text-right">$<%= (stripeInvoice.amount_remaining/100).toFixed(2) %></h3>
+    <h3 class="col text-right">$<%= (invoice.amount.remaining/100).toFixed(2) %></h3>
 </div>
 <hr>
-<% if(stripeInvoice.amount_remaining){ %> 
-    <form action="/invoices/<%= stripeInvoice.metadata.invoiceId %>/pay" method="POST" id="payment-form">
+<% if(invoice.amount.remaining){ %> 
+    <form action="/invoices/<%= invoice._id %>/pay" method="POST" id="payment-form">
         <label class="form-label" for="card-element">Credit or debit card information</label>
         <div class="mb-3 form-control" id="cardNumber"></div>
         <div class="mb-3 form-row">
@@ -57,6 +57,6 @@
     </form>
 <% } %> 
 <% block("scripts").append('<script src="/js/invoice-status.js"></script>') %>
-<% if(stripeInvoice.amount_remaining){ %> 
+<% if(invoice.amount.remaining){ %> 
     <% block("scripts").append('<script src="/js/submit-payment-method.js"></script>') %>
 <% } %> 

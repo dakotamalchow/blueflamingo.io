@@ -53,16 +53,9 @@ const sendEmailInvoice = async(invoiceId,emailType)=>{
 
 module.exports.index = async(req,res)=>{
     const user = res.locals.currentUser;
-    const invoices = await Invoice.find({user});
-    let stripeInvoices = [];
     const invoiceStatus = req.query.status;
-    for (let invoice of invoices){
-        let stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
-        if(!invoiceStatus || (invoiceStatus===stripeInvoice.status)){
-            stripeInvoices.push(stripeInvoice);
-        };
-    };
-    res.render("billing/index",{stripeInvoices,invoiceStatus});
+    const invoices = await Invoice.find({user}).populate("customer");
+    res.render("billing/index",{invoices,invoiceStatus});
 };
 
 module.exports.newForm = async(req,res)=>{
@@ -77,7 +70,7 @@ module.exports.createInvoice = async(req,res)=>{
     const customer = await Customer.findById(customerId);
     const invoiceCount = user.increaseInvoiceCount();
     const invoiceNumber = String(invoiceCount).padStart(4,"0");
-    const invoice = new Invoice({user,customer,invoiceNumber});
+    const invoice = new Invoice({user,customer,invoiceNumber,notes});
     //lineItems comes back as nested objects, so this returns an array
     for(let item of Object.values(lineItems)){
         const stripeAmount = parseFloat(item.amount)*100;
@@ -88,7 +81,7 @@ module.exports.createInvoice = async(req,res)=>{
             description: item.description
         });
     };
-    const stripeInvoice = await stripe.invoices.create({
+    let stripeInvoice = await stripe.invoices.create({
         customer: customer.stripeCustomer,
         transfer_data:{
             destination:user.stripeAccount
@@ -102,9 +95,16 @@ module.exports.createInvoice = async(req,res)=>{
             userName: user.businessName||user.name
         }
     });
+    //this stripeInvoice object has a status of 'open'
+    stripeInvoice = await stripe.invoices.finalizeInvoice(stripeInvoice.id);
     invoice.stripeInvoice = stripeInvoice.id;
+    invoice.amount = {
+        due: stripeInvoice.amount_due,
+        paid: stripeInvoice.amount_paid,
+        remaining: stripeInvoice.amount_remaining
+    };
+    invoice.status = stripeInvoice.status;
     await invoice.save();
-    await stripe.invoices.finalizeInvoice(stripeInvoice.id);
     await sendEmailInvoice(invoice._id,"invoice");
     req.flash("success","Successfully created and sent invoice");
     res.redirect("/invoices");
@@ -112,9 +112,9 @@ module.exports.createInvoice = async(req,res)=>{
 
 module.exports.invoiceDetails = async(req,res)=>{
     const invoiceId = req.params.id;
-    const invoice = await Invoice.findById(invoiceId);
+    const invoice = await Invoice.findById(invoiceId).populate("customer");
     const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
-    res.render("billing/details",{stripeInvoice});
+    res.render("billing/details",{invoice,stripeInvoice});
 };
 
 module.exports.sendInvoiceEmail = async(req,res)=>{
@@ -124,10 +124,10 @@ module.exports.sendInvoiceEmail = async(req,res)=>{
 
 module.exports.customerInvoiceView = async(req,res)=>{
     const invoiceId = req.params.id;
-    const invoice = await Invoice.findById(invoiceId);
+    const invoice = await Invoice.findById(invoiceId).populate("customer");
     const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
     const userName = stripeInvoice.metadata.userName;
-    res.render("billing/pay",{stripeInvoice,userName});
+    res.render("billing/pay",{invoice,stripeInvoice,userName});
 };
 
 module.exports.payInvoice = async(req,res)=>{

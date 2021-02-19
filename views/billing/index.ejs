@@ -11,13 +11,13 @@
     </div>
 </form>
 <hr>
-<% if(stripeInvoices.length == 0){ %> 
+<% if(invoices.length == 0){ %> 
     <p>Currently no invoices. Click the button below to create an invoice.</p>
 <% } %> 
-<% for(let stripeInvoice of stripeInvoices){ %>
-    <a href="/invoices/<%= stripeInvoice.metadata.invoiceId %>">
-        <p>#<%= stripeInvoice.metadata.invoiceNumber %> - <%= stripeInvoice.status %></p>
-        <p><%= stripeInvoice.customer_name %> - $<%= (stripeInvoice.amount_due/100).toFixed(2) %></p>
+<% for(let invoice of invoices){ %>
+    <a href="/invoices/<%= invoice._id %>">
+        <p>#<%= invoice.invoiceNumber %> - <%= invoice.status %></p>
+        <p><%= invoice.customer.name %> - $<%= (invoice.amount.due/100).toFixed(2) %></p>
     </a>
     <hr>
 <% } %>
