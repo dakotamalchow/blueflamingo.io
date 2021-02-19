@@ -11,9 +11,9 @@
     <div class="col-2 col-sm-1"></div>
 </div>
 <hr>
-<p>Name: <%= stripeCustomer.name %></p>
-<p>Email: <%= stripeCustomer.email %></p>
+<p>Name: <%= customer.name %></p>
+<p>Email: <%= customer.email %></p>
 <hr>
 <div class="text-center">
-    <a class="btn btn-primary btn-lg" href="/customers/<%= stripeCustomer.metadata.customerId %>/edit">Edit</a>
+    <a class="btn btn-primary btn-lg" href="/customers/<%= customer._id %>/edit">Edit</a>
 </div>

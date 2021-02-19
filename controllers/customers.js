@@ -6,12 +6,7 @@ module.exports.index = async(req,res)=>{
     const user = res.locals.currentUser;
     req.session.returnTo = req.originalUrl;
     const customers = await Customer.find({user});
-    let stripeCustomers = [];
-    for (let customer of customers){
-        let stripeCustomer = await stripe.customers.retrieve(customer.stripeCustomer);
-        stripeCustomers.push(stripeCustomer);
-    };
-    res.render("customers/index",{stripeCustomers});
+    res.render("customers/index",{customers});
 };
 
 module.exports.newForm = (req,res)=>{
@@ -40,15 +35,13 @@ module.exports.createCustomer = async(req,res)=>{
 module.exports.customerDetails = async(req,res)=>{
     const customerId = req.params.id;
     const customer = await Customer.findById(customerId);
-    const stripeCustomer = await stripe.customers.retrieve(customer.stripeCustomer);
-    res.render("customers/details",{stripeCustomer});
+    res.render("customers/details",{customer});
 };
 
 module.exports.editForm = async(req,res)=>{
     const customerId = req.params.id;
     const customer = await Customer.findById(customerId);
-    const stripeCustomer = await stripe.customers.retrieve(customer.stripeCustomer);
-    res.render("customers/edit",{stripeCustomer});
+    res.render("customers/edit",{customer});
 };
 
 module.exports.editCustomer = async(req,res)=>{

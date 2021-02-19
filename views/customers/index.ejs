@@ -1,12 +1,12 @@
 <% layout("layouts/boilerplate") %>
 <h2>Customers</h2>
 <hr>
-<% if(stripeCustomers.length == 0){ %> 
+<% if(customers.length == 0){ %> 
     <p>Currently no customers. Click the button below to create a customer.</p>
 <% } %>
-<% for(let stripeCustomer of stripeCustomers){ %>
-    <a href="/customers/<%= stripeCustomer.metadata.customerId %>">
-        <p><%= stripeCustomer.name %> - <%= stripeCustomer.email %></p>
+<% for(let customer of customers){ %>
+    <a href="/customers/<%= customer._id %>">
+        <p><%= customer.name %> - <%= customer.email %></p>
     </a>
     <hr>
 <% } %>
