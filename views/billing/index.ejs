@@ -13,12 +13,28 @@
 <hr>
 <% if(invoices.length == 0){ %> 
     <p>Currently no invoices. Click the button below to create an invoice.</p>
-<% } %> 
+<% } %>
+<div class="row">
+    <div class="col col-md-3">Invoice Number</div>
+    <div class="col col-md-5">Sent To</div>
+    <div class="col col-md-2">Status</div>
+    <div class="col col-md-2">Amount Due</div>
+</div>
+<hr>
 <% for(let invoice of invoices){ %>
     <a href="/invoices/<%= invoice._id %>">
-        <p>#<%= invoice.invoiceNumber %> - <%= invoice.status %></p>
-        <p><%= invoice.customer.name %> - $<%= (invoice.amount.due/100).toFixed(2) %></p>
+        <div class="row">
+            <div class="col col-md-3">#<%= invoice.invoiceNumber %></div>
+            <div class="col col-md-5"><%= invoice.customer.name %>
+                <span class="d-none d-md-block">(<%= invoice.customer.email %>)</span>
+            </div>
+            <div class="col col-md-2">
+                <span class="px-2 invoice-status"><%= invoice.status %></span>
+            </div>
+            <div class="col col-md-2 text-right">$<%= (invoice.amount.due/100).toFixed(2) %></div>
+        </div>
     </a>
     <hr>
 <% } %>
 <a class="btn btn-primary btn-lg fixed-bottom-right" href="/invoices/new">Create New Invoice</a>
+<% block("scripts").append('<script src="/js/invoice-status.js"></script>') %>
