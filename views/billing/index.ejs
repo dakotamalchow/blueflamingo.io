@@ -11,9 +11,6 @@
     </div>
 </form>
 <hr>
-<% if(invoices.length == 0){ %> 
-    <p>Currently no invoices. Click the button below to create an invoice.</p>
-<% } %>
 <div class="row">
     <div class="col col-md-3">Invoice Number</div>
     <div class="col col-md-5">Sent To</div>
@@ -21,6 +18,9 @@
     <div class="col col-md-2">Amount Due</div>
 </div>
 <hr>
+<% if(invoices.length == 0){ %> 
+    <p>Currently no invoices to show with the selected filter. Click the button below to create an invoice.</p>
+<% } %>
 <% for(let invoice of invoices){ %>
     <a href="/invoices/<%= invoice._id %>">
         <div class="row">

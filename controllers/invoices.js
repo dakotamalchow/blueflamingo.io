@@ -54,7 +54,13 @@ const sendEmailInvoice = async(invoiceId,emailType)=>{
 module.exports.index = async(req,res)=>{
     const user = res.locals.currentUser;
     const invoiceStatus = req.query.status;
-    const invoices = await Invoice.find({user}).populate("customer");
+    let invoices;
+    if(invoiceStatus){
+        invoices = await Invoice.find({user,status:invoiceStatus}).populate("customer");
+    }
+    else{
+        invoices = await Invoice.find({user}).populate("customer");
+    };
     res.render("billing/index",{invoices,invoiceStatus});
 };
 
