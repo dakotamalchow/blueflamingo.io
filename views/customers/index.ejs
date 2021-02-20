@@ -1,12 +1,20 @@
 <% layout("layouts/boilerplate") %>
 <h2>Customers</h2>
 <hr>
+<div class="row">
+    <div class="col">Name</div>
+    <div class="col">Email</div>
+</div>
+<hr>
 <% if(customers.length == 0){ %> 
     <p>Currently no customers. Click the button below to create a customer.</p>
 <% } %>
 <% for(let customer of customers){ %>
     <a href="/customers/<%= customer._id %>">
-        <p><%= customer.name %> - <%= customer.email %></p>
+        <div class="row">
+            <div class="col"><%= customer.name %></div>
+            <div class="col"><%= customer.email %></div>
+        </div>
     </a>
     <hr>
 <% } %>
