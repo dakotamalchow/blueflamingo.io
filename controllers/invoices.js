@@ -144,6 +144,14 @@ module.exports.payInvoice = async(req,res)=>{
     const stripeCustomerId = customer.stripeCustomer;
     await stripe.paymentMethods.attach(paymentMethodId,{customer:stripeCustomerId});
     await stripe.invoices.pay(invoice.stripeInvoice,{payment_method:paymentMethodId});
+    const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
+    invoice.amount = {
+        due: stripeInvoice.amount_due,
+        paid: stripeInvoice.amount_paid,
+        remaining: stripeInvoice.amount_remaining
+    };
+    invoice.status = stripeInvoice.status;
+    await invoice.save();
     await sendEmailInvoice(invoiceId,"receipt");
     req.flash("success","Thank you for your payment! You will receive an email confirmation shortly.");
     res.redirect(`/invoices/${invoiceId}/pay`);
