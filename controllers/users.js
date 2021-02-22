@@ -70,7 +70,6 @@ module.exports.purchasePlan = async(req,res)=>{
     const user = res.locals.currentUser;
     const paymentMethodId = req.body.stripePaymentMethod;
     const {promoCode} = req.body;
-    console.log(req.body);
     await stripe.paymentMethods.attach(paymentMethodId,{customer:user.stripeCustomer});
     await stripe.customers.update(user.stripeCustomer,{
         invoice_settings: {
