@@ -14,9 +14,11 @@ router.get("/register/purchase-plan",isLoggedIn,users.purchasePlanForm);
 
 router.post("/register/purchase-plan",isLoggedIn,catchAsync(users.purchasePlan));
 
-router.get("/register/complete-account",isLoggedIn,hasPlan,users.completeAccount);
+router.get("/register/complete-account",isLoggedIn,hasPlan,users.completeAccountPage);
 
 router.get("/register/refresh-account-links",isLoggedIn,hasPlan,users.refreshAccountLinks);
+
+router.get("/register/verifying-account",isLoggedIn,hasPlan,users.verifyingAccountPage);
 
 router.get("/login",users.loginForm);
 

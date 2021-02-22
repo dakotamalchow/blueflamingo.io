@@ -2,6 +2,7 @@ const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
 
 const User = require("../models/user");
 const Plan = require("../models/plan");
+const { set } = require('mongoose');
 
 module.exports.registerForm = (req,res)=>{
     res.render("users/register");
@@ -94,7 +95,7 @@ module.exports.purchasePlan = async(req,res)=>{
     res.redirect("/register/complete-account");
 };
 
-module.exports.completeAccount = async(req,res)=>{
+module.exports.completeAccountPage = async(req,res)=>{
     const user = res.locals.currentUser;
     const stripeAccount = await stripe.accounts.retrieve(user.stripeAccount);
     if(stripeAccount.charges_enabled && stripeAccount.details_submitted){
@@ -107,7 +108,7 @@ module.exports.completeAccount = async(req,res)=>{
         const accountLinks = await stripe.accountLinks.create({
             account:stripeAccount.id,
             refresh_url:"http://localhost:3000/register/refresh-account-links",
-            return_url:"http://localhost:3000/register/complete-account",
+            return_url:"http://localhost:3000/register/verifying-account",
             type:"account_onboarding"
         });
         const url = accountLinks.url;
@@ -122,12 +123,24 @@ module.exports.refreshAccountLinks = async(req,res)=>{
         const accountLinks = await stripe.accountLinks.create({
             account:stripeAccount.id,
             refresh_url:"http://localhost:3000/register/refresh-account-links",
-            return_url:"http://localhost:3000/register/complete-account",
+            return_url:"http://localhost:3000/register/verifying-account",
             type:"account_onboarding"
         });
         const url = accountLinks.url;
         return res.redirect(url);
     }
+};
+
+module.exports.verifyingAccountPage = async(req,res)=>{
+    const user = res.locals.currentUser;
+    const stripeAccount = await stripe.accounts.retrieve(user.stripeAccount);
+    if(stripeAccount.charges_enabled && stripeAccount.details_submitted){
+        user.isAccountComplete = true;
+        await user.save();
+        req.flash("success","Registration process complete");
+        return res.redirect("/invoices");
+    };
+    res.render("users/verifying-account");
 };
 
 module.exports.loginForm = (req,res)=>{
