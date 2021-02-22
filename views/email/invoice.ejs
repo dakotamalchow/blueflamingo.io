@@ -7,18 +7,18 @@
 </head>
 <body style="background-color: #F6F8FA;">
     <div style="padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto; max-width: 1200px;">
-        <p style="font-size: 2rem; text-align: center; margin-top: 0; margin-bottom: 0.5rem;">Invoice #<%= stripeInvoice.metadata.invoiceNumber %></p>
-        <p style="font-size: 1.75rem; text-align: center; margin-top: 0; margin-bottom: 0.5rem;"><%= stripeInvoice.metadata.userName %></p>
+        <p style="font-size: 2rem; text-align: center; margin-top: 0; margin-bottom: 0.5rem;">Invoice #<%= invoice.invoiceNumber %></p>
+        <p style="font-size: 1.75rem; text-align: center; margin-top: 0; margin-bottom: 0.5rem;"><%= userName %></p>
         <div style="text-align: center;">
-            <span style="font-size: 1.25rem; margin-top: 0; padding: 0.1rem 1rem; color: #FFF; background-color: <%= statusColor %>; border-radius: 0.25rem;"><%= stripeInvoice.status %></span>
+            <span style="font-size: 1.25rem; margin-top: 0; padding: 0.1rem 1rem; color: #FFF; background-color: <%= statusColor %>; border-radius: 0.25rem;"><%= invoice.status %></span>
         </div>
         <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
         <p style="font-size: 1.5rem; margin-top: 0; margin-bottom: 0.5rem;">Billable To</p>
-        <p style="font-size: 1rem;"><%= stripeInvoice.customer_name %> (<%= stripeInvoice.customer_email %>)</p>
+        <p style="font-size: 1rem;"><%= invoice.customer.name %> (<%= invoice.customer.email %>)</p>
         <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
         <p style="font-size: 1.5rem; margin-top: 0; margin-bottom: 0.5rem;">Line Items</p>
         <table>
-            <% for(let lineItem of stripeInvoice.lines.data){ %>
+            <% for(let lineItem of lineItems){ %>
                 <tr>
                     <td style="width: 100%; font-size: 1rem;"><%= lineItem.description %></td>
                     <td style="text-align: right; font-size: 1rem;">$<%= (lineItem.amount/100).toFixed(2) %></td>
@@ -32,7 +32,7 @@
                     Total:
                 </td>
                 <td style="text-align: right; font-size: 1.5rem; margin-top: 0; margin-bottom: 0.5rem;">
-                    $<%= (stripeInvoice.amount_due/100).toFixed(2) %>
+                    $<%= (invoice.amount.due/100).toFixed(2) %>
                 </td>
             </tr>
             <tr>
@@ -40,7 +40,7 @@
                     Paid:
                 </td>
                 <td style="text-align: right; font-size: 1.5rem; margin-top: 0; margin-bottom: 0.5rem;">
-                    $<%= (stripeInvoice.amount_paid/100).toFixed(2) %>
+                    $<%= (invoice.amount.paid/100).toFixed(2) %>
                 </td>
             </tr>
         </table>
@@ -53,17 +53,17 @@
                 </td>
                 </td>
                 <td style="text-align: right; font-size: 1.75rem; margin-top: 0; margin-bottom: 0.5rem;">
-                    $<%= (stripeInvoice.amount_remaining/100).toFixed(2) %>
+                    $<%= (invoice.amount.remaining/100).toFixed(2) %>
                 </td>
             </tr>
         </table>
         <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
         <p style="font-size: 1.25rem;">Notes</p>
-        <p><%= stripeInvoice.description %></p>
+        <p><%= invoice.notes %></p>
         <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
-        <% if(stripeInvoice.amount_remaining){ %>
+        <% if(invoice.amount.remaining){ %>
             <div style="text-align: center; margin-top: 3rem; margin-bottom: 3rem;">
-                <a style="text-decoration: none; color: #FFF; background-color: #0040F0; padding: 0.5rem 3rem; border-radius: 0.25rem; font-size: 1.25rem;" href="blueflamingo.io/invoices/<%= stripeInvoice.metadata.invoiceId %>/pay">Pay Invoice</a>
+                <a style="text-decoration: none; color: #FFF; background-color: #0040F0; padding: 0.5rem 3rem; border-radius: 0.25rem; font-size: 1.25rem;" href="blueflamingo.io/invoices/<%= invoice._id %>/pay">Pay Invoice</a>
             </div>
             <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
         <% } %> 

@@ -5,16 +5,18 @@ const sgMail = require("@sendgrid/mail");
 require("dotenv").config();
 
 const Invoice = require("../models/invoice");
+const LineItem = require("../models/lineItem");
 const Customer = require("../models/customer");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const sendEmailInvoice = async(invoiceId,emailType)=>{
-    const invoice = await Invoice.findById(invoiceId);
-    const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
+    const invoice = await Invoice.findById(invoiceId).populate("customer").populate("user");
+    const lineItems = await LineItem.find({invoice});
+    const userName = invoice.user.businessName||invoice.user.name;
     const invoiceTemplate = fs.readFileSync("views/email/invoice.ejs",{encoding:"utf-8"});
     let statusColor = "";
-    switch(stripeInvoice.status){
+    switch(invoice.status){
         case "draft":
             //secondary - grey
             statusColor += "#6c757d";
@@ -34,19 +36,19 @@ const sendEmailInvoice = async(invoiceId,emailType)=>{
     let subject = "";
     let text = "";
     if(emailType=="invoice"){
-        subject = `New Invoice from ${stripeInvoice.metadata.userName} #${stripeInvoice.metadata.invoiceNumber}`;
-        text = `${stripeInvoice.metadata.userName} sent you a new invoice for $${(stripeInvoice.amount_due/100).toFixed(2)}. Please visit https://blueflamingo.io/invoices/${stripeInvoice.metadata.invoiceId}/pay to pay your invoice.`;
+        subject = `New Invoice from ${userName} #${invoice.invoiceNumber}`;
+        text = `${userName} sent you a new invoice for $${(invoice.amount.due/100).toFixed(2)}. Please visit https://blueflamingo.io/invoices/${invoice._id}/pay to pay your invoice.`;
     }
     else if(emailType=="receipt"){
-        subject = `Receipt from ${stripeInvoice.metadata.userName} #${stripeInvoice.metadata.invoiceNumber}`;
-        text = `This is a confirmation that invoice #${stripeInvoice.metadata.invoiceNumber} from ${stripeInvoice.metadata.userName} has been paid.`;
+        subject = `Receipt from ${userName} #${invoice.invoiceNumber}`;
+        text = `This is a confirmation that invoice #${invoice.invoiceNumber} from ${userName} has been paid.`;
     };
     const msg = {
         to:"dakotamalchow@gmail.com",
         from:"billing@blueflamingo.io",
         subject:subject,
         text:text,
-        html:ejs.render(invoiceTemplate,{stripeInvoice,statusColor})
+        html:ejs.render(invoiceTemplate,{invoice,lineItems,userName,statusColor})
     };
     await sgMail.send(msg);
 };
@@ -86,6 +88,8 @@ module.exports.createInvoice = async(req,res)=>{
             currency: "usd",
             description: item.description
         });
+        const lineItem = new LineItem({invoice,description:item.description,amount:item.amount*100});
+        await lineItem.save();
     };
     let stripeInvoice = await stripe.invoices.create({
         customer: customer.stripeCustomer,
@@ -119,8 +123,8 @@ module.exports.createInvoice = async(req,res)=>{
 module.exports.invoiceDetails = async(req,res)=>{
     const invoiceId = req.params.id;
     const invoice = await Invoice.findById(invoiceId).populate("customer");
-    const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
-    res.render("billing/details",{invoice,stripeInvoice});
+    const lineItems = await LineItem.find({invoice});
+    res.render("billing/details",{invoice,lineItems});
 };
 
 module.exports.sendInvoiceEmail = async(req,res)=>{
@@ -130,10 +134,10 @@ module.exports.sendInvoiceEmail = async(req,res)=>{
 
 module.exports.customerInvoiceView = async(req,res)=>{
     const invoiceId = req.params.id;
-    const invoice = await Invoice.findById(invoiceId).populate("customer");
-    const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
-    const userName = stripeInvoice.metadata.userName;
-    res.render("billing/pay",{invoice,stripeInvoice,userName});
+    const invoice = await Invoice.findById(invoiceId).populate("customer").populate("user");
+    const lineItems = await LineItem.find({invoice});
+    const userName = invoice.user.businessName||invoice.user.name;
+    res.render("billing/pay",{invoice,lineItems,userName});
 };
 
 module.exports.payInvoice = async(req,res)=>{
