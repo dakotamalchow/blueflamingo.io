@@ -94,10 +94,6 @@ module.exports.purchasePlan = async(req,res)=>{
     res.redirect("/register/complete-account");
 };
 
-module.exports.completeAccount = (req,res)=>{
-    res.rend("users/complete-account");
-};
-
 module.exports.completeAccount = async(req,res)=>{
     const user = res.locals.currentUser;
     const stripeAccount = await stripe.accounts.retrieve(user.stripeAccount);
@@ -110,13 +106,28 @@ module.exports.completeAccount = async(req,res)=>{
     else{
         const accountLinks = await stripe.accountLinks.create({
             account:stripeAccount.id,
-            refresh_url:"http://localhost:3000/register/complete-account",
+            refresh_url:"http://localhost:3000/register/refresh-account-links",
             return_url:"http://localhost:3000/register/complete-account",
             type:"account_onboarding"
         });
         const url = accountLinks.url;
         return res.render("users/complete-account",{url});
     };
+};
+
+module.exports.refreshAccountLinks = async(req,res)=>{
+    const user = res.locals.currentUser;
+    const stripeAccount = await stripe.accounts.retrieve(user.stripeAccount);
+    if(!stripeAccount.charges_enabled || !stripeAccount.details_submitted){
+        const accountLinks = await stripe.accountLinks.create({
+            account:stripeAccount.id,
+            refresh_url:"http://localhost:3000/register/refresh-account-links",
+            return_url:"http://localhost:3000/register/complete-account",
+            type:"account_onboarding"
+        });
+        const url = accountLinks.url;
+        return res.redirect(url);
+    }
 };
 
 module.exports.loginForm = (req,res)=>{

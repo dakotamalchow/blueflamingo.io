@@ -16,6 +16,8 @@ router.post("/register/purchase-plan",isLoggedIn,catchAsync(users.purchasePlan))
 
 router.get("/register/complete-account",isLoggedIn,hasPlan,users.completeAccount);
 
+router.get("/register/refresh-account-links",isLoggedIn,hasPlan,users.refreshAccountLinks);
+
 router.get("/login",users.loginForm);
 
 router.post("/login",passport.authenticate("local",{failureRedirect:"/login",failureFlash:true}),users.loginUser);
