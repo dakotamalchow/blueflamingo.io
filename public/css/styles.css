@@ -9944,10 +9944,9 @@ section {
   overflow-wrap: break-word;
 }
 
-.fixed-bottom-right {
-  position: fixed;
+.sticky-bottom {
+  position: sticky;
   bottom: 30px;
-  right: 20px;
 }
 
 .navbar-dark .navbar-nav .nav-link {
