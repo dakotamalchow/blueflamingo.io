@@ -9953,4 +9953,8 @@ section {
   color: rgba(255, 255, 255, 0.75);
 }
 
+.pre-scrollable {
+  max-height: 210px;
+}
+
 /*# sourceMappingURL=styles.css.map */
