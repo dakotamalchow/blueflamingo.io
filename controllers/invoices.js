@@ -36,7 +36,7 @@ const sendEmailInvoice = async(invoiceId,emailType)=>{
     let text = "";
     if(emailType=="invoice"){
         subject = `New Invoice from ${userName} #${invoice.invoiceNumber}`;
-        text = `${userName} sent you a new invoice for $${invoice.amount.due}. Please visit https://blueflamingo.io/invoices/${invoice._id}/pay to pay your invoice.`;
+        text = `${userName} sent you a new invoice for $${invoice.amount.due.toFixed(2)}. Please visit https://blueflamingo.io/invoices/${invoice._id}/pay to pay your invoice.`;
     }
     else if(emailType=="receipt"){
         subject = `Receipt from ${userName} #${invoice.invoiceNumber}`;

@@ -46,7 +46,7 @@
                 </a>
                 <% for(let item of items){ %> 
                     <a class="btn btn-block btn-outline-primary m-0" href="">
-                        <li class="text-left" role="menuitem"><%= item.description %> $<%= item.amount %></li>
+                        <li class="text-left" role="menuitem"><%= item.description %> $<%= item.amount.toFixed(2) %></li>
                     </a>
                 <% } %> 
             </ul>
