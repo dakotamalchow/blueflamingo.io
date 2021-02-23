@@ -7,6 +7,6 @@ const items = require("../controllers/items");
 
 router.get("/new",isLoggedIn,hasPlan,isAccountComplete,catchAsync(items.newForm));
 
-router.post("/",isLoggedIn,hasPlan,isAccountComplete,catchAsync(items.createLineItem));
+router.post("/",isLoggedIn,hasPlan,isAccountComplete,catchAsync(items.saveItem));
 
 module.exports = router;
