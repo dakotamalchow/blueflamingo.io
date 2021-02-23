@@ -44,12 +44,11 @@
                 <a class="btn btn-block btn-outline-primary m-0" href="/items/new">
                     <li class="text-left" role="menuitem">&plus; Add New Item</li>
                 </a>
-                <a class="btn btn-block btn-outline-primary m-0" href="">
-                    <li class="text-left" role="menuitem">Plow Snow $40.00</li>
-                </a>
-                <a class="btn btn-block btn-outline-primary m-0" href="">
-                    <li class="text-left" role="menuitem">Install New Front Door $250.00</li>
-                </a>
+                <% for(let item of items){ %> 
+                    <a class="btn btn-block btn-outline-primary m-0" href="">
+                        <li class="text-left" role="menuitem"><%= item.description %> $<%= item.amount %></li>
+                    </a>
+                <% } %> 
             </ul>
             <div class="input-group col-5 col-sm-4 col-md-3 col-lg-2">
                 <span class="input-group-text">$</span>

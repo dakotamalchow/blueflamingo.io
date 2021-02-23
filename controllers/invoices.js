@@ -66,9 +66,11 @@ module.exports.index = async(req,res)=>{
 };
 
 module.exports.newForm = async(req,res)=>{
-    const customers = await Customer.find({});
+    const user = res.locals.currentUser;
+    const customers = await Customer.find({user});
+    const items = await Item.find({user});
     req.session.returnTo = req.originalUrl;
-    res.render("billing/new",{customers});
+    res.render("billing/new",{customers,items});
 };
 
 module.exports.createInvoice = async(req,res)=>{
