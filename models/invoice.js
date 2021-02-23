@@ -18,6 +18,16 @@ const invoiceSchema = new Schema({
         type: String,
         required: true
     },
+    lineItems:[{
+        description:{
+            type: String,
+            required: true
+        },
+        amount:{
+            type: Number,
+            required: true
+        }
+    }],
     amount:{
         due:{
             type: Number,

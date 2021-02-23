@@ -18,7 +18,7 @@
         <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
         <p style="font-size: 1.5rem; margin-top: 0; margin-bottom: 0.5rem;">Line Items</p>
         <table>
-            <% for(let lineItem of lineItems){ %>
+            <% for(let lineItem of invoice.lineItems){ %>
                 <tr>
                     <td style="width: 100%; font-size: 1rem;"><%= lineItem.description %></td>
                     <td style="text-align: right; font-size: 1rem;">$<%= (lineItem.amount/100).toFixed(2) %></td>

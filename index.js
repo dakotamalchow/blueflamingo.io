@@ -14,6 +14,7 @@ const AppError = require("./utils/AppError");
 const initData = require("./utils/initData");
 const User = require("./models/user");
 const invoiceRoutes = require("./routes/invoices");
+const itemRoutes = require("./routes/items");
 const customerRoutes = require("./routes/customers");
 const userRoutes = require("./routes/users");
 const settingRoutes = require("./routes/settings");
@@ -71,6 +72,7 @@ app.use(async(req,res,next)=>{
 });
 
 app.use("/invoices",invoiceRoutes);
+app.use("/items",itemRoutes);
 app.use("/customers",customerRoutes);
 app.use("/",userRoutes);
 app.use("/settings",settingRoutes);

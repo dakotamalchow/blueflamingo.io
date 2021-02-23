@@ -5,14 +5,13 @@ const sgMail = require("@sendgrid/mail");
 require("dotenv").config();
 
 const Invoice = require("../models/invoice");
-const LineItem = require("../models/lineItem");
+const Item = require("../models/item");
 const Customer = require("../models/customer");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const sendEmailInvoice = async(invoiceId,emailType)=>{
     const invoice = await Invoice.findById(invoiceId).populate("customer").populate("user");
-    const lineItems = await LineItem.find({invoice});
     const userName = invoice.user.businessName||invoice.user.name;
     const invoiceTemplate = fs.readFileSync("views/email/invoice.ejs",{encoding:"utf-8"});
     let statusColor = "";
@@ -48,7 +47,7 @@ const sendEmailInvoice = async(invoiceId,emailType)=>{
         from:"billing@blueflamingo.io",
         subject:subject,
         text:text,
-        html:ejs.render(invoiceTemplate,{invoice,lineItems,userName,statusColor})
+        html:ejs.render(invoiceTemplate,{invoice,userName,statusColor})
     };
     await sgMail.send(msg);
 };
@@ -78,18 +77,16 @@ module.exports.createInvoice = async(req,res)=>{
     const customer = await Customer.findById(customerId);
     const invoiceCount = user.increaseInvoiceCount();
     const invoiceNumber = String(invoiceCount).padStart(4,"0");
-    const invoice = new Invoice({user,customer,invoiceNumber,notes});
+    const invoice = new Invoice({user,customer,invoiceNumber,lineItems:Object.values(lineItems),notes});
     //lineItems comes back as nested objects, so this returns an array
-    for(let item of Object.values(lineItems)){
-        const stripeAmount = parseFloat(item.amount)*100;
+    for(let lineItem of Object.values(lineItems)){
+        const stripeAmount = parseFloat(lineItem.amount)*100;
         await stripe.invoiceItems.create({
             customer: customer.stripeCustomer,
             amount: stripeAmount,
             currency: "usd",
-            description: item.description
+            description: lineItem.description
         });
-        const lineItem = new LineItem({invoice,description:item.description,amount:item.amount*100});
-        await lineItem.save();
     };
     let stripeInvoice = await stripe.invoices.create({
         customer: customer.stripeCustomer,
@@ -123,8 +120,7 @@ module.exports.createInvoice = async(req,res)=>{
 module.exports.invoiceDetails = async(req,res)=>{
     const invoiceId = req.params.id;
     const invoice = await Invoice.findById(invoiceId).populate("customer");
-    const lineItems = await LineItem.find({invoice});
-    res.render("billing/details",{invoice,lineItems});
+    res.render("billing/details",{invoice});
 };
 
 module.exports.sendInvoiceEmail = async(req,res)=>{
@@ -135,9 +131,8 @@ module.exports.sendInvoiceEmail = async(req,res)=>{
 module.exports.customerInvoiceView = async(req,res)=>{
     const invoiceId = req.params.id;
     const invoice = await Invoice.findById(invoiceId).populate("customer").populate("user");
-    const lineItems = await LineItem.find({invoice});
     const userName = invoice.user.businessName||invoice.user.name;
-    res.render("billing/pay",{invoice,lineItems,userName});
+    res.render("billing/pay",{invoice,userName});
 };
 
 module.exports.payInvoice = async(req,res)=>{

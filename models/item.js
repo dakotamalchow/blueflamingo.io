@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 const {Schema} = mongoose;
 
-const lineItemSchema = new Schema({
-    invoice:{
+const itemSchema = new Schema({
+    user:{
         type: Schema.Types.ObjectId,
-        ref: "Invoice"
+        ref: "User"
     },
     description:{
         type: String,
@@ -16,4 +16,4 @@ const lineItemSchema = new Schema({
     }
 });
 
-module.exports = mongoose.model("LineItem",lineItemSchema);
+module.exports = mongoose.model("Item",itemSchema);

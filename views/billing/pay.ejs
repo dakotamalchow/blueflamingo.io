@@ -12,7 +12,7 @@
 <p><%= invoice.customer.name %> (<%= invoice.customer.email %>)</p>
 <hr>
 <h4>Line Items</h4>
-<% for(let lineItem of lineItems){ %>
+<% for(let lineItem of invoice.lineItems){ %>
     <div class="row justify-content-between mx-0">
         <p class="col mb-0"><%= lineItem.description %></p>
         <p class="col-3 col-md-2 mb-0 text-right">$<%= (lineItem.amount/100).toFixed(2) %></p>
