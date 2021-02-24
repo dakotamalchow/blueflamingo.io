@@ -155,7 +155,7 @@ const addLineItem = function(){
     const newItemLi = document.createElement("li");
     newItemLi.classList.add("text-left");
     newItemLi.setAttribute("role","menuitem");
-    newItemLi.innerText = "&plus; Create New Item";
+    newItemLi.innerHTML = "&plus; Create New Item";
 
     const searchResultDiv = document.createElement("div");
     searchResultDiv.setAttribute("id",`searchResultDiv${lineItemCount}`);
