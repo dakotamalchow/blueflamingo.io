@@ -2,7 +2,6 @@ const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
 
 const User = require("../models/user");
 const Plan = require("../models/plan");
-const { set } = require('mongoose');
 
 module.exports.registerForm = (req,res)=>{
     res.render("users/register");
@@ -107,8 +106,8 @@ module.exports.completeAccountPage = async(req,res)=>{
     else{
         const accountLinks = await stripe.accountLinks.create({
             account:stripeAccount.id,
-            refresh_url:"http://localhost:3000/register/refresh-account-links",
-            return_url:"http://localhost:3000/register/verifying-account",
+            refresh_url:"http://blueflamingo.io/register/refresh-account-links",
+            return_url:"http://blueflamingo.io/register/verifying-account",
             type:"account_onboarding"
         });
         const url = accountLinks.url;
@@ -122,8 +121,8 @@ module.exports.refreshAccountLinks = async(req,res)=>{
     if(!stripeAccount.charges_enabled || !stripeAccount.details_submitted){
         const accountLinks = await stripe.accountLinks.create({
             account:stripeAccount.id,
-            refresh_url:"http://localhost:3000/register/refresh-account-links",
-            return_url:"http://localhost:3000/register/verifying-account",
+            refresh_url:"http://blueflamingo.io/register/refresh-account-links",
+            return_url:"http://blueflamingo.io/register/verifying-account",
             type:"account_onboarding"
         });
         const url = accountLinks.url;
