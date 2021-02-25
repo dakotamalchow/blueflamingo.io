@@ -59,14 +59,14 @@ module.exports.registerUser = async(req,res,next)=>{
     user.stripeCustomer = stripeCustomer.id;
     await user.save();
     req.flash("success","Account successfully created");
-    res.redirect("/register/complete-account");
+    res.redirect("/register/add-account-info");
 };
 
-module.exports.completeAccountPage = async(req,res)=>{
+module.exports.addAccountInfoPage = async(req,res)=>{
     const user = res.locals.currentUser;
     const stripeAccount = await stripe.accounts.retrieve(user.stripeAccount);
     if(stripeAccount.charges_enabled && stripeAccount.details_submitted){
-        user.isAccountComplete = true;
+        user.isStripeVerified = true;
         await user.save();
         req.flash("success","Registration process complete");
         return res.redirect("/register/purchase-plan");
@@ -74,37 +74,36 @@ module.exports.completeAccountPage = async(req,res)=>{
     else{
         const accountLinks = await stripe.accountLinks.create({
             account:stripeAccount.id,
-            refresh_url:"http://blueflamingo.io/register/refresh-account-links",
-            return_url:"http://blueflamingo.io/register/verifying-account",
+            refresh_url:"/register/refresh-account-links",
+            return_url:"/register/verifying-account",
             type:"account_onboarding"
         });
         const url = accountLinks.url;
-        return res.render("users/complete-account",{url});
+        return res.render("users/add-account-info",{url});
     };
 };
 
 module.exports.refreshAccountLinks = async(req,res)=>{
     const user = res.locals.currentUser;
     const stripeAccount = await stripe.accounts.retrieve(user.stripeAccount);
-    console.log("Charges enabled",stripeAccount.charges_enabled);
-    console.log("Details submitted",stripeAccount.default_submitted);
     if(!stripeAccount.charges_enabled || !stripeAccount.details_submitted){
         const accountLinks = await stripe.accountLinks.create({
             account:stripeAccount.id,
-            refresh_url:"http://blueflamingo.io/register/refresh-account-links",
-            return_url:"http://blueflamingo.io/register/verifying-account",
+            refresh_url:"/register/refresh-account-links",
+            return_url:"/register/verifying-account",
             type:"account_onboarding"
         });
         const url = accountLinks.url;
         return res.redirect(url);
-    }
+    };
+    res.redirect("/");
 };
 
 module.exports.verifyingAccountPage = async(req,res)=>{
     const user = res.locals.currentUser;
     const stripeAccount = await stripe.accounts.retrieve(user.stripeAccount);
     if(stripeAccount.charges_enabled && stripeAccount.details_submitted){
-        user.isAccountComplete = true;
+        user.isStripeVerified = true;
         await user.save();
         req.flash("success","Registration process complete");
         return res.redirect("/register/purchase-plan");
@@ -145,7 +144,7 @@ module.exports.purchasePlan = async(req,res)=>{
     user.stripeSubscription = subscription.id;
     await user.save();
     req.flash("success","Plan purchased successfully");
-    res.redirect("/register/complete-account");
+    res.redirect("/invoices");
 };
 
 module.exports.loginForm = (req,res)=>{

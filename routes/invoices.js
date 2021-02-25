@@ -2,18 +2,18 @@ const express = require("express");
 const router = express.Router({mergeParams:true});
 
 const catchAsync = require("../utils/catchAsync");
-const {isLoggedIn,isAccountComplete,hasPlan,validateInvoiceReqBody} = require("../utils/middleware");
+const {isLoggedIn,isStripeVerified,hasPlan,validateInvoiceReqBody} = require("../utils/middleware");
 const invoices = require("../controllers/invoices");
 
-router.get("/",isLoggedIn,isAccountComplete,hasPlan,catchAsync(invoices.index));
+router.get("/",isLoggedIn,isStripeVerified,hasPlan,catchAsync(invoices.index));
 
-router.get("/new",isLoggedIn,isAccountComplete,hasPlan,catchAsync(invoices.newForm));
+router.get("/new",isLoggedIn,isStripeVerified,hasPlan,catchAsync(invoices.newForm));
 
-router.post("/",isLoggedIn,isAccountComplete,hasPlan,validateInvoiceReqBody,catchAsync(invoices.createInvoice));
+router.post("/",isLoggedIn,isStripeVerified,hasPlan,validateInvoiceReqBody,catchAsync(invoices.createInvoice));
 
-router.get("/:id",isLoggedIn,isAccountComplete,hasPlan,catchAsync(invoices.invoiceDetails));
+router.get("/:id",isLoggedIn,isStripeVerified,hasPlan,catchAsync(invoices.invoiceDetails));
 
-router.post("/:id/send",isLoggedIn,isAccountComplete,hasPlan,catchAsync(invoices.sendInvoiceEmail));
+router.post("/:id/send",isLoggedIn,isStripeVerified,hasPlan,catchAsync(invoices.sendInvoiceEmail));
 
 router.get("/:id/pay",catchAsync(invoices.customerInvoiceView));
 

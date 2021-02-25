@@ -18,10 +18,10 @@ module.exports.hasPlan = (req,res,next)=>{
     next();
 };
 
-module.exports.isAccountComplete = (req,res,next)=>{
+module.exports.isStripeVerified = (req,res,next)=>{
     const user = res.locals.currentUser;
-    if(!user.isAccountComplete){
-        return res.redirect("/register/complete-account");
+    if(!user.isStripeVerified){
+        return res.redirect("/register/add-account-info");
     };
     next();
 };

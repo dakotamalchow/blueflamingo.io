@@ -34,7 +34,7 @@ const userSchema = new Schema({
         default: 0,
         required: true
     },
-    isAccountComplete:{
+    isStripeVerified:{
         type: Boolean,
         default: false,
         requred: true
