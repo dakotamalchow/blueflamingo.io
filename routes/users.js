@@ -3,22 +3,22 @@ const router = express.Router();
 const passport = require("passport");
 
 const catchAsync = require("../utils/catchAsync");
-const {isLoggedIn,hasPlan,validateUserReqBody} = require("../utils/middleware");
+const {isLoggedIn,isAccountComplete,validateUserReqBody} = require("../utils/middleware");
 const users = require("../controllers/users");
 
 router.get("/register",users.registerForm);
 
 router.post("/register",validateUserReqBody,catchAsync(users.registerUser));
 
-router.get("/register/purchase-plan",isLoggedIn,users.purchasePlanForm);
+router.get("/register/complete-account",isLoggedIn,users.completeAccountPage);
 
-router.post("/register/purchase-plan",isLoggedIn,catchAsync(users.purchasePlan));
+router.get("/register/refresh-account-links",isLoggedIn,users.refreshAccountLinks);
 
-router.get("/register/complete-account",isLoggedIn,hasPlan,users.completeAccountPage);
+router.get("/register/verifying-account",isLoggedIn,users.verifyingAccountPage);
 
-router.get("/register/refresh-account-links",isLoggedIn,hasPlan,users.refreshAccountLinks);
+router.get("/register/purchase-plan",isLoggedIn,isAccountComplete,users.purchasePlanForm);
 
-router.get("/register/verifying-account",isLoggedIn,hasPlan,users.verifyingAccountPage);
+router.post("/register/purchase-plan",isLoggedIn,isAccountComplete,catchAsync(users.purchasePlan));
 
 router.get("/login",users.loginForm);
 
