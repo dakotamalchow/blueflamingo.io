@@ -71,6 +71,9 @@ const disableForm = (isDisabled)=>{
         };
         spinner.remove();
     };
+    cardNumberElement.update({disabled:isDisabled});
+    cardExpiryElement.update({disabled:isDisabled});
+    cardCvcElement.update({disabled:isDisabled});
 };
 
 const promoCode = document.querySelector("#promoCode");
