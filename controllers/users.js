@@ -152,8 +152,12 @@ module.exports.loginForm = (req,res)=>{
 };
 
 module.exports.loginUser = (req,res)=>{
-    const redirectUrl = req.session.returnTo || "/invoices";
+    const user = res.locals.currentUser;
+    let redirectUrl = req.session.returnTo || "/invoices";
     delete req.session.returnTo;
+    if(user.isAdmin){
+        redirectUrl = "/admin";
+    };
     res.redirect(redirectUrl);
 };
 

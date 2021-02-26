@@ -26,6 +26,14 @@ module.exports.isStripeVerified = (req,res,next)=>{
     next();
 };
 
+module.exports.isAdmin = (req,res,next)=>{
+    const user = res.locals.currentUser;
+    if(!user.isAdmin){
+        return next(new AppError(401,"Unauthorized route"));
+    };
+    next();
+};
+
 const validateReqBody = (req,res,next,schema)=>{
     const {error} = schema.validate(req.body);
     if(error){
