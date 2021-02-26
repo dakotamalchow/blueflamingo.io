@@ -50,6 +50,8 @@ const sendEmailInvoice = async(invoiceId,emailType)=>{
         html:ejs.render(invoiceTemplate,{invoice,userName,statusColor})
     };
     await sgMail.send(msg);
+    invoice.log.push({timeStamp:new Date(),description:`Email ${emailType} sent to customer`});
+    await invoice.save();
 };
 
 module.exports.index = async(req,res)=>{
@@ -113,6 +115,7 @@ module.exports.createInvoice = async(req,res)=>{
         remaining: stripeInvoice.amount_remaining/100
     };
     invoice.status = stripeInvoice.status;
+    invoice.log.push({timeStamp:new Date(),description:"Invoice created"});
     await invoice.save();
     await sendEmailInvoice(invoice._id,"invoice");
     req.flash("success","Successfully created and sent invoice");
@@ -151,6 +154,7 @@ module.exports.payInvoice = async(req,res)=>{
         remaining: stripeInvoice.amount_remaining/100
     };
     invoice.status = stripeInvoice.status;
+    invoice.log.push({timeStamp:new Date(),description:"Invoice paid"});
     await invoice.save();
     await sendEmailInvoice(invoiceId,"receipt");
     req.flash("success","Thank you for your payment! You will receive an email confirmation shortly.");

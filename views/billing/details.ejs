@@ -53,4 +53,12 @@
 <hr>
 <h5>Notes</h5>
 <p><%= invoice.notes %></p>
+<hr>
+<h5>Log</h5>
+<% for(let entry of invoice.log){ %> 
+    <div class="row">
+        <p class="col"><%= entry.timeStamp.toLocaleString() %></p>
+        <p class="col"><%= entry.description %></p>
+    </div>
+<% } %> 
 <% block("scripts").append('<script src="/js/invoice-status.js"></script>') %> 

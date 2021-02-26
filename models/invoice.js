@@ -48,7 +48,17 @@ const invoiceSchema = new Schema({
     status:{
         type: String,
         required: true
-    }
+    },
+    log:[{
+        timeStamp:{
+            type: Date,
+            required: true
+        },
+        description:{
+            type:String,
+            required:true
+        }
+    }]
 });
 
 module.exports = mongoose.model("Invoice",invoiceSchema);
