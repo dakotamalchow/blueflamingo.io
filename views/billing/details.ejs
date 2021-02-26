@@ -38,6 +38,18 @@
     <h3 class="col">Due:</h3>
     <h3 class="col text-right">$<%= invoice.amount.remaining.toFixed(2) %></h3>
 </div>
+<% if(!invoice.amount.remaining){ %> 
+    <hr>
+    <div class="row justify-content-between">
+        <h5 class="col">Processing Fee:</h5>
+        <% const processingFee = ((invoice.amount.due*0.029)+0.30).toFixed(2) %> 
+        <h5 class="col text-right">$(<%= processingFee %>)</h5>
+    </div>
+    <div class="row justify-content-between">
+        <h4 class="col">Net:</h4>
+        <h4 class="col text-right">$<%= (invoice.amount.paid-processingFee).toFixed(2) %></h4>
+    </div>
+<% } %> 
 <hr>
 <h5>Notes</h5>
 <p><%= invoice.notes %></p>

@@ -144,8 +144,7 @@ module.exports.payInvoice = async(req,res)=>{
     const customer = await Customer.findById(invoice.customer);
     const stripeCustomerId = customer.stripeCustomer;
     await stripe.paymentMethods.attach(paymentMethodId,{customer:stripeCustomerId});
-    await stripe.invoices.pay(invoice.stripeInvoice,{payment_method:paymentMethodId});
-    const stripeInvoice = await stripe.invoices.retrieve(invoice.stripeInvoice);
+    const stripeInvoice = await stripe.invoices.pay(invoice.stripeInvoice,{payment_method:paymentMethodId});
     invoice.amount = {
         due: stripeInvoice.amount_due/100,
         paid: stripeInvoice.amount_paid/100,
