@@ -39,6 +39,7 @@ module.exports.registerUser = async(req,res,next)=>{
     req.login(registeredUser,err=>{
         if(err) {return next(err);}
     });
+    console.log("user logged in");
     const stripeAccount = await stripe.accounts.create({
         type:"express",
         country:"US",
@@ -51,6 +52,7 @@ module.exports.registerUser = async(req,res,next)=>{
             transfers:{requested:true}
         }
     });
+    console.log("stripe account created");
     user.stripeAccount = stripeAccount.id;
     const stripeCustomer = await stripe.customers.create({
         name: user.name,
@@ -58,6 +60,7 @@ module.exports.registerUser = async(req,res,next)=>{
     });
     user.stripeCustomer = stripeCustomer.id;
     await user.save();
+    console.log("user saved");
     req.flash("success","Account successfully created");
     res.redirect("/register/add-account-info");
 };
@@ -66,16 +69,18 @@ module.exports.addAccountInfoPage = async(req,res)=>{
     const user = res.locals.currentUser;
     const stripeAccount = await stripe.accounts.retrieve(user.stripeAccount);
     if(stripeAccount.charges_enabled && stripeAccount.details_submitted){
+        console.log("verified");
         user.isStripeVerified = true;
         await user.save();
         req.flash("success","Registration process complete");
         return res.redirect("/register/purchase-plan");
     }
     else{
+        console.log("not verified");
         const accountLinks = await stripe.accountLinks.create({
             account:stripeAccount.id,
-            refresh_url:"/register/refresh-account-links",
-            return_url:"/register/verifying-account",
+            refresh_url:"https://blueflamingo.io/register/refresh-account-links",
+            return_url:"https://blueflamingo.io/register/verifying-account",
             type:"account_onboarding"
         });
         const url = accountLinks.url;
@@ -89,8 +94,8 @@ module.exports.refreshAccountLinks = async(req,res)=>{
     if(!stripeAccount.charges_enabled || !stripeAccount.details_submitted){
         const accountLinks = await stripe.accountLinks.create({
             account:stripeAccount.id,
-            refresh_url:"/register/refresh-account-links",
-            return_url:"/register/verifying-account",
+            refresh_url:"https://blueflamingo.io/register/refresh-account-links",
+            return_url:"https://blueflamingo.io/register/verifying-account",
             type:"account_onboarding"
         });
         const url = accountLinks.url;
