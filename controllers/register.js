@@ -4,7 +4,7 @@ const User = require("../models/user");
 const Plan = require("../models/plan");
 
 module.exports.registerForm = (req,res)=>{
-    res.render("users/register");
+    res.render("register/register-form");
 };
 
 const validatePassword = (password,confirmPassword)=>{
@@ -81,7 +81,7 @@ module.exports.addAccountInfoPage = async(req,res)=>{
             type:"account_onboarding"
         });
         const url = accountLinks.url;
-        return res.render("users/add-account-info",{url});
+        return res.render("register/add-account-info",{url});
     };
 };
 
@@ -110,7 +110,7 @@ module.exports.verifyingAccountPage = async(req,res)=>{
         req.flash("success","Registration process complete");
         return res.redirect("/register/purchase-plan");
     };
-    res.render("users/verifying-account");
+    res.render("register/verifying-account");
 };
 
 module.exports.purchasePlanForm = (req,res)=>{
@@ -118,7 +118,7 @@ module.exports.purchasePlanForm = (req,res)=>{
     if(user.plan){
         return res.redirect("/invoices");
     }
-    res.render("users/purchase-plan");
+    res.render("regster/purchase-plan");
 };
 
 module.exports.purchasePlan = async(req,res)=>{
