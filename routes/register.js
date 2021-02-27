@@ -18,3 +18,5 @@ router.get("/verifying-account",isLoggedIn,register.verifyingAccountPage);
 router.get("/purchase-plan",isLoggedIn,isStripeVerified,register.purchasePlanForm);
 
 router.post("/purchase-plan",isLoggedIn,isStripeVerified,catchAsync(register.purchasePlan));
+
+module.exports = router;

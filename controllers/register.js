@@ -39,7 +39,6 @@ module.exports.registerUser = async(req,res,next)=>{
     req.login(registeredUser,err=>{
         if(err) {return next(err);}
     });
-    console.log("user logged in");
     const stripeAccount = await stripe.accounts.create({
         type:"express",
         country:"US",
@@ -52,7 +51,6 @@ module.exports.registerUser = async(req,res,next)=>{
             transfers:{requested:true}
         }
     });
-    console.log("stripe account created");
     user.stripeAccount = stripeAccount.id;
     const stripeCustomer = await stripe.customers.create({
         name: user.name,
@@ -60,7 +58,6 @@ module.exports.registerUser = async(req,res,next)=>{
     });
     user.stripeCustomer = stripeCustomer.id;
     await user.save();
-    console.log("user saved");
     req.flash("success","Account successfully created");
     res.redirect("/register/add-account-info");
 };
