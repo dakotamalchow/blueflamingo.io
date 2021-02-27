@@ -13,10 +13,12 @@ const dns = require("dns");
 const AppError = require("./utils/AppError");
 const initData = require("./utils/initData");
 const User = require("./models/user");
+
 const invoiceRoutes = require("./routes/invoices");
 const itemRoutes = require("./routes/items");
 const customerRoutes = require("./routes/customers");
 const userRoutes = require("./routes/users");
+const registerRoutes = require("./routes/register");
 const settingRoutes = require("./routes/settings");
 const adminRoutes = require("./routes/admin");
 
@@ -76,6 +78,7 @@ app.use("/invoices",invoiceRoutes);
 app.use("/items",itemRoutes);
 app.use("/customers",customerRoutes);
 app.use("/",userRoutes);
+app.use("/register",registerRoutes);
 app.use("/settings",settingRoutes);
 app.use("/admin",adminRoutes);
 
