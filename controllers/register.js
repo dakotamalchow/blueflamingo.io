@@ -69,7 +69,7 @@ module.exports.addAccountInfoPage = async(req,res)=>{
         console.log("verified");
         user.isStripeVerified = true;
         await user.save();
-        req.flash("success","Registration process complete");
+        req.flash("success","Accout info added successfully");
         return res.redirect("/register/purchase-plan");
     }
     else{
@@ -107,7 +107,7 @@ module.exports.verifyingAccountPage = async(req,res)=>{
     if(stripeAccount.charges_enabled && stripeAccount.details_submitted){
         user.isStripeVerified = true;
         await user.save();
-        req.flash("success","Registration process complete");
+        req.flash("success","Accout info added successfully");
         return res.redirect("/register/purchase-plan");
     };
     res.render("register/verifying-account");
@@ -118,7 +118,7 @@ module.exports.purchasePlanForm = (req,res)=>{
     if(user.plan){
         return res.redirect("/invoices");
     }
-    res.render("regster/purchase-plan");
+    res.render("register/purchase-plan");
 };
 
 module.exports.purchasePlan = async(req,res)=>{
