@@ -12,7 +12,8 @@ const userSchema = new Schema({
         required: true
     },
     businessName:{
-        type: String
+        type: String,
+        required: true
     },
     plan:{
         type: String

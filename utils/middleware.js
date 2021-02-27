@@ -83,7 +83,7 @@ module.exports.validateCustomerReqBody = (req,res,next)=>{
 module.exports.validateUserReqBody = (req,res,next)=>{
     const userReqBodySchema = Joi.object({
         name: Joi.string().required(),
-        businessName: Joi.string().allow(""),
+        businessName: Joi.string().required(),
         email: Joi.string().email().required(),
         password: Joi.string().required(),
         confirmPassword: Joi.string().required()
