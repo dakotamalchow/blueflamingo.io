@@ -5,6 +5,8 @@ const methodOverride = require("method-override");
 const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
+const RedisStore = require("connect-redis")(session);
+const redis = require("redis");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const flash = require("connect-flash");
@@ -31,6 +33,11 @@ mongoose.connect("mongodb://dakota:blueFlamingo@localhost:27017/blueflamingo?aut
         console.log("Error connecting to Mongo: " + error);
     });
 
+const redisClient = redis.createClient();
+redisClient.on("connect",()=>{
+    console.log("Connected to Redis");
+});
+
 app.set("views",path.join(__dirname,"views"));
 app.set("view engine","ejs");
 app.engine("ejs",ejsMate);
@@ -46,7 +53,8 @@ app.use(methodOverride("_method"));
 app.use(session({
     secret:"BlueFlamingoTest",
     resave:false,
-    saveUninitialized:true
+    saveUninitialized:true,
+    store: new RedisStore({client:redisClient})
 }));
 app.use(flash());
 
