@@ -4,7 +4,8 @@ const User = require("../models/user");
 const Plan = require("../models/plan");
 
 module.exports.registerForm = (req,res)=>{
-    res.render("register/register-form");
+    const data = req.query;
+    res.render("register/register-form",{data});
 };
 
 const validatePassword = (password,confirmPassword)=>{
@@ -32,7 +33,10 @@ module.exports.registerUser = async(req,res,next)=>{
     const isPasswordValid = validatePassword(password,confirmPassword);
     if(isPasswordValid!=true){
         req.flash("error",isPasswordValid);
-        return res.redirect("/register");
+        let queryString = `?name=${encodeURIComponent(name)}`;
+        queryString+=`&businessName=${encodeURIComponent(businessName)}`;
+        queryString+=`&email=${encodeURIComponent(email)}`;
+        return res.redirect("/register"+queryString);
     };
     const user = new User({name,businessName,email});
     const registeredUser = await User.register(user,password);

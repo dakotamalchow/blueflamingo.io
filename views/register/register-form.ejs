@@ -3,15 +3,15 @@
 <form action="/register" method="POST" class="validated-form" novalidate>
     <div class="mb-3">
         <label class="form-label" for="name">Name</label>
-        <input class="form-control" type="text" id="name" name="name" placeholder="John Smith" required>
+        <input class="form-control" type="text" id="name" name="name" value="<%= data.name %>" placeholder="John Smith" required>
     </div>
     <div class="mb-3">
         <label class="form-label" for="businessName">Business Name</label>
-        <input class="form-control" type="text" id="businessName" name="businessName" placeholder="J. Smith Corp" required>
+        <input class="form-control" type="text" id="businessName" name="businessName" value="<%= data.businessName %>" placeholder="J. Smith Corp" required>
     </div>
     <div class="mb-3">
         <label class="form-label" for="email">Email</label>
-        <input class="form-control" type="email" id="email" name="email" placeholder="johnsmith@gmail.com" required>
+        <input class="form-control" type="email" id="email" name="email" value="<%= data.email %>" placeholder="johnsmith@gmail.com" required>
     </div>
     <div class="mb-3">
         <label class="form-label" for="password">Password</label>
