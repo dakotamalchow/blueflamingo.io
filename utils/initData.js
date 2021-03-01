@@ -22,7 +22,15 @@ const setupPlans = async()=>{
 const setupCoupons = async()=>{
     await stripe.coupons.create({
         duration: "once",
-        id: "free-month",
+        id: "1-free-month",
+        name: "one free month",
+        percent_off: 100
+    });
+    await stripe.coupons.create({
+        duration: "repeating",
+        duration_in_months: 2,
+        id: "2-free-months",
+        name: "two free months",
         percent_off: 100
     });
 };

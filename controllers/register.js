@@ -133,8 +133,11 @@ module.exports.purchasePlan = async(req,res)=>{
     });
     const plan = await Plan.findOne({name:"Standard"});
     let couponId = ""
-    if(promoCode.toUpperCase()=="1MONTH"){
-        couponId = "free-month";
+    if(promoCode.toUpperCase()=="1FLAMINGO"){
+        couponId = "1-free-month";
+    }
+    else if(promoCode.toUpperCase()=="2FLAMINGOS"){
+        couponId = "2-free-months";
     };
     const subscription = await stripe.subscriptions.create({
         customer: user.stripeCustomer,
