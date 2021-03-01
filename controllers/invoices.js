@@ -43,7 +43,7 @@ const sendEmailInvoice = async(invoiceId,emailType)=>{
         text = `This is a confirmation that invoice #${invoice.invoiceNumber} from ${userName} has been paid.`;
     };
     const msg = {
-        to:"dakotamalchow@gmail.com",
+        to:invoice.customer.email,
         from:"billing@blueflamingo.io",
         subject:subject,
         text:text,
