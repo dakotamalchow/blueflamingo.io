@@ -66,14 +66,12 @@ module.exports.addAccountInfoPage = async(req,res)=>{
     const user = res.locals.currentUser;
     const stripeAccount = await stripe.accounts.retrieve(user.stripeAccount);
     if(stripeAccount.charges_enabled && stripeAccount.details_submitted){
-        console.log("verified");
         user.isStripeVerified = true;
         await user.save();
         req.flash("success","Accout info added successfully");
         return res.redirect("/register/purchase-plan");
     }
     else{
-        console.log("not verified");
         const accountLinks = await stripe.accountLinks.create({
             account:stripeAccount.id,
             refresh_url:"https://blueflamingo.io/register/refresh-account-links",
