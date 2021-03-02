@@ -137,9 +137,16 @@ module.exports.sendInvoiceEmail = async(req,res)=>{
 
 module.exports.customerInvoiceView = async(req,res)=>{
     const invoiceId = req.params.id;
+    let publicKey;
+    if(process.env.ENV=="dev"){
+        publicKey = process.env.STRIPE_PUB_KEY_DEV;
+    }
+    else if(process.env.ENV=="prod"){
+        publicKey = process.env.STRIPE_PUB_KEY_PROD;
+    };
     const invoice = await Invoice.findById(invoiceId).populate("customer").populate("user");
     const userName = invoice.user.businessName||invoice.user.name;
-    res.render("billing/pay",{invoice,userName});
+    res.render("billing/pay",{invoice,userName,publicKey});
 };
 
 module.exports.payInvoice = async(req,res)=>{

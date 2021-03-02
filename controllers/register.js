@@ -121,8 +121,15 @@ module.exports.purchasePlanForm = (req,res)=>{
     const user = res.locals.currentUser;
     if(user.plan){
         return res.redirect("/invoices");
+    };
+    let publicKey;
+    if(process.env.ENV=="dev"){
+        publicKey = process.env.STRIPE_PUB_KEY_DEV;
     }
-    res.render("register/purchase-plan");
+    else if(process.env.ENV=="prod"){
+        publicKey = process.env.STRIPE_PUB_KEY_PROD;
+    };
+    res.render("register/purchase-plan",{publicKey});
 };
 
 module.exports.purchasePlan = async(req,res)=>{

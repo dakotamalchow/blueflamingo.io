@@ -1,8 +1,6 @@
+const publicKey = document.querySelector("#stripePublicKey").value;
+const stripe = Stripe(publicKey);
 const elements = stripe.elements();
-
-let stripe;
-if(process.env.ENV=="dev"){ stripe = require('stripe')(process.env.STRIPE_PUB_KEY_DEV); }
-else if(process.env.ENV=="prod"){ stripe = require('stripe')(process.env.STRIPE_PUB_KEY_PROD); };
 
 const setDisplayError = ({error})=>{
     let displayError = document.querySelector("#card-errors");
