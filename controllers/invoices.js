@@ -1,7 +1,10 @@
 const fs = require("fs");
 const ejs = require("ejs");
-const stripe = require('stripe')(process.env.STRIPE_SEC_KEY);
 const sgMail = require("@sendgrid/mail");
+
+let stripe;
+if(process.env.ENV=="dev"){ stripe = require('stripe')(process.env.STRIPE_SEC_KEY_DEV); }
+else if(process.env.ENV=="prod"){ stripe = require('stripe')(process.env.STRIPE_SEC_KEY_PROD); };
 
 const Invoice = require("../models/invoice");
 const Item = require("../models/item");

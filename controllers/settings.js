@@ -1,4 +1,6 @@
-const stripe = require('stripe')(process.env.STRIPE_SEC_KEY);
+let stripe;
+if(process.env.ENV=="dev"){ stripe = require('stripe')(process.env.STRIPE_SEC_KEY_DEV); }
+else if(process.env.ENV=="prod"){ stripe = require('stripe')(process.env.STRIPE_SEC_KEY_PROD); };
 
 module.exports.index = async(req,res)=>{
     const user = res.locals.currentUser;
