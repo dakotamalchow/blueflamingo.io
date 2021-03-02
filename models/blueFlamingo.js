@@ -6,14 +6,14 @@ const blueFlamingoSchema = new Schema({
         type: String,
         required: true
     },
-    hasPlans:{
-        type: Boolean,
-        default: false,
-    },
-    hasCoupons:{
-        type: Boolean,
-        default: false,
-    }
+    plans:[{
+        type: String,
+        required: true
+    }],
+    coupons:[{
+        type: String,
+        required: true
+    }]
 });
 
 module.exports = mongoose.model("BlueFlamingo",blueFlamingoSchema)

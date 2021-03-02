@@ -1,4 +1,4 @@
-const stripe = Stripe("pk_test_osZfCwd1uI7FjnfaUqWxbu2R");
+const stripe = Stripe(process.env.STRIPE_PUB_KEY);
 const elements = stripe.elements();
 
 const setDisplayError = ({error})=>{

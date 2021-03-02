@@ -6,6 +6,9 @@ const planSchema = new Schema({
         type: String,
         required: true
     },
+    stripeProduct:{
+        type: String
+    },
     stripePrice:{
         type: String,
     }

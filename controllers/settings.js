@@ -1,4 +1,4 @@
-const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
+const stripe = require('stripe')(process.env.STRIPE_SEC_KEY);
 
 module.exports.index = async(req,res)=>{
     const user = res.locals.currentUser;

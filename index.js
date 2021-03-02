@@ -11,9 +11,9 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const flash = require("connect-flash");
 const dns = require("dns");
+require("dotenv").config();
 
 const AppError = require("./utils/AppError");
-const initData = require("./utils/initData");
 const User = require("./models/user");
 
 const invoiceRoutes = require("./routes/invoices");
@@ -24,7 +24,7 @@ const registerRoutes = require("./routes/register");
 const settingRoutes = require("./routes/settings");
 const adminRoutes = require("./routes/admin");
 
-mongoose.connect("mongodb://dakota:blueFlamingo@localhost:27017/blueflamingo?authSource=admin",
+mongoose.connect(`mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PW}@localhost:27017/blueflamingo?authSource=admin`,
     {useNewUrlParser:true,useUnifiedTopology:true,useCreateIndex:true,useFindAndModify:false})
     .then(() => {
         console.log("Mongo connection open");
@@ -51,7 +51,7 @@ app.use(express.urlencoded({extended:true}))
 app.use(express.json());
 app.use(methodOverride("_method"));
 app.use(session({
-    secret:"BlueFlamingoTest",
+    secret:process.env.SESSION_SECRET,
     resave:false,
     saveUninitialized:true,
     store: new RedisStore({client:redisClient})
@@ -76,7 +76,6 @@ app.use(async(req,res,next)=>{
         res.locals.currentUser = req.user;
         res.locals.success = req.flash("success");
         res.locals.error = req.flash("error");
-        await initData.setupData();
         next(err);
     },10);
     

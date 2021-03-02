@@ -1,4 +1,4 @@
-const stripe = require('stripe')('sk_test_F7a54OYuDnabmUT6HN2pLiDu');
+const stripe = require('stripe')(process.env.STRIPE_SEC_KEY);
 
 const User = require("../models/user");
 const Plan = require("../models/plan");
@@ -140,6 +140,9 @@ module.exports.purchasePlan = async(req,res)=>{
     }
     else if(promoCode.toUpperCase()=="2FLAMINGOS"){
         couponId = "2-free-months";
+    }
+    else if(promoCode.toUpperCase()=="3FLAMINGOS"){
+        couponId = "3-free-months";
     };
     const subscription = await stripe.subscriptions.create({
         customer: user.stripeCustomer,
