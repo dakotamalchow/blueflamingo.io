@@ -109,14 +109,15 @@ module.exports.createInvoice = async(req,res)=>{
         }
     });
     //this stripeInvoice object has a status of 'open'
-    stripeInvoice = await stripe.invoices.finalizeInvoice(stripeInvoice.id);
+    // stripeInvoice = await stripe.invoices.finalizeInvoice(stripeInvoice.id);
     invoice.stripeInvoice = stripeInvoice.id;
     invoice.amount = {
         due: stripeInvoice.amount_due/100,
         paid: stripeInvoice.amount_paid/100,
         remaining: stripeInvoice.amount_remaining/100
     };
-    invoice.status = stripeInvoice.status;
+    // invoice.status = stripeInvoice.status;
+    invoice.status = "open";
     invoice.log.push({timeStamp:new Date(),description:"Invoice created"});
     await invoice.save();
     await sendEmailInvoice(invoice._id,"invoice");
@@ -156,6 +157,8 @@ module.exports.payInvoice = async(req,res)=>{
     const customer = await Customer.findById(invoice.customer);
     const stripeCustomerId = customer.stripeCustomer;
     await stripe.paymentMethods.attach(paymentMethodId,{customer:stripeCustomerId});
+    const processingFee = ((invoice.amount.due*.0315)+0.30).toFixed(2);
+    await stripe.invoices.update(invoice.stripeInvoice,{application_fee_amount:processingFee*100});
     const stripeInvoice = await stripe.invoices.pay(invoice.stripeInvoice,{payment_method:paymentMethodId});
     invoice.amount = {
         due: stripeInvoice.amount_due/100,
