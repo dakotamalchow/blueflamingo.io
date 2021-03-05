@@ -24,17 +24,19 @@ const cardCvcElement = elements.create('cardCvc');
 cardCvcElement.mount("#cardCvc");
 cardCvcElement.on("change",setDisplayError);
 
-const form = document.querySelector("#payment-form");
+const form = document.querySelector("#card-payment-form");
+const clientSecret = form.dataset.secret;
 form.addEventListener("submit",async(event)=>{
     event.preventDefault();
     disableForm(true);
     const postalCode = document.querySelector("#postalCode").value;
-    const {paymentMethod,error} = await stripe.createPaymentMethod({
-        type:"card",
-        card:cardNumberElement,
-        billing_details:{
-            address:{
-                postal_code: postalCode
+    const {paymentIntent,error} = await stripe.confirmCardPayment(clientSecret,{
+        payment_method:{
+            card:cardNumberElement,
+            billing_details:{
+                address:{
+                    postal_code: postalCode
+                }
             }
         }
     });
@@ -44,15 +46,30 @@ form.addEventListener("submit",async(event)=>{
         disableForm(false);
     }
     else{
-        stripePaymentMethodHandler(paymentMethod);
+        console.log(paymentIntent);
+        const hiddenInput = document.createElement("input");
+        hiddenInput.setAttribute("type","hidden");
+        hiddenInput.setAttribute("name","paymentType");
+        hiddenInput.setAttribute("value","card");
+        form.appendChild(hiddenInput);
+        const promoCode = document.querySelector("#promoCode");
+        if(promoCode){
+            const hiddenInput2 = document.createElement("input");
+            hiddenInput2.setAttribute("type", "hidden");
+            hiddenInput2.setAttribute("name", "promoCode");
+            hiddenInput2.setAttribute("value", promoCode.value);
+            form.appendChild(hiddenInput2);
+        };
+        form.submit();
         setTimeout(()=>{
                 disableForm(false);
         },5000);
+        
     };
 });
 
-const formElements = document.querySelectorAll("#payment-form input, #payment-form button");
-const formButton = document.querySelector("#payment-form button");
+const formElements = document.querySelectorAll("#card-payment-form input, button");
+const formButton = document.querySelector("#card-submit-button");
 // <!-- <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> -->
 const spinner = document.createElement("span");
 spinner.classList.add("spinner-border","spinner-border-sm");
@@ -75,24 +92,4 @@ const disableForm = (isDisabled)=>{
     cardNumberElement.update({disabled:isDisabled});
     cardExpiryElement.update({disabled:isDisabled});
     cardCvcElement.update({disabled:isDisabled});
-};
-
-const promoCode = document.querySelector("#promoCode");
-
-const stripePaymentMethodHandler = (paymentMethod)=>{
-    const form = document.querySelector("#payment-form");
-    const hiddenInput = document.createElement("input");
-    hiddenInput.setAttribute("type", "hidden");
-    hiddenInput.setAttribute("name", "stripePaymentMethod");
-    hiddenInput.setAttribute("value", paymentMethod.id);
-    form.appendChild(hiddenInput);
-    //this is a temp solution until a better way to show a loading screen is implemented
-    if(promoCode){
-        const hiddenInput2 = document.createElement("input");
-        hiddenInput2.setAttribute("type", "hidden");
-        hiddenInput2.setAttribute("name", "promoCode");
-        hiddenInput2.setAttribute("value", promoCode.value);
-        form.appendChild(hiddenInput2);
-    };
-    form.submit();
-};  
+}; 

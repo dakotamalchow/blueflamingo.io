@@ -1,6 +1,13 @@
 const fs = require("fs");
 const ejs = require("ejs");
 const sgMail = require("@sendgrid/mail");
+const plaid = require("plaid");
+
+const plaidClient = new plaid.Client({
+    clientID:"603820da02cf49000f162105",
+    secret:"2ebd7bc07a8e3dc2347b42f9e5e2ed",
+    env:plaid.environments.sandbox
+});
 
 let stripe;
 if(process.env.ENV=="dev"){ stripe = require('stripe')(process.env.STRIPE_SEC_KEY_DEV); }
@@ -84,39 +91,16 @@ module.exports.createInvoice = async(req,res)=>{
     const invoiceCount = user.increaseInvoiceCount();
     const invoiceNumber = String(invoiceCount).padStart(4,"0");
     const invoice = new Invoice({user,customer,invoiceNumber,lineItems:Object.values(lineItems),notes});
+    let amount = 0;
     //lineItems comes back as nested objects, so this returns an array
     for(let lineItem of Object.values(lineItems)){
-        const stripeAmount = parseFloat(lineItem.amount)*100;
-        await stripe.invoiceItems.create({
-            customer: customer.stripeCustomer,
-            amount: stripeAmount,
-            currency: "usd",
-            description: lineItem.description
-        });
+        amount += parseFloat(lineItem.amount);
     };
-    let stripeInvoice = await stripe.invoices.create({
-        customer: customer.stripeCustomer,
-        transfer_data:{
-            destination:user.stripeAccount
-        },
-        description: notes,
-        collection_method: "send_invoice",
-        days_until_due: 30,
-        metadata:{
-            invoiceId: invoice.id,
-            invoiceNumber: invoiceNumber,
-            userName: user.businessName||user.name
-        }
-    });
-    //this stripeInvoice object has a status of 'open'
-    // stripeInvoice = await stripe.invoices.finalizeInvoice(stripeInvoice.id);
-    invoice.stripeInvoice = stripeInvoice.id;
     invoice.amount = {
-        due: stripeInvoice.amount_due/100,
-        paid: stripeInvoice.amount_paid/100,
-        remaining: stripeInvoice.amount_remaining/100
+        due: amount,
+        paid: 0,
+        remaining: amount
     };
-    // invoice.status = stripeInvoice.status;
     invoice.status = "open";
     invoice.log.push({timeStamp:new Date(),description:"Invoice created"});
     await invoice.save();
@@ -147,28 +131,71 @@ module.exports.customerInvoiceView = async(req,res)=>{
     };
     const invoice = await Invoice.findById(invoiceId).populate("customer").populate("user");
     const userName = invoice.user.businessName||invoice.user.name;
-    res.render("billing/pay",{invoice,userName,publicKey});
+    const processingFee = ((invoice.amount.due*.0315)+0.30).toFixed(2);
+    const paymentIntent = await stripe.paymentIntents.create({
+        payment_method_types: ["card"],
+        amount: invoice.amount.due*100,
+        currency: "usd",
+        application_fee_amount: processingFee*100,
+        transfer_data: {
+            destination: invoice.user.stripeAccount,
+        }
+    });
+    const linkToken = await plaidClient.createLinkToken({
+        user:{
+            client_user_id: invoice.customer._id
+        },
+        client_name: "Blue Flamingo",
+        products: ["auth"],
+        country_codes: ["US"],
+        language: "en"
+    });
+    res.render("billing/pay",{invoice,userName,publicKey,clientSecret:paymentIntent.client_secret,linkToken:linkToken.link_token});
 };
 
 module.exports.payInvoice = async(req,res)=>{
     const invoiceId = req.params.id;
-    const paymentMethodId = req.body.stripePaymentMethod;
-    const invoice = await Invoice.findById(invoiceId);
+    const {paymentType} = req.body;
+    const invoice = await Invoice.findById(invoiceId).populate("user");
     const customer = await Customer.findById(invoice.customer);
     const stripeCustomerId = customer.stripeCustomer;
-    await stripe.paymentMethods.attach(paymentMethodId,{customer:stripeCustomerId});
-    const processingFee = ((invoice.amount.due*.0315)+0.30).toFixed(2);
-    await stripe.invoices.update(invoice.stripeInvoice,{application_fee_amount:processingFee*100});
-    const stripeInvoice = await stripe.invoices.pay(invoice.stripeInvoice,{payment_method:paymentMethodId});
-    invoice.amount = {
-        due: stripeInvoice.amount_due/100,
-        paid: stripeInvoice.amount_paid/100,
-        remaining: stripeInvoice.amount_remaining/100
-    };
-    invoice.status = stripeInvoice.status;
-    invoice.log.push({timeStamp:new Date(),description:"Invoice paid"});
-    await invoice.save();
-    await sendEmailInvoice(invoiceId,"receipt");
+    if(paymentType=="card"){
+        invoice.amount = {
+            due: invoice.amount.due,
+            paid: invoice.amount.due,
+            remaining: 0
+        };
+        invoice.status = "paid";
+        invoice.log.push({timeStamp:new Date(),description:"Invoice paid"});
+        await invoice.save();
+        await sendEmailInvoice(invoiceId,"receipt");
+    }
+    else if(paymentType=="bank"){
+        const {plaidLinkPublicToken,plaidAccountId} = req.body;
+        let accessResponse = await plaidClient.exchangePublicToken(plaidLinkPublicToken);
+        const bankAccountResponse = await plaidClient.createStripeToken(accessResponse.access_token,plaidAccountId);
+        const bankAccountToken = bankAccountResponse.stripe_bank_account_token;
+        await stripe.customers.update(stripeCustomerId,{source:bankAccountToken});
+        const processingFee = (invoice.amount.due*.0105).toFixed(2);
+        await stripe.charges.create({
+            amount: invoice.amount.due*100,
+            currency: "usd",
+            customer: stripeCustomerId,
+            application_fee_amount: processingFee*100,
+            transfer_data: {
+                destination: invoice.user.stripeAccount,
+            }
+        });
+        invoice.amount = {
+            due: invoice.amount.due,
+            paid: invoice.amount.due,
+            remaining: 0
+        };
+        invoice.status = "paid";
+        invoice.log.push({timeStamp:new Date(),description:"Invoice paid"});
+        await invoice.save();
+        await sendEmailInvoice(invoiceId,"receipt");
+    }
     req.flash("success","Thank you for your payment! You will receive an email confirmation shortly.");
-    res.redirect(`/invoices/${invoiceId}/pay`);
+    res.redirect(`/invoices/${invoiceId}/pay`);    
 };

@@ -12,7 +12,7 @@ const invoiceSchema = new Schema({
     },
     stripeInvoice:{
         type: String,
-        required: true
+        // required: true
     },
     invoiceNumber:{
         type: String,

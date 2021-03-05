@@ -1,5 +1,6 @@
 <% layout("layouts/boilerplate") %>
 <% block("header-scripts").append('<script src="https://js.stripe.com/v3/"></script>') %>
+<% block("header-scripts").append('<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>') %>
 <div>
     <h2 class="text-center">Invoice #<%= invoice.invoiceNumber %></h2>
     <h3 class="text-center"><%= userName %></h3>
@@ -33,8 +34,16 @@
     <h3 class="col text-right">$<%= invoice.amount.remaining.toFixed(2) %></h3>
 </div>
 <hr>
-<% if(invoice.amount.remaining){ %> 
-    <form action="/invoices/<%= invoice._id %>/pay" method="POST" id="payment-form">
+<% if(invoice.amount.remaining){ %>
+    <div class="row mb-5 text-center" id="select-payment-type">
+        <div class="col"> 
+            <button class="btn btn-primary btn-lg btn-block" id="card-select" data-form="#card-payment-form">Card</button>
+        </div>
+        <div class="col">
+            <button class="btn btn-outline-primary btn-lg btn-block" id="bank-select" data-form="#bank-payment-form">Bank</button>
+        </div>
+    </div>
+    <form action="/invoices/<%= invoice._id %>/pay" method="POST" id="card-payment-form" data-secret="<%= clientSecret %>">
         <label class="form-label" for="card-element">Credit or debit card information</label>
         <div class="mb-3 form-control" id="cardNumber"></div>
         <div class="mb-3 form-row">
@@ -50,14 +59,26 @@
         </div>
         <div class="mb-3 alert alert-danger" id="card-errors" role="alert" hidden></div>
         <input type="text" id="stripePublicKey" value="<%= publicKey %>" hidden>
+        <input type="text" id="plaidLinkToken" value="<%= linkToken %>" hidden>
         <div class="mb-3 text-center">
-            <button class="btn btn-primary px-5">
-                <span class="h5">Pay Invoice</span>
-            </button>
+            <button class="btn btn-primary btn-lg px-5" id="card-submit-button">Pay Invoice with Card</button>
         </div>
     </form>
-<% } %> 
+    <form action="/invoices/<%= invoice._id %>/pay" method="POST" id="bank-payment-form" hidden>
+        <div class="mb-3 text-center" id="bank-payment-div">
+            <p>You will be prompted to enter details for your bank.</p>
+            <button class="btn btn-primary btn-lg px-5" id="link-button" type="button">Add Bank Account</button>
+        </div>
+    </form>
+<% } %>
+<script type="text/javascript">
+
+</script> 
 <% block("scripts").append('<script src="/js/invoice-status.js"></script>') %>
+<% block("scripts").append('<script src="/js/select-payment-type.js"></script>') %>
 <% if(invoice.amount.remaining){ %> 
-    <% block("scripts").append('<script src="/js/submit-payment-method.js"></script>') %>
+    <% block("scripts").append('<script src="/js/submit-bank-payment.js"></script>') %>
+<% } %> 
+<% if(invoice.amount.remaining){ %> 
+    <% block("scripts").append('<script src="/js/submit-card-payment.js"></script>') %>
 <% } %> 
