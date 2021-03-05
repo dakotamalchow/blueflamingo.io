@@ -16,15 +16,12 @@
                 <div class="mb-3">
                     <a href="/register"><u>Don't have an account? Create one today!</u></a>
                 </div>
-            <% } else { %> 
-                <% if(!currentUser.plan){ %> 
-                    <hr> 
-                    <div class="mb-3">
-                        <a class="btn btn-primary" href="/register/purchase-plan">Purchase Plan</a>
-                    </div>
+            <% } else { %>
+                <% if(!currentUser.isStripeVerified){ %> 
+                    <a class="btn btn-primary" href="/register/complete-account">Complete Account</a>
                 <% } else { %> 
-                    <% if(!currentUser.isAccountComplete){ %> 
-                        <a class="btn btn-primary" href="/register/complete-account">Complete Account</a>
+                    <% if(!currentUser.plan){ %>
+                        <a class="btn btn-primary" href="/register/purchase-plan">Purchase Plan</a>
                     <% } %> 
                 <% } %> 
             <% } %> 
