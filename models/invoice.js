@@ -49,6 +49,13 @@ const invoiceSchema = new Schema({
         type: String,
         required: true
     },
+    paymentOptions:{
+        type: Object,
+        required: true
+    },
+    paymentType:{
+        type: String
+    },
     log:[{
         timeStamp:{
             type: Date,

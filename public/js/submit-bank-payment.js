@@ -8,14 +8,14 @@
             while(div.firstChild){
                 div.removeChild(div.firstChild);
             };
-            const nameEl = document.createElement("p");
+            const nameEl = document.createElement("h5");
             nameEl.innerText = metadata.account.name;
             const maskEl = document.createElement("p");
             maskEl.innerText = `***${metadata.account.mask}`;
             payButton = document.createElement("button");
             payButton.classList.add("btn","btn-primary","btn-lg","px-5");
             payButton.setAttribute("id","bank-submit-button");
-            payButton.innerText = "Pay Invoice with Bank";
+            payButton.innerText = "Pay Invoice with Bank Account";
             div.appendChild(nameEl);
             div.appendChild(maskEl);
             div.appendChild(payButton);

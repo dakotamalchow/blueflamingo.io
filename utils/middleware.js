@@ -50,6 +50,10 @@ module.exports.validateInvoiceReqBody = (req,res,next)=>{
         item2: { description: 'test item 2', amount: '2.00' },
         ...
     }*/
+    /*paymentOptions: {
+        card: "on",
+        bank: "on"
+    }*/
     const InvoiceReqBodySchema = Joi.object({
         customerId: Joi.objectId().required(),
         lineItems: Joi.object().pattern(
@@ -59,6 +63,7 @@ module.exports.validateInvoiceReqBody = (req,res,next)=>{
                 amount: Joi.number().min(0).precision(2).required()
             }).required()
         ).required(),
+        paymentOptions: Joi.object().required(),
         notes: Joi.string().allow("")
     });
     validateReqBody(req,res,next,InvoiceReqBodySchema);

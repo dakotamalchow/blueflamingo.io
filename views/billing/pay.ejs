@@ -35,50 +35,57 @@
 </div>
 <hr>
 <% if(invoice.amount.remaining){ %>
-    <div class="row mb-5 text-center" id="select-payment-type">
-        <div class="col"> 
-            <button class="btn btn-primary btn-lg btn-block" id="card-select" data-form="#card-payment-form">Card</button>
-        </div>
-        <div class="col">
-            <button class="btn btn-outline-primary btn-lg btn-block" id="bank-select" data-form="#bank-payment-form">Bank</button>
-        </div>
-    </div>
-    <form action="/invoices/<%= invoice._id %>/pay" method="POST" id="card-payment-form" data-secret="<%= clientSecret %>">
-        <label class="form-label" for="card-element">Credit or debit card information</label>
-        <div class="mb-3 form-control" id="cardNumber"></div>
-        <div class="mb-3 form-row">
-            <div class="col-4">
-                <div class="form-control" id="cardExpiry"></div>
+    <% if((Object.keys(invoice.paymentOptions).length)>1){ %> 
+        <div class="row mb-5 text-center" id="select-payment-type">
+            <div class="col"> 
+                <button class="btn btn-primary btn-lg btn-block" id="card-select" data-form="#card-payment-form">Card</button>
             </div>
-            <div class="col-3">
-                <div class="form-control" id="cardCvc"></div>
-            </div>
-            <div class="col-5">
-                <input class="form-control" type="number" id="postalCode" placeholder="Postal Code">
+            <div class="col">
+                <button class="btn btn-outline-primary btn-lg btn-block" id="bank-select" data-form="#bank-payment-form">Bank</button>
             </div>
         </div>
-        <div class="mb-3 alert alert-danger" id="card-errors" role="alert" hidden></div>
-        <input type="text" id="stripePublicKey" value="<%= publicKey %>" hidden>
-        <input type="text" id="plaidLinkToken" value="<%= linkToken %>" hidden>
-        <div class="mb-3 text-center">
-            <button class="btn btn-primary btn-lg px-5" id="card-submit-button">Pay Invoice with Card</button>
-        </div>
-    </form>
-    <form action="/invoices/<%= invoice._id %>/pay" method="POST" id="bank-payment-form" hidden>
-        <div class="mb-3 text-center" id="bank-payment-div">
-            <p>You will be prompted to enter details for your bank.</p>
-            <button class="btn btn-primary btn-lg px-5" id="link-button" type="button">Add Bank Account</button>
-        </div>
-    </form>
+    <% } %>
+    <% if("card" in invoice.paymentOptions){ %>  
+        <form action="/invoices/<%= invoice._id %>/pay" method="POST" id="card-payment-form" data-secret="<%= clientSecret %>">
+            <label class="form-label" for="card-element">Credit or debit card information</label>
+            <div class="mb-3 form-control" id="cardNumber"></div>
+            <div class="mb-3 form-row">
+                <div class="col-4">
+                    <div class="form-control" id="cardExpiry"></div>
+                </div>
+                <div class="col-3">
+                    <div class="form-control" id="cardCvc"></div>
+                </div>
+                <div class="col-5">
+                    <input class="form-control" type="number" id="postalCode" placeholder="Postal Code">
+                </div>
+            </div>
+            <div class="mb-3 alert alert-danger" id="card-errors" role="alert" hidden></div>
+            <input type="text" id="stripePublicKey" value="<%= publicKey %>" hidden>
+            <div class="mb-3 text-center">
+                <button class="btn btn-primary btn-lg px-5" id="card-submit-button">Pay Invoice with Card</button>
+            </div>
+        </form>
+    <% } %> 
+    <% if("bank" in invoice.paymentOptions){ %>  
+        <form action="/invoices/<%= invoice._id %>/pay" method="POST" id="bank-payment-form" <%= ((Object.keys(invoice.paymentOptions).length)>1)?"hidden":"" %> >
+            <input type="text" id="plaidLinkToken" value="<%= linkToken %>" hidden>
+            <div class="mb-3 text-center" id="bank-payment-div">
+                <p>You will be prompted to enter details for your bank.</p>
+                <button class="btn btn-primary btn-lg px-5" id="link-button" type="button">Add Bank Account</button>
+            </div>
+        </form>
+    <% } %> 
 <% } %>
-<script type="text/javascript">
-
-</script> 
 <% block("scripts").append('<script src="/js/invoice-status.js"></script>') %>
-<% block("scripts").append('<script src="/js/select-payment-type.js"></script>') %>
-<% if(invoice.amount.remaining){ %> 
-    <% block("scripts").append('<script src="/js/submit-bank-payment.js"></script>') %>
+<% if((Object.keys(invoice.paymentOptions).length)>1){ %> 
+    <% block("scripts").append('<script src="/js/select-payment-type.js"></script>') %>
 <% } %> 
 <% if(invoice.amount.remaining){ %> 
-    <% block("scripts").append('<script src="/js/submit-card-payment.js"></script>') %>
+    <% if("card" in invoice.paymentOptions){ %> 
+        <% block("scripts").append('<script src="/js/submit-card-payment.js"></script>') %>
+    <% } %> 
+    <% if("bank" in invoice.paymentOptions){ %> 
+        <% block("scripts").append('<script src="/js/submit-bank-payment.js"></script>') %>
+    <% } %> 
 <% } %> 

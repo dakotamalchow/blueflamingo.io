@@ -85,12 +85,12 @@ module.exports.newForm = async(req,res)=>{
 };
 
 module.exports.createInvoice = async(req,res)=>{
-    const {customerId,lineItems,notes} = req.body;
+    const {customerId,lineItems,paymentOptions,notes} = req.body;
     const user = res.locals.currentUser;
     const customer = await Customer.findById(customerId);
     const invoiceCount = user.increaseInvoiceCount();
     const invoiceNumber = String(invoiceCount).padStart(4,"0");
-    const invoice = new Invoice({user,customer,invoiceNumber,lineItems:Object.values(lineItems),notes});
+    const invoice = new Invoice({user,customer,invoiceNumber,lineItems:Object.values(lineItems),paymentOptions,notes});
     let amount = 0;
     //lineItems comes back as nested objects, so this returns an array
     for(let lineItem of Object.values(lineItems)){
@@ -150,6 +150,7 @@ module.exports.customerInvoiceView = async(req,res)=>{
         country_codes: ["US"],
         language: "en"
     });
+    console.log(invoice.paymentOptions);
     res.render("billing/pay",{invoice,userName,publicKey,clientSecret:paymentIntent.client_secret,linkToken:linkToken.link_token});
 };
 
@@ -166,6 +167,7 @@ module.exports.payInvoice = async(req,res)=>{
             remaining: 0
         };
         invoice.status = "paid";
+        invoice.paymentType = paymentType;
         invoice.log.push({timeStamp:new Date(),description:"Invoice paid"});
         await invoice.save();
         await sendEmailInvoice(invoiceId,"receipt");
@@ -192,6 +194,7 @@ module.exports.payInvoice = async(req,res)=>{
             remaining: 0
         };
         invoice.status = "paid";
+        invoice.paymentType = paymentType;
         invoice.log.push({timeStamp:new Date(),description:"Invoice paid"});
         await invoice.save();
         await sendEmailInvoice(invoiceId,"receipt");
