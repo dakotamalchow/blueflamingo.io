@@ -12,7 +12,7 @@ module.exports.isLoggedIn = (req,res,next)=>{
 
 module.exports.hasPlan = (req,res,next)=>{
     const user = res.locals.currentUser;
-    if(!user.plan){
+    if(!(user.plan=="Standard")){
         return res.redirect("/register/purchase-plan");
     };
     next();

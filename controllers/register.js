@@ -119,9 +119,6 @@ module.exports.verifyingAccountPage = async(req,res)=>{
 
 module.exports.purchasePlanForm = (req,res)=>{
     const user = res.locals.currentUser;
-    if(user.plan){
-        return res.redirect("/invoices");
-    };
     let publicKey;
     if(process.env.ENV=="dev"){
         publicKey = process.env.STRIPE_PUB_KEY_DEV;
@@ -129,7 +126,7 @@ module.exports.purchasePlanForm = (req,res)=>{
     else if(process.env.ENV=="prod"){
         publicKey = process.env.STRIPE_PUB_KEY_PROD;
     };
-    res.render("register/purchase-plan",{publicKey});
+    res.render("register/purchase-plan",{user,publicKey});
 };
 
 module.exports.purchasePlan = async(req,res)=>{
@@ -143,14 +140,16 @@ module.exports.purchasePlan = async(req,res)=>{
     });
     const plan = await Plan.findOne({name:"Standard"});
     let couponId = "";
-    if(promoCode.toUpperCase()=="1FLAMINGO"){
-        couponId = "1-free-month";
-    }
-    else if(promoCode.toUpperCase()=="2FLAMINGOS"){
-        couponId = "2-free-months";
-    }
-    else if(promoCode.toUpperCase()=="3FLAMINGOS"){
-        couponId = "3-free-months";
+    if(promoCode){
+        if(promoCode.toUpperCase()=="1FLAMINGO"){
+            couponId = "1-free-month";
+        }
+        else if(promoCode.toUpperCase()=="2FLAMINGOS"){
+            couponId = "2-free-months";
+        }
+        else if(promoCode.toUpperCase()=="3FLAMINGOS"){
+            couponId = "3-free-months";
+        };
     };
     const subscription = await stripe.subscriptions.create({
         customer: user.stripeCustomer,

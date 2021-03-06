@@ -31,7 +31,7 @@ module.exports.editUser = async(req,res)=>{
 
 module.exports.cancelSubscrption = async(req,res)=>{
     const user = res.locals.currentUser;
-    user.plan = "";
+    user.plan = "Free";
     await user.save();
     await stripe.subscriptions.del(user.stripeSubscription);
     req.flash("success","Subscription was successfully canceled");
