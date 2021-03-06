@@ -15,7 +15,7 @@
 </div>
 <p class="text-center">You will billed $40.00 once a month on or around today's date, but can cancel at any time</p>
 <hr>
-<form action="/register/purchase-plan" method="POST" id="payment-form">
+<form action="/register/purchase-plan" method="POST" id="card-payment-form">
     <label class="form-label" for="card-element">Credit or debit card information</label>
     <div class="mb-3 form-control" id="cardNumber"></div>
     <div class="mb-3 form-row">
@@ -37,10 +37,10 @@
     </div>
     <input type="text" id="stripePublicKey" value="<%= publicKey %>" hidden>
     <div class="mb-3 text-center">
-        <button class="btn btn-primary px-5">
+        <button class="btn btn-primary px-5" id="card-submit-button">
             <span class="h5">Purchase Plan</span>
         </button>
     </div>
 </form>
-<% block("scripts").append('<script src="/js/submit-payment-method.js"></script>') %>
 <% block("scripts").append('<script src="/js/check-promo-code.js"></script>') %>
+<% block("scripts").append('<script src="/js/submit-card-payment-method.js"></script>') %>

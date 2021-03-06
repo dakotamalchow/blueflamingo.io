@@ -134,8 +134,7 @@ module.exports.purchasePlanForm = (req,res)=>{
 
 module.exports.purchasePlan = async(req,res)=>{
     const user = res.locals.currentUser;
-    const paymentMethodId = req.body.stripePaymentMethod;
-    const {promoCode} = req.body;
+    const {promoCode,paymentMethodId} = req.body;
     await stripe.paymentMethods.attach(paymentMethodId,{customer:user.stripeCustomer});
     await stripe.customers.update(user.stripeCustomer,{
         invoice_settings: {
@@ -143,7 +142,7 @@ module.exports.purchasePlan = async(req,res)=>{
           }
     });
     const plan = await Plan.findOne({name:"Standard"});
-    let couponId = ""
+    let couponId = "";
     if(promoCode.toUpperCase()=="1FLAMINGO"){
         couponId = "1-free-month";
     }
