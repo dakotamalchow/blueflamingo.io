@@ -1,9 +1,6 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
-
-let stripe;
-if(process.env.ENV=="dev"){ stripe = require('stripe')(process.env.STRIPE_SEC_KEY_DEV); }
-else if(process.env.ENV=="prod"){ stripe = require('stripe')(process.env.STRIPE_SEC_KEY_PROD); };
+const stripe = require('stripe')(process.env.STRIPE_SEC_KEY);
 
 const Plan = require("../models/plan");
 const BlueFlamingo = require("../models/blueFlamingo");

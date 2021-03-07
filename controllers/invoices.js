@@ -1,17 +1,14 @@
 const fs = require("fs");
 const ejs = require("ejs");
 const sgMail = require("@sendgrid/mail");
+const stripe = require('stripe')(process.env.STRIPE_SEC_KEY);
 const plaid = require("plaid");
 
 const plaidClient = new plaid.Client({
-    clientID:"603820da02cf49000f162105",
-    secret:"2ebd7bc07a8e3dc2347b42f9e5e2ed",
-    env:plaid.environments.sandbox
+    clientID:process.env.PLAID_CLIENT_ID,
+    secret:process.env.PLAID_SECRET,
+    env:plaid.environments[process.env.PLAID_ENV]
 });
-
-let stripe;
-if(process.env.ENV=="dev"){ stripe = require('stripe')(process.env.STRIPE_SEC_KEY_DEV); }
-else if(process.env.ENV=="prod"){ stripe = require('stripe')(process.env.STRIPE_SEC_KEY_PROD); };
 
 const Invoice = require("../models/invoice");
 const Item = require("../models/item");
@@ -122,13 +119,7 @@ module.exports.sendInvoiceEmail = async(req,res)=>{
 
 module.exports.customerInvoiceView = async(req,res)=>{
     const invoiceId = req.params.id;
-    let publicKey;
-    if(process.env.ENV=="dev"){
-        publicKey = process.env.STRIPE_PUB_KEY_DEV;
-    }
-    else if(process.env.ENV=="prod"){
-        publicKey = process.env.STRIPE_PUB_KEY_PROD;
-    };
+    const publicKey = process.env.STRIPE_PUB_KEY;
     const invoice = await Invoice.findById(invoiceId).populate("customer").populate("user");
     const userName = invoice.user.businessName||invoice.user.name;
     const processingFee = ((invoice.amount.due*.0315)+0.30).toFixed(2);

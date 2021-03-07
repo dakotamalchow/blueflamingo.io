@@ -1,8 +1,5 @@
-let stripe;
-if(process.env.ENV=="dev"){ stripe = require('stripe')(process.env.STRIPE_SEC_KEY_DEV); }
-else if(process.env.ENV=="prod"){ stripe = require('stripe')(process.env.STRIPE_SEC_KEY_PROD); };
-
 const sgMail = require("@sendgrid/mail");
+const stripe = require('stripe')(process.env.STRIPE_SEC_KEY);
 
 const User = require("../models/user");
 const Plan = require("../models/plan");
@@ -138,13 +135,7 @@ module.exports.verifyingAccountPage = async(req,res)=>{
 
 module.exports.purchasePlanForm = (req,res)=>{
     const user = res.locals.currentUser;
-    let publicKey;
-    if(process.env.ENV=="dev"){
-        publicKey = process.env.STRIPE_PUB_KEY_DEV;
-    }
-    else if(process.env.ENV=="prod"){
-        publicKey = process.env.STRIPE_PUB_KEY_PROD;
-    };
+    const publicKey = process.env.STRIPE_PUB_KEY;
     res.render("register/purchase-plan",{user,publicKey});
 };
 
