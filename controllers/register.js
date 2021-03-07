@@ -2,8 +2,24 @@ let stripe;
 if(process.env.ENV=="dev"){ stripe = require('stripe')(process.env.STRIPE_SEC_KEY_DEV); }
 else if(process.env.ENV=="prod"){ stripe = require('stripe')(process.env.STRIPE_SEC_KEY_PROD); };
 
+const sgMail = require("@sendgrid/mail");
+
 const User = require("../models/user");
 const Plan = require("../models/plan");
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+const sendEmail = async(subject,text,emailView)=>{
+    const emailFile = fs.readFileSync(`views/email/${emailView}.ejs`,{encoding:"utf-8"});
+    const msg = {
+        to:invoice.customer.email,
+        from:"billing@blueflamingo.io",
+        subject:subject,
+        text:text,
+        html:ejs.render(emailFile)
+    };
+    await sgMail.send(msg);
+};
 
 module.exports.registerForm = (req,res)=>{
     const data = req.query;
@@ -111,6 +127,9 @@ module.exports.verifyingAccountPage = async(req,res)=>{
     if(stripeAccount.charges_enabled && stripeAccount.details_submitted){
         user.isStripeVerified = true;
         await user.save();
+        const emailSubject = "Welcome to Blue Flamingo!";
+        const emailText = "Welcome to the simple way to invoice. Go to https://blueflamingo.io/invoices/new to create an invoice.";
+        await sendEmail(emailSubject,emailText,"registered");
         req.flash("success","Accout info added successfully");
         return res.redirect("/register/purchase-plan");
     };
