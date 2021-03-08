@@ -173,7 +173,7 @@ module.exports.payInvoice = async(req,res)=>{
         const bankAccountResponse = await plaidClient.createStripeToken(accessResponse.access_token,plaidAccountId);
         const bankAccountToken = bankAccountResponse.stripe_bank_account_token;
         await stripe.customers.update(stripeCustomerId,{source:bankAccountToken});
-        const processingFee = (invoice.amount.due*.0105).toFixed(2);
+        const processingFee = (invoice.amount.due*.0125).toFixed(2);
         await stripe.charges.create({
             amount: invoice.amount.due*100,
             currency: "usd",
