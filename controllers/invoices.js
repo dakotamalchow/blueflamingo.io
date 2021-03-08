@@ -146,7 +146,6 @@ module.exports.customerInvoiceView = async(req,res)=>{
         country_codes: ["US"],
         language: "en"
     });
-    console.log(invoice.paymentOptions);
     res.render("billing/pay",{invoice,userName,publicKey,clientSecret:paymentIntent.client_secret,linkToken:linkToken.link_token});
 };
 
@@ -184,7 +183,7 @@ module.exports.payInvoice = async(req,res)=>{
                 destination: invoice.user.stripeAccount,
             },
             metadata:{
-                invoiceId: invoice._id
+                invoiceId: String(invoice._id)
             }
         });
         invoice.amount = {
