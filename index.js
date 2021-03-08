@@ -11,7 +11,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const flash = require("connect-flash");
 const dns = require("dns");
-require("dotenv").config();
+require("dotenv").config({path:path.resolve(__dirname,".env")});
 
 const AppError = require("./utils/AppError");
 const User = require("./models/user");
