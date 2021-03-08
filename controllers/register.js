@@ -1,3 +1,5 @@
+const fs = require("fs");
+const ejs = require("ejs");
 const sgMail = require("@sendgrid/mail");
 const stripe = require('stripe')(process.env.STRIPE_SEC_KEY);
 
@@ -6,10 +8,10 @@ const Plan = require("../models/plan");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const sendEmail = async(subject,text,emailView)=>{
+const sendEmail = async(email,subject,text,emailView)=>{
     const emailFile = fs.readFileSync(`views/email/${emailView}.ejs`,{encoding:"utf-8"});
     const msg = {
-        to:invoice.customer.email,
+        to:email,
         from:"billing@blueflamingo.io",
         subject:subject,
         text:text,
@@ -126,7 +128,7 @@ module.exports.verifyingAccountPage = async(req,res)=>{
         await user.save();
         const emailSubject = "Welcome to Blue Flamingo!";
         const emailText = "Welcome to the simple way to invoice. Go to https://blueflamingo.io/invoices/new to create an invoice.";
-        await sendEmail(emailSubject,emailText,"registered");
+        await sendEmail(user.email,emailSubject,emailText,"registered");
         req.flash("success","Accout info added successfully");
         return res.redirect("/register/purchase-plan");
     };
