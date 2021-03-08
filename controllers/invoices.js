@@ -16,7 +16,7 @@ const Customer = require("../models/customer");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const sendEmailInvoice = async(invoiceId,emailType)=>{
+const sendEmailInvoice = async(invoiceId,emailType,errorMessage="")=>{
     const invoice = await Invoice.findById(invoiceId).populate("customer").populate("user");
     const userName = invoice.user.businessName||invoice.user.name;
     const invoiceTemplate = fs.readFileSync("views/email/invoice.ejs",{encoding:"utf-8"});
@@ -27,6 +27,7 @@ const sendEmailInvoice = async(invoiceId,emailType)=>{
             statusColor += "#6c757d";
             break;
         case "open":
+        case "pending":
             //success - green
             statusColor += "#28a745";
             break;
@@ -46,14 +47,18 @@ const sendEmailInvoice = async(invoiceId,emailType)=>{
     }
     else if(emailType=="receipt"){
         subject = `Receipt from ${userName} #${invoice.invoiceNumber}`;
-        text = `This is a confirmation that invoice #${invoice.invoiceNumber} from ${userName} has been paid.`;
+        text = `This is a confirmation that invoice #${invoice.invoiceNumber} from ${userName} is ${invoice.status}.`;
+    }
+    else if(emailType=="payment failure"){
+        subject = `Payment failure - ${userName} #${invoice.invoiceNumber}`;
+        text = `Your payment failed on invoice #${invoice.invoiceNumber} from ${userName}. Please visit https://blueflamingo.io/invoices/${invoice._id}/pay to pay your invoice.`;
     };
     const msg = {
         to:invoice.customer.email,
         from:"billing@blueflamingo.io",
         subject:subject,
         text:text,
-        html:ejs.render(invoiceTemplate,{invoice,userName,statusColor})
+        html:ejs.render(invoiceTemplate,{invoice,userName,statusColor,errorMessage})
     };
     await sgMail.send(msg);
     invoice.log.push({timeStamp:new Date(),description:`Email ${emailType} sent to customer`});
@@ -177,6 +182,9 @@ module.exports.payInvoice = async(req,res)=>{
             application_fee_amount: processingFee*100,
             transfer_data: {
                 destination: invoice.user.stripeAccount,
+            },
+            metadata:{
+                invoiceId: invoice._id
             }
         });
         invoice.amount = {
@@ -184,12 +192,36 @@ module.exports.payInvoice = async(req,res)=>{
             paid: invoice.amount.due,
             remaining: 0
         };
-        invoice.status = "paid";
+        invoice.status = "pending";
         invoice.paymentType = paymentType;
-        invoice.log.push({timeStamp:new Date(),description:"Invoice paid"});
+        invoice.log.push({timeStamp:new Date(),description:"Payment pending"});
         await invoice.save();
         await sendEmailInvoice(invoiceId,"receipt");
     }
     req.flash("success","Thank you for your payment! You will receive an email confirmation shortly.");
     res.redirect(`/invoices/${invoiceId}/pay`);    
+};
+
+module.exports.webhook = async(req,res)=>{
+    const event = req.body;
+    if(event.type=="charge.failed"){
+        const invoice = await Invoice.findById(event.data.object.metadata.invoiceId);
+        invoice.amount = {
+            due: invoice.amount.due,
+            paid: 0,
+            remaining: invoice.amount.due
+        };
+        invoice.status = "open";
+        invoice.log.push({timeStamp:new Date(),description:`Payment failed - ${event.data.object.failure_message}`});
+        await invoice.save();
+        await sendEmailInvoice(invoiceId,"payment failure",event.data.object.failure_message);
+    }
+    else if(event.type=="charge.succeeded"){
+        const invoice = await Invoice.findById(event.data.object.metadata.invoiceId);
+        invoice.status = "paid";
+        invoice.log.push({timeStamp:new Date(),description:"Invoice paid"});
+        await invoice.save();
+        await sendEmailInvoice(invoiceId,"receipt");
+    };
+    res.json({received:true});
 };

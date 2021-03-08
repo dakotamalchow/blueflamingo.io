@@ -7,6 +7,7 @@ for(let invoiceStatusSpan of invoiceStatusSpans){
             backgroundColor += "bg-secondary";
             break;
         case "open":
+        case "pending":
             backgroundColor += "bg-success";
             break;
         case "paid":

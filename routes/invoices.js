@@ -7,9 +7,11 @@ const invoices = require("../controllers/invoices");
 
 router.get("/",isLoggedIn,isStripeVerified,hasPlan,catchAsync(invoices.index));
 
+router.post("/",isLoggedIn,isStripeVerified,hasPlan,validateInvoiceReqBody,catchAsync(invoices.createInvoice));
+
 router.get("/new",isLoggedIn,isStripeVerified,hasPlan,catchAsync(invoices.newForm));
 
-router.post("/",isLoggedIn,isStripeVerified,hasPlan,validateInvoiceReqBody,catchAsync(invoices.createInvoice));
+router.post("/webhook",catchAsync(invoices.webhook));
 
 router.get("/:id",isLoggedIn,isStripeVerified,hasPlan,catchAsync(invoices.invoiceDetails));
 

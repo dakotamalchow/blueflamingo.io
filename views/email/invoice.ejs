@@ -12,6 +12,11 @@
         <div style="text-align: center;">
             <span style="font-size: 1.25rem; margin-top: 0; padding: 0.1rem 1rem; color: #FFF; background-color: <%= statusColor %>; border-radius: 0.25rem;"><%= invoice.status %></span>
         </div>
+        <% if(errorMessage){ %> 
+            <div style="margin-top: 1rem; border: 1px solid transparent; border-radius: 0.25rem; color: #721C24; background-color: #F8D7DA; border-color: #F5C6CB;" role="alert">
+                <p style="font-size: 1.5rem; text-align: center;"><%= errorMessage %> </p>
+            </div>
+        <% } %> 
         <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
         <p style="font-size: 1.5rem; margin-top: 0; margin-bottom: 0.5rem;">Billable To</p>
         <p style="font-size: 1rem;"><%= invoice.customer.name %> (<%= invoice.customer.email %>)</p>
