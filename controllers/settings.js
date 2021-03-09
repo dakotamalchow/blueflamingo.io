@@ -37,12 +37,13 @@ module.exports.cancelSubscrption = async(req,res)=>{
 };
 
 module.exports.editPaymentMethodForm = (req,res)=>{
-    res.render("settings/edit-payment-method");
+    const publicKey = process.env.STRIPE_PUB_KEY;
+    res.render("settings/edit-payment-method",{publicKey});
 };
 
 module.exports.editPaymentMethod = async(req,res)=>{
     const user = res.locals.currentUser;
-    const paymentMethodId = req.body.stripePaymentMethod;
+    const {paymentMethodId} = req.body;
     await stripe.paymentMethods.attach(paymentMethodId,{customer:user.stripeCustomer});
     await stripe.customers.update(user.stripeCustomer,{
         invoice_settings: {
