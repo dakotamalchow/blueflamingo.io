@@ -7,7 +7,15 @@
 <% } %> 
 <p>Name: <%= user.name %> </p>
 <p>Email: <%= user.email %> </p>
-<a class="btn btn-primary" href="/settings/edit-user">Edit</a>
+<p>Logo:</p>
+<% if(user.logo.url){ %>
+    <div class="mb-3">
+        <img src="<%= user.thumbnail %> " alt="">
+    </div>
+<% } %>
+<div> 
+    <a class="btn btn-primary" href="/settings/edit-user">Edit</a>
+</div>
 <hr>
 <h3>Subscription Info</h3>
 <% if(stripeSubscription.status == "active"){ %> 

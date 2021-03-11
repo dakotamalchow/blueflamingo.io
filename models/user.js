@@ -35,6 +35,11 @@ const userSchema = new Schema({
         default: 0,
         required: true
     },
+    logo:{
+        url: String,
+        fileName: String,
+        originalName: String
+    },
     isStripeVerified:{
         type: Boolean,
         default: false,
@@ -52,6 +57,10 @@ userSchema.methods.increaseInvoiceCount = function(){
     this.save();
     return this.invoiceCount;
 };
+
+userSchema.virtual("thumbnail").get(function(){
+    return this.logo.url.replace("/upload","/upload/w_200,c_thumb");
+});
 
 //use email to login instead of a username (set in index.js as well)
 userSchema.plugin(passportLocalMongoose,{usernameField:"email"});

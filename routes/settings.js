@@ -1,5 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const {storage} = require("../cloudinary");
+const upload = multer({storage});
 
 const catchAsync = require("../utils/catchAsync");
 const {isLoggedIn,isStripeVerified,hasPlan} = require("../utils/middleware");
@@ -9,7 +12,7 @@ router.get("/",isLoggedIn,isStripeVerified,hasPlan,catchAsync(settings.index));
 
 router.get("/edit-user",isLoggedIn,isStripeVerified,hasPlan,settings.editUserForm);
 
-router.post("/edit-user",isLoggedIn,isStripeVerified,hasPlan,catchAsync(settings.editUser));
+router.post("/edit-user",isLoggedIn,isStripeVerified,hasPlan,upload.single("logo"),catchAsync(settings.editUser));
 
 router.post("/cancel-subscription",isLoggedIn,isStripeVerified,hasPlan,catchAsync(settings.cancelSubscrption));
 

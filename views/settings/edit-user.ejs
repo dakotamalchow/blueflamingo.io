@@ -11,7 +11,7 @@
     <div class="col-2 col-sm-1"></div>
 </div>
 <hr>
-<form action="/settings/edit-user" method="POST" class="validated-form" novalidate>
+<form action="/settings/edit-user" method="POST" class="validated-form" enctype="multipart/form-data" novalidate>
     <div class="mb-3">
         <label class="form-label h4" for="name">Name</label>
         <input class="form-control" type="text" id="name" name="name" value="<%= user.name %>" required>
@@ -24,7 +24,22 @@
         <label class="form-label h4" for="businessName">Business Name</label>
         <input class="form-control" type="text" id="businessName" name="businessName" value="<%= user.businessName %>">
     </div>
+    <h4 class="form-label">Logo</h4>
+    <p>This will be the image shown on customer invoices</p>
+    <div class="mb-3 input-group">
+        <div class="custom-file">
+            <input class="custom-file-input" type="file" id="logoInput" name="logo" aria-describedby="logo">
+            <label class="custom-file-label" for="logoInput" id="logoLabel"><%= user.logo.originalName?user.logo.originalName:"Choose file" %></label>
+        </div>
+    </div>
+    <div class="mb-3 text-center position-relative" id="logoImgDiv" <%= user.logo.originalName?"":"hidden" %>>
+        <img class="img-thumbnail" src="<%= user.logo.url?user.logo.url:"" %>" alt="" id="logoImg" width="200">
+        <button class="btn btn-danger position-absolute mt-3 ml-2" id="removeLogoButton" type="button">
+            <span class="oi oi-delete" title="delete" aria-hidden="true"></span>
+        </button>
+    </div>
     <div class="mb-3 text-center">
         <button class="btn btn-primary btn-lg">Save</button>
     </div>
 </form>
+<% block("scripts").append('<script src="/js/preview-logo.js"></script>') %>
