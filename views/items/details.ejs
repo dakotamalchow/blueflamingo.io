@@ -1,0 +1,19 @@
+<% layout("layouts/boilerplate") %>
+<div class="row">
+    <div class="col-2 col-sm-1">
+        <a class="btn btn-danger align-self-start" href="/items">
+            <span class="oi oi-arrow-thick-left" title="arrow thick left" aria-hidden="true"></span>
+        </a>
+    </div>
+    <div class="col">
+        <h2 class="text-center">Item Details</h2>
+    </div>
+    <div class="col-2 col-sm-1"></div>
+</div>
+<hr>
+<p>Description: <%= item.description %></p>
+<p>Amount: $<%= item.amount.toFixed(2) %></p>
+<hr>
+<div class="text-center">
+    <a class="btn btn-primary btn-lg" href="/items/<%= item._id %>/edit">Edit</a>
+</div>
