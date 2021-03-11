@@ -1,9 +1,14 @@
 <% layout("layouts/boilerplate") %>
 <% block("header-scripts").append('<script src="https://js.stripe.com/v3/"></script>') %>
 <% block("header-scripts").append('<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>') %>
+<% if(invoice.user.logo.url){ %>
+    <div class="text-center"> 
+        <img src="<%= invoice.user.thumbnail %>" alt="logo">
+    </div>
+<% } %>
 <div>
-    <h2 class="text-center">Invoice #<%= invoice.invoiceNumber %></h2>
-    <h3 class="text-center"><%= userName %></h3>
+    <h2 class="text-center"><%= invoice.user.businessName %></h2>
+    <h3 class="text-center">Invoice #<%= invoice.invoiceNumber %></h3>
 </div>
 <div class="row">
     <span class="mx-auto px-3 h5 invoice-status"><%= invoice.status %></span>

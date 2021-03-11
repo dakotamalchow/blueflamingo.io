@@ -18,7 +18,6 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const sendEmailInvoice = async(invoiceId,emailType,errorMessage="")=>{
     const invoice = await Invoice.findById(invoiceId).populate("customer").populate("user");
-    const userName = invoice.user.businessName||invoice.user.name;
     const invoiceTemplate = fs.readFileSync("views/email/invoice.ejs",{encoding:"utf-8"});
     let statusColor = "";
     switch(invoice.status){
@@ -42,23 +41,23 @@ const sendEmailInvoice = async(invoiceId,emailType,errorMessage="")=>{
     let subject = "";
     let text = "";
     if(emailType=="invoice"){
-        subject = `New Invoice from ${userName} #${invoice.invoiceNumber}`;
-        text = `${userName} sent you a new invoice for $${invoice.amount.due.toFixed(2)}. Please visit https://blueflamingo.io/invoices/${invoice._id}/pay to pay your invoice.`;
+        subject = `New Invoice from ${invoice.user.businessName} #${invoice.invoiceNumber}`;
+        text = `${invoice.user.businessName} sent you a new invoice for $${invoice.amount.due.toFixed(2)}. Please visit https://blueflamingo.io/invoices/${invoice._id}/pay to pay your invoice.`;
     }
     else if(emailType=="receipt"){
-        subject = `Receipt from ${userName} #${invoice.invoiceNumber}`;
-        text = `This is a confirmation that invoice #${invoice.invoiceNumber} from ${userName} is ${invoice.status}.`;
+        subject = `Receipt from ${invoice.user.businessName} #${invoice.invoiceNumber}`;
+        text = `This is a confirmation that invoice #${invoice.invoiceNumber} from ${invoice.user.businessName} is ${invoice.status}.`;
     }
     else if(emailType=="payment failure"){
-        subject = `Payment failure - ${userName} #${invoice.invoiceNumber}`;
-        text = `Your payment failed on invoice #${invoice.invoiceNumber} from ${userName}. Please visit https://blueflamingo.io/invoices/${invoice._id}/pay to pay your invoice.`;
+        subject = `Payment failure - ${invoice.user.businessName} #${invoice.invoiceNumber}`;
+        text = `Your payment failed on invoice #${invoice.invoiceNumber} from ${invoice.user.businessName}. Please visit https://blueflamingo.io/invoices/${invoice._id}/pay to pay your invoice.`;
     };
     const msg = {
         to:invoice.customer.email,
         from:"billing@blueflamingo.io",
         subject:subject,
         text:text,
-        html:ejs.render(invoiceTemplate,{invoice,userName,statusColor,errorMessage})
+        html:ejs.render(invoiceTemplate,{invoice,statusColor,errorMessage})
     };
     await sgMail.send(msg);
     invoice.log.push({timeStamp:new Date(),description:`Email ${emailType} sent to customer`});
@@ -126,7 +125,6 @@ module.exports.customerInvoiceView = async(req,res)=>{
     const invoiceId = req.params.id;
     const publicKey = process.env.STRIPE_PUB_KEY;
     const invoice = await Invoice.findById(invoiceId).populate("customer").populate("user");
-    const userName = invoice.user.businessName||invoice.user.name;
     const processingFee = ((invoice.amount.due*.0315)+0.30).toFixed(2);
     const paymentIntent = await stripe.paymentIntents.create({
         payment_method_types: ["card"],
@@ -146,7 +144,7 @@ module.exports.customerInvoiceView = async(req,res)=>{
         country_codes: ["US"],
         language: "en"
     });
-    res.render("billing/pay",{invoice,userName,publicKey,clientSecret:paymentIntent.client_secret,linkToken:linkToken.link_token});
+    res.render("billing/pay",{invoice,publicKey,clientSecret:paymentIntent.client_secret,linkToken:linkToken.link_token});
 };
 
 module.exports.payInvoice = async(req,res)=>{

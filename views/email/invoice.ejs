@@ -7,8 +7,13 @@
 </head>
 <body style="background-color: #F6F8FA;">
     <div style="padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto; max-width: 1200px;">
-        <p style="font-size: 2rem; text-align: center; margin-top: 0; margin-bottom: 0.5rem;">Invoice #<%= invoice.invoiceNumber %></p>
-        <p style="font-size: 1.75rem; text-align: center; margin-top: 0; margin-bottom: 0.5rem;"><%= userName %></p>
+        <% if(invoice.user.logo.url){ %>
+            <div style="text-align: center;"> 
+                <img src="<%= invoice.user.thumbnail %>" alt="logo">
+            </div>
+        <% } %>
+        <p style="font-size: 2rem; text-align: center; margin-top: 0; margin-bottom: 0.5rem;"><%= invoice.user.businessName %></p>
+        <p style="font-size: 1.75rem; text-align: center; margin-top: 0; margin-bottom: 0.5rem;">Invoice #<%= invoice.invoiceNumber %></p>
         <div style="text-align: center;">
             <span style="font-size: 1.25rem; margin-top: 0; padding: 0.1rem 1rem; color: #FFF; background-color: <%= statusColor %>; border-radius: 0.25rem;"><%= invoice.status %></span>
         </div>
