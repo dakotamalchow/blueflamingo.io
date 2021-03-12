@@ -66,7 +66,7 @@
             };
             console.log("onExit metadata",metadata);
         },
-        env:"sandbox"
+        env:"development"
     });
 
     // <!-- <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> -->
