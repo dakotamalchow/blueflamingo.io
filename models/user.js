@@ -3,7 +3,11 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const {Schema} = mongoose;
 
 const userSchema = new Schema({
-    name:{
+    firstName:{
+        type: String,
+        required: true
+    },
+    lastName:{
         type: String,
         required: true
     },
@@ -50,6 +54,10 @@ const userSchema = new Schema({
         default: false,
         required: true
     }
+});
+
+userSchema.virtual("name").get(function(){
+    return `${this.firstName} ${this.lastName}`;
 });
 
 userSchema.methods.increaseInvoiceCount = function(){

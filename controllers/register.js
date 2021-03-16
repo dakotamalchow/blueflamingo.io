@@ -30,8 +30,11 @@ const validatePassword = (password,confirmPassword)=>{
     if(password.length<8){
         errorMessage+="Password must be at least 8 characters long. ";
     };
-    if(!/[A-Za-z]/.test(password)){
-        errorMessage+="Password must contain at least one letter. ";
+    if(!/[a-z]/.test(password)){
+        errorMessage+="Password must contain at least one lowercase letter. ";
+    };
+    if(!/[A-Z]/.test(password)){
+        errorMessage+="Password must contain at least one uppercase letter. ";
     };
     if(!/\d/.test(password)){
         errorMessage+="Password must contain at least one number. ";
@@ -46,16 +49,17 @@ const validatePassword = (password,confirmPassword)=>{
 };
 
 module.exports.registerUser = async(req,res,next)=>{
-    const {name,businessName,email,password,confirmPassword} = req.body;
+    const {firstName,lastName,businessName,email,password,confirmPassword} = req.body;
     const isPasswordValid = validatePassword(password,confirmPassword);
     if(isPasswordValid!=true){
         req.flash("error",isPasswordValid);
-        let queryString = `?name=${encodeURIComponent(name)}`;
+        let queryString = `?firstName=${encodeURIComponent(firstName)}`;
+        queryString+= `&lastName=${encodeURIComponent(lastName)}`;
         queryString+=`&businessName=${encodeURIComponent(businessName)}`;
         queryString+=`&email=${encodeURIComponent(email)}`;
         return res.redirect("/register"+queryString);
     };
-    const user = new User({name,businessName,email});
+    const user = new User({firstName,lastName,businessName,email});
     const registeredUser = await User.register(user,password);
     req.login(registeredUser,err=>{
         if(err) {return next(err);}

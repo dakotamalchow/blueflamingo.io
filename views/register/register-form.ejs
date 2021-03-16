@@ -1,9 +1,15 @@
 <% layout("layouts/boilerplate") %>
 <h2>Register</h2>
 <form action="/register" method="POST" class="validated-form" novalidate>
-    <div class="mb-3">
-        <label class="form-label" for="name">Name</label>
-        <input class="form-control" type="text" id="name" name="name" value="<%= data.name %>" placeholder="John Smith" required>
+    <div class="form-row">
+        <div class="col-md mb-3">
+            <label class="form-label" for="firstName">First Name</label>
+            <input class="form-control" type="text" id="firstName" name="firstName" value="<%= data.firstName %>" placeholder="John" required>
+        </div>
+        <div class="col-md mb-3">
+            <label class="form-label" for="lastName">Last Name</label>
+            <input class="form-control" type="text" id="lastName" name="lastName" value="<%= data.lastName %>" placeholder="Smith" required>
+        </div>
     </div>
     <div class="mb-3">
         <label class="form-label" for="businessName">Business Name</label>
@@ -24,7 +30,8 @@
     <p class="mb-0">Password requirements:</p>
     <ul>
         <li>Must be at least 8 characters long</li>
-        <li>Must contain at least one letter</li>
+        <li>Must contain at least one lowercase letter</li>
+        <li>Must contain at least one uppercase letter</li>
         <li>Must contain at least one number</li>
     </ul>
     <div class="mb-3">
