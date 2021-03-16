@@ -3,7 +3,10 @@ const Item = require("../models/item");
 module.exports.index = async(req,res)=>{
     const user = res.locals.currentUser;
     req.session.returnTo = req.originalUrl;
-    const items = await Item.find({user});
+    const {sortBy,sortOrder} = req.query;
+    sortQuery = {};
+    sortQuery[sortBy] = sortOrder;
+    const items = await Item.find({user}).sort(sortQuery);
     res.render("items/index",{items});
 };
 

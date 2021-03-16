@@ -5,7 +5,10 @@ const Customer = require("../models/customer");
 module.exports.index = async(req,res)=>{
     const user = res.locals.currentUser;
     req.session.returnTo = req.originalUrl;
-    const customers = await Customer.find({user});
+    const {sortBy,sortOrder} = req.query;
+    sortQuery = {};
+    sortQuery[sortBy] = sortOrder;
+    const customers = await Customer.find({user}).sort(sortQuery);
     res.render("customers/index",{customers});
 };
 

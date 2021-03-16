@@ -66,14 +66,19 @@ const sendEmailInvoice = async(invoiceId,emailType,errorMessage="")=>{
 
 module.exports.index = async(req,res)=>{
     const user = res.locals.currentUser;
-    const invoiceStatus = req.query.status;
-    let invoices;
-    if(invoiceStatus){
-        invoices = await Invoice.find({user,status:invoiceStatus}).populate("customer");
+    const {status,sortBy,sortOrder} = req.query;
+    let statusArray = [];
+    let invoiceStatus = "";
+    if(status){
+        statusArray.push(status);
+        invoiceStatus = status;
     }
     else{
-        invoices = await Invoice.find({user}).populate("customer");
+        statusArray.push("draft","open","pending","paid");
     };
+    sortQuery = {};
+    sortQuery[sortBy] = sortOrder;
+    const invoices = await Invoice.find({user,status:{$in:statusArray}}).populate("customer").sort(sortQuery);
     res.render("billing/index",{invoices,invoiceStatus});
 };
 
