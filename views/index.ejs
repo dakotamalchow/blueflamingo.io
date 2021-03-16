@@ -18,7 +18,7 @@
                 </div>
             <% } else { %>
                 <% if(!currentUser.isStripeVerified){ %> 
-                    <a class="btn btn-primary" href="/register/complete-account">Complete Account</a>
+                    <a class="btn btn-primary" href="/register/add-account-info">Add Account Info</a>
                 <% } else { %> 
                     <% if(!currentUser.plan){ %>
                         <a class="btn btn-primary" href="/register/purchase-plan">Purchase Plan</a>
