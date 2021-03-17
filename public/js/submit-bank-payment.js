@@ -67,7 +67,7 @@
             console.log("onExit metadata",metadata);
         },
         //plaidEnv is passed as a variable in the view
-        env:"sandbox"
+        env: plaidEnv
     });
 
     // <!-- <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> -->
