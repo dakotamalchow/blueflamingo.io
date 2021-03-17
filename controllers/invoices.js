@@ -144,12 +144,18 @@ module.exports.customerInvoiceView = async(req,res)=>{
         user:{
             client_user_id: invoice.customer._id
         },
-        client_name: "Blue Flamingo",
+        client_name: invoice.user.businessName,
         products: ["auth"],
         country_codes: ["US"],
         language: "en"
     });
-    res.render("billing/pay",{invoice,publicKey,clientSecret:paymentIntent.client_secret,linkToken:linkToken.link_token});
+    res.render("billing/pay",{
+        invoice,
+        publicKey,
+        clientSecret:paymentIntent.client_secret,
+        linkToken:linkToken.link_token,
+        plaidEnv:plaid.environments[process.env.PLAID_ENV]
+    });
 };
 
 module.exports.payInvoice = async(req,res)=>{
@@ -185,6 +191,7 @@ module.exports.payInvoice = async(req,res)=>{
             transfer_data: {
                 destination: invoice.user.stripeAccount,
             },
+            statement_descriptor: invoice.user.statementDescriptor,
             metadata:{
                 invoiceId: String(invoice._id)
             }

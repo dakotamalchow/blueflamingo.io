@@ -48,15 +48,37 @@ const validatePassword = (password,confirmPassword)=>{
     return true;
 };
 
+const validateBusinessName = (businessName)=>{
+    let errorMessage = "";
+    if(businessName.length<5){
+        errorMessage+="Business name must be at least 5 characters. ";
+    };
+    if(!/[a-zA-Z]/.test(businessName)){
+        errorMessage+="Business name must contain at least one letter. ";
+    };
+    if(errorMessage){
+        return "The business name will be shown on customer invoices and card/bank statements. " + errorMessage;
+    };
+    return true;
+};
+
 module.exports.registerUser = async(req,res,next)=>{
     const {firstName,lastName,businessName,email,password,confirmPassword} = req.body;
+    const isBusinessNameValid = validateBusinessName(businessName);
     const isPasswordValid = validatePassword(password,confirmPassword);
-    if(isPasswordValid!=true){
-        req.flash("error",isPasswordValid);
+    if(isBusinessNameValid!=true||isPasswordValid!=true){
         let queryString = `?firstName=${encodeURIComponent(firstName)}`;
         queryString+= `&lastName=${encodeURIComponent(lastName)}`;
         queryString+=`&businessName=${encodeURIComponent(businessName)}`;
         queryString+=`&email=${encodeURIComponent(email)}`;
+        let errorMessage = "";
+        if(isBusinessNameValid!=true){
+            errorMessage+=`${isBusinessNameValid} `;
+        };
+        if(isPasswordValid!=true){
+            errorMessage+=`${isPasswordValid} `;
+        };
+        req.flash("error",errorMessage);
         return res.redirect("/register"+queryString);
     };
     const user = new User({firstName,lastName,businessName,email});
@@ -74,6 +96,11 @@ module.exports.registerUser = async(req,res,next)=>{
         capabilities:{
             card_payments:{requested:true},
             transfers:{requested:true}
+        },
+        settings:{
+            payments:{
+                statement_descriptor: user.statementDescriptor
+            }
         }
     });
     user.stripeAccount = stripeAccount.id;

@@ -60,6 +60,10 @@ userSchema.virtual("name").get(function(){
     return `${this.firstName} ${this.lastName}`;
 });
 
+userSchema.virtual("statementDescriptor").get(function(){
+    return this.businessName.replace(/[<>\'"*]/g,"").substring(0,22);
+});
+
 userSchema.methods.increaseInvoiceCount = function(){
     this.invoiceCount+=1;
     this.save();
