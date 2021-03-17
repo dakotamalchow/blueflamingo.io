@@ -90,6 +90,6 @@
     </div>
 </form>
 <script>
-    const itemsStringify = JSON.stringify(items);
+    const items = <%- JSON.stringify(items) %>;
 </script>
 <% block("scripts").append('<script src="/js/line-items.js"></script>') %> 

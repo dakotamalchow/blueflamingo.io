@@ -52,7 +52,9 @@
     </div>
 </form>
 <script>
-    const publicKey = publicKey;
+    const publicKey = "<%- publicKey %>";
 </script>
-<% block("scripts").append('<script src="/js/check-promo-code.js"></script>') %>
+<% if(!user.plan){ 
+    block("scripts").append('<script src="/js/check-promo-code.js"></script>')
+} %>
 <% block("scripts").append('<script src="/js/submit-card-payment-method.js"></script>') %>

@@ -20,9 +20,6 @@ const updateTotal = function(){
 const amountInput0 = document.querySelector("#amountInput0");
 amountInput0.addEventListener("change",updateTotal);
 
-//itemsStringify is passed as a variable in the view
-const items  = JSON.parse(itemsStringify);
-
 const addToLineItem = function(){
     const descriptionInput = document.querySelector(`#descriptionInput${this.i}`);
     descriptionInput.value = this.description;
@@ -47,6 +44,7 @@ const updateDropdown = function(){
         searchResultDiv.removeChild(searchResultDiv.firstChild);
     };
     const input = this.value.toLowerCase();
+    //items is passed as a variable in the view
     for(let item of items){
         if(item.description.toLowerCase().includes(input)||input==""){
             const buttonDiv = document.createElement("div");

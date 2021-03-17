@@ -87,14 +87,14 @@
 <% if(invoice.amount.remaining){ %> 
     <% if("card" in invoice.paymentOptions){ %> 
         <script>
-            const publicKey = publicKey;
+            const publicKey = "<%- publicKey %>";
         </script>
         <% block("scripts").append('<script src="/js/submit-card-payment.js"></script>') %>
     <% } %> 
     <% if("bank" in invoice.paymentOptions){ %> 
         <script>
-            const linkToken = linkToken;
-            const plaidEnv = plaidEnv;
+            const linkToken = "<%- linkToken %>";
+            const plaidEnv = "<%- plaidEnv %>";
         </script>
         <% block("scripts").append('<script src="/js/submit-bank-payment.js"></script>') %>
     <% } %> 
