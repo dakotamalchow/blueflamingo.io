@@ -45,12 +45,14 @@
             <div class="mt-3" id="promoCodeConfirmation" role="alert"></div>
         </div>
     <% } %> 
-    <input type="text" id="stripePublicKey" value="<%= publicKey %>" hidden>
     <div class="mb-3 text-center">
         <button class="btn btn-primary px-5" id="card-submit-button">
             <span class="h5">Purchase Plan</span>
         </button>
     </div>
 </form>
+<script>
+    const publicKey = publicKey;
+</script>
 <% block("scripts").append('<script src="/js/check-promo-code.js"></script>') %>
 <% block("scripts").append('<script src="/js/submit-card-payment-method.js"></script>') %>

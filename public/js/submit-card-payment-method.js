@@ -1,4 +1,4 @@
-const publicKey = document.querySelector("#stripePublicKey").value;
+//publicKey is passed as a variable in the view
 const stripe = Stripe(publicKey);
 const elements = stripe.elements();
 

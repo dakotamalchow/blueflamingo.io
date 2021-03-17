@@ -20,8 +20,8 @@ const updateTotal = function(){
 const amountInput0 = document.querySelector("#amountInput0");
 amountInput0.addEventListener("change",updateTotal);
 
-const itemsDiv = document.querySelector("#items");
-const items  = JSON.parse(itemsDiv.value);
+//itemsStringify is passed as a variable in the view
+const items  = JSON.parse(itemsStringify);
 
 const addToLineItem = function(){
     const descriptionInput = document.querySelector(`#descriptionInput${this.i}`);

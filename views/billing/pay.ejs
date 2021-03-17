@@ -66,15 +66,13 @@
                 </div>
             </div>
             <div class="mb-3 alert alert-danger" id="card-errors" role="alert" hidden></div>
-            <input type="text" id="stripePublicKey" value="<%= publicKey %>" hidden>
             <div class="mb-3 text-center">
                 <button class="btn btn-primary btn-lg px-5" id="card-submit-button">Pay Invoice with Card</button>
             </div>
         </form>
     <% } %> 
     <% if("bank" in invoice.paymentOptions){ %>  
-        <form action="/invoices/<%= invoice._id %>/pay" method="POST" id="bank-payment-form" <%= ((Object.keys(invoice.paymentOptions).length)>1)?"hidden":"" %> >
-            <input type="text" id="plaidLinkToken" value="<%= linkToken %>" hidden>
+        <form action="/invoices/<%= invoice._id %>/pay" method="POST" id="bank-payment-form" <%= ((Object.keys(invoice.paymentOptions).length)>1)?"hidden":"" %>>
             <div class="mb-3 text-center" id="bank-payment-div">
                 <p>You will be prompted to enter details for your bank.</p>
                 <button class="btn btn-primary btn-lg px-5" id="link-button" type="button">Add Bank Account</button>
@@ -88,9 +86,16 @@
 <% } %> 
 <% if(invoice.amount.remaining){ %> 
     <% if("card" in invoice.paymentOptions){ %> 
+        <script>
+            const publicKey = publicKey;
+        </script>
         <% block("scripts").append('<script src="/js/submit-card-payment.js"></script>') %>
     <% } %> 
     <% if("bank" in invoice.paymentOptions){ %> 
+        <script>
+            const linkToken = linkToken;
+            const plaidEnv = plaidEnv;
+        </script>
         <% block("scripts").append('<script src="/js/submit-bank-payment.js"></script>') %>
     <% } %> 
 <% } %> 

@@ -89,5 +89,7 @@
         <button class="btn btn-primary btn-lg">Send</button>
     </div>
 </form>
-<input type="text" id="items" value='<%= JSON.stringify(items) %>' hidden></input>
+<script>
+    const itemsStringify = JSON.stringify(items);
+</script>
 <% block("scripts").append('<script src="/js/line-items.js"></script>') %> 

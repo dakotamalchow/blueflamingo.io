@@ -1,6 +1,6 @@
 (async ()=>{
-    const linkToken = document.querySelector("#plaidLinkToken").value;
     const linkHandler = Plaid.create({
+        //linkToken is passed as a variable in the view
         token: linkToken,
         onSuccess: (public_token,metadata)=>{
             const form = document.querySelector("#bank-payment-form");
@@ -66,7 +66,8 @@
             };
             console.log("onExit metadata",metadata);
         },
-        env:"development"
+        //plaidEnv is passed as a variable in the view
+        env:"sandbox"
     });
 
     // <!-- <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> -->
