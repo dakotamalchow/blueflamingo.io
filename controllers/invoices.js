@@ -154,7 +154,7 @@ module.exports.customerInvoiceView = async(req,res)=>{
         publicKey,
         clientSecret:paymentIntent.client_secret,
         linkToken:linkToken.link_token,
-        plaidEnv:plaid.environments[process.env.PLAID_ENV]
+        plaidEnv:process.env.PLAID_ENV
     });
 };
 
