@@ -81,7 +81,7 @@
     <% } %> 
 <% } %>
 <% block("scripts").append('<script src="/js/invoice-status.js"></script>') %>
-<% if((Object.keys(invoice.paymentOptions).length)>1){ %> 
+<% if((invoice.amount.remaining)&&((Object.keys(invoice.paymentOptions).length)>1)){ %> 
     <% block("scripts").append('<script src="/js/select-payment-type.js"></script>') %>
 <% } %> 
 <% if(invoice.amount.remaining){ %> 
