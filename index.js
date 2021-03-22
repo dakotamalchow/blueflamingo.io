@@ -11,6 +11,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const flash = require("connect-flash");
 const dns = require("dns");
+const mongoSanitize = require("express-mongo-sanitize");
 require("dotenv").config({path:path.resolve(__dirname,".env")});
 
 const AppError = require("./utils/AppError");
@@ -50,6 +51,7 @@ app.use("/", express.static(path.join(__dirname,"node_modules")));
 app.use(express.urlencoded({extended:true}))
 app.use(express.json());
 app.use(methodOverride("_method"));
+app.use(mongoSanitize());
 app.use(session({
     secret:process.env.SESSION_SECRET,
     resave:false,
