@@ -1,0 +1,146 @@
+<% layout("layouts/boilerplate") %>
+<h2>Account Info</h2>
+<hr>
+<form action="/account-info" method="POST" class="validated-form" novalidate>
+    <div class="row mb-3">
+        <span class="col py-1 mx-2 badge badge-pill badge-secondary"> </span>
+        <span class="col py-1 mx-2 badge badge-pill badge-secondary"> </span>
+        <span class="col py-1 mx-2 badge badge-pill badge-secondary"> </span>
+        <span class="col py-1 mx-2 badge badge-pill badge-secondary"> </span>
+        <span class="col py-1 mx-2 badge badge-pill badge-secondary"> </span>
+    </div>
+    <div class="tab">
+        <h4>Your Info</h4>
+        <div class="mb-3">
+            <label class="form-label" for="dob">Date of Birth</label>
+            <input class="form-control" type="date" id="dob" name="dob" value="<%= data.dob %>" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="title">Title</label>
+            <input class="form-control" type="text" id="title" name="title" value="<%= data.title %>" placeholder="Owner, Manager, General Employee, etc." required>
+        </div>
+    </div>
+    <div class="tab">
+        <h4>Business Info</h4>
+        <div class="mb-3">
+            <label class="form-label" for="phoneNumber">Phone Number</label>
+            <input class="form-control" type="tel" id="phoneNumber" name="phoneNumber" value="<%= data.phoneNumber %>" placeholder="123-456-7890" pattern="<%= regExPhoneNumber %>" required>
+            <small>Format: 123-456-7890</small>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="address">Address</label>
+            <input class="form-control" type="text" id="address" name="address[line1]" value="<%= data.address %>" placeholder="123 N Main St" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="address">Address Line 2</label>
+            <input class="form-control" type="text" id="address2" name="address[line2]" value="<%= data.address %>" placeholder="Ex: Apt 101">
+        </div>
+        <div class="form-row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label" for="city">City</label>
+                <input class="form-control" type="text" id="city" name="address[city]" value="<%= data.address %>" placeholder="Muncie" required>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="form-label" for="state">State</label>
+                <input class="form-control" type="text" id="state" name="address[state]" value="<%= data.address %>" placeholder="IN" required>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="form-label" for="postalCode">Postal Code</label>
+                <input class="form-control" type="text" id="postalCode" name="address[postalCode]" value="<%= data.address %>" placeholder="47305" required>
+            </div>
+        </div>
+    </div>
+    <div class="tab">
+        <h4>Business Info</h4>
+        <label class="form-label" for="businessType">Business Type</label>
+        <div class="mb-3">
+            <select class="custom-select" name="businessType" id="businessType" required>
+                <option value="">Choose a busness type</option>
+                <option value="individual" <%= data.businessType=="individual"?"selected":"" %>>Individual or Sole Proprietorship</option>
+                <option value="company" <%= data.businessType=="company"?"selected":"" %>>Company, LLC, or Partnership</option>
+            </select>
+        </div>
+        <label class="form-label" for="businessType">Business Category</label>
+        <div class="mb-3">
+            <select class="custom-select" name="category" id="category" required>
+                <option value="">Choose a busness category</option>
+                <!-- loop through categories -->
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="title">Business Description</label>
+            <textarea class="form-control" id="description" name="description" value="<%= data.description %>" placeholder="Enter a short description of the business here." required></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="taxId">Tax ID</label>
+            <input class="form-control" type="number" id="taxId" name="taxId" value="<%= data.taxId %>" required>
+        </div>
+        <div class="form-row">
+            <div class="col-md mb-3">
+                <label class="form-label" for="firstName">Owner First Name</label>
+                <input class="form-control" type="text" id="firstName" name="firstName" value="<%= data.firstName %>" placeholder="John" required>
+            </div>
+            <div class="col-md mb-3">
+                <label class="form-label" for="lastName">Owner Last Name</label>
+                <input class="form-control" type="text" id="lastName" name="lastName" value="<%= data.lastName %>" placeholder="Smith" required>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="email">Owner Email</label>
+            <input class="form-control" type="email" id="email" name="email" value="<%= data.email %>" placeholder="johnsmith@gmail.com" required>
+        </div>
+    </div>
+    <div class="tab">
+        <h4>Payment Info</h4>
+        <h5>Where would you like your money sent to?</h5>
+        <div class="mb-3">
+            <label class="form-label" for="bankAccount">Bank Account Number</label>
+            <input class="form-control" type="number" id="bankAccount" name="bankAccount" value="<%= data.bankAccount %>" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="bankRouting">Bank Routing Number</label>
+            <input class="form-control" type="number" id="bankRouting" name="bankRouting" value="<%= data.bankRouting %>" required>
+        </div>
+    </div>
+    <div class="tab" id="summary">
+        <h5>Date of Birth</h5>
+        <p id="sum-dob"></p>
+        <h5>Title</h6>
+        <p id="sum-title"></p>
+        <hr>
+        <h5>Phone Number</h5>
+        <p id="sum-phoneNumber"></p>
+        <h5>Address</h6>
+        <div id="sum-address"></div>
+        <hr>
+        <h5>Business Type</h5>
+        <p id="sum-businessType"></p>
+        <h5>Business Category</h5>
+        <p id="sum-category"></p>
+        <h5>Business Description</h5>
+        <p id="sum-description"></p>
+        <h5>Tax ID</h6>
+        <p id="sum-taxId"></p>
+        <hr>
+        <h5>Bank Account Number</h5>
+        <p id="sum-bankAccount"></p>
+        <h5>Bank Routing Number</h5>
+        <p id="sum-bankRouting"></p>
+        <div class="mb-3">
+            <input type="checkbox" name="tos" id="tos" required>
+            <label for="tos">I agree to the terms of service</label>
+        </div>
+    </div>
+    <div class="mb-3 alert alert-danger" id="errorMessage" hidden>
+        <!-- ul of errors here -->
+    </div>
+    <div class="mb-3 text-center">
+        <button class="btn btn-primary px-5" id="prevButton" type="button">
+            <span class="h5">Previous</span>
+        </button>
+        <button class="btn btn-primary px-5" id="nextButton" type="button">
+            <span class="h5">Next</span>
+        </button>
+    </div>
+</form>
+<% block("scripts").append('<script src="/js/multi-step-form.js"></script>') %>
