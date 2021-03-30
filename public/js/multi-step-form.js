@@ -4,7 +4,31 @@ const pills = document.querySelectorAll(".badge.badge-pill");
 const prevButton = document.querySelector("#prevButton");
 const nextButton = document.querySelector("#nextButton");
 const nextButtonSpan = document.querySelector("#nextButton span");
+const submitButton = document.querySelector("#submitButton");
 const errorSpan = document.querySelector("#errorMessage");
+
+const companyInfoDiv = document.querySelector("#companyInfo");
+const businessTypeSelect = document.querySelector("#businessType");
+
+const showCompanyInfo = function(){
+    errorSpan.innerHTML = "";
+    errorSpan.setAttribute("hidden",true);
+    const companyInputs = companyInfoDiv.getElementsByTagName("input");
+    if(this.value=="company"){
+        companyInfoDiv.removeAttribute("hidden");
+        for(let input of companyInputs){
+            input.setAttribute("required",true);
+        };
+    }
+    else{
+        companyInfoDiv.setAttribute("hidden",true);
+        for(let input of companyInputs){
+            input.removeAttribute("required");
+        };
+    };
+};
+
+businessTypeSelect.addEventListener("change",showCompanyInfo);
 
 const showTab = function(currentTab){
     pills.forEach((pill,i)=>{
@@ -24,13 +48,13 @@ const showTab = function(currentTab){
         prevButton.removeAttribute("hidden");
     };
     if(currentTab==(tabs.length-1)){
-        nextButtonSpan.innerText = "Submit";
-        nextButton.setAttribute("type","submit");
+        nextButton.setAttribute("hidden",true);
+        submitButton.removeAttribute("hidden");
         populateSummary();
     }
     else{
-        nextButtonSpan.innerText = "Next";
-        nextButton.setAttribute("type","button");
+        nextButton.removeAttribute("hidden");
+        submitButton.setAttribute("hidden",true);
     };
     for(let tab of tabs){
         tab.setAttribute("hidden",true);
@@ -48,15 +72,19 @@ const populateSummary = function(){
         address.innerHTML += `<br>${document.querySelector("#address2").value}`;
     };
     address.innerHTML += `<br>${document.querySelector("#city").value}, ${document.querySelector("#state").value} ${document.querySelector("#postalCode").value}`;
-    document.querySelector("#sum-businessType").innerText = document.querySelector("#businessType").value;
+    let businessType = document.querySelector("#businessType").value;
+    businessType = businessType.charAt(0).toUpperCase()+businessType.slice(1);
+    document.querySelector("#sum-businessType").innerText = businessType;
     document.querySelector("#sum-category").innerText = document.querySelector("#category").value;
     document.querySelector("#sum-description").innerText = document.querySelector("#description").value;
-    document.querySelector("#sum-taxId").innerText = document.querySelector("#taxId").value;
+    //include taxId, ownerFirstName, ownerLastName, and ownerEmail if businessType == "Company"
     document.querySelector("#sum-bankAccount").innerText = document.querySelector("#bankAccount").value;
     document.querySelector("#sum-bankRouting").innerText = document.querySelector("#bankRouting").value;
 };
 
 const prevTab = function(){
+    errorSpan.innerHTML = "";
+    errorSpan.setAttribute("hidden",true);
     if(currentTab>0){
         currentTab-=1;
         showTab(currentTab);
@@ -68,15 +96,24 @@ const nextTab = function(){
     errorSpan.setAttribute("hidden",true);
     let isError = false;
     if(currentTab<tabs.length-1){
-        // const labels = tabs[currentTab].getElementsByTagName("label");
-        // const inputs = tabs[currentTab].getElementsByTagName("input");
-        // for(let i=0; i<inputs.length; i++){
-        //     if(inputs[i].required&&inputs[i].value==""){
-        //         errorSpan.innerHTML += `<li>${labels[i].innerText}</li>`;
-        //         errorSpan.removeAttribute("hidden");
-        //         isError = true;
-        //     };
-        // };
+        const labels = tabs[currentTab].getElementsByTagName("label");
+        const inputs = [];
+        for (let i=0; i<labels.length; i++){
+            if(labels[i].htmlFor!=""){
+                const input = document.getElementById(labels[i].htmlFor);
+                if(input){
+                    input.label = labels[i];
+                };
+                inputs[i] = input;
+            };
+        };
+        for(let i=0; i<inputs.length; i++){
+            if(inputs[i].required&&inputs[i].value==""){
+                errorSpan.innerHTML += `<li>${inputs[i].label.innerText}</li>`;
+                errorSpan.removeAttribute("hidden");
+                isError = true;
+            };
+        };
         if(isError){
             errorSpan.innerHTML = "The following field(s) are required:" + errorSpan.innerHTML;
         }

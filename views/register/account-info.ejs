@@ -1,7 +1,7 @@
 <% layout("layouts/boilerplate") %>
 <h2>Account Info</h2>
 <hr>
-<form action="/account-info" method="POST" class="validated-form" novalidate>
+<form action="/register/account-info" method="POST" class="validated-form" novalidate>
     <div class="row mb-3">
         <span class="col py-1 mx-2 badge badge-pill badge-secondary"> </span>
         <span class="col py-1 mx-2 badge badge-pill badge-secondary"> </span>
@@ -32,7 +32,7 @@
             <input class="form-control" type="text" id="address" name="address[line1]" value="<%= data.address %>" placeholder="123 N Main St" required>
         </div>
         <div class="mb-3">
-            <label class="form-label" for="address">Address Line 2</label>
+            <label class="form-label" for="address2">Address Line 2</label>
             <input class="form-control" type="text" id="address2" name="address[line2]" value="<%= data.address %>" placeholder="Ex: Apt 101">
         </div>
         <div class="form-row">
@@ -60,34 +60,37 @@
                 <option value="company" <%= data.businessType=="company"?"selected":"" %>>Company, LLC, or Partnership</option>
             </select>
         </div>
-        <label class="form-label" for="businessType">Business Category</label>
+        <label class="form-label" for="category">Business Category</label>
         <div class="mb-3">
-            <select class="custom-select" name="category" id="category" required>
-                <option value="">Choose a busness category</option>
-                <!-- loop through categories -->
-            </select>
+            <input class="form-control" type="text" name="category" id="category" placeholder="Search for a Category here" data-toggle="dropdown" autocomplete="category" required>
+            <ul class="dropdown-menu py-0 pre-scrollable" id="searchResults" role="menu" aria-labelledby="category">
+                <!-- search results for category will be added here -->
+            </ul>
+            <input class="form-control" type="text" name="mcc" id="mcc" hidden>
         </div>
         <div class="mb-3">
-            <label class="form-label" for="title">Business Description</label>
-            <textarea class="form-control" id="description" name="description" value="<%= data.description %>" placeholder="Enter a short description of the business here." required></textarea>
+            <label class="form-label" for="description">Business Description</label>
+            <textarea class="form-control" id="description" name="description" value="<%= data.description %>" placeholder="Enter a short description of the business here" required></textarea>
         </div>
-        <div class="mb-3">
-            <label class="form-label" for="taxId">Tax ID</label>
-            <input class="form-control" type="number" id="taxId" name="taxId" value="<%= data.taxId %>" required>
-        </div>
-        <div class="form-row">
-            <div class="col-md mb-3">
-                <label class="form-label" for="firstName">Owner First Name</label>
-                <input class="form-control" type="text" id="firstName" name="firstName" value="<%= data.firstName %>" placeholder="John" required>
+        <div id="companyInfo" hidden>
+            <div class="mb-3">
+                <label class="form-label" for="taxId">Tax ID</label>
+                <input class="form-control" type="number" id="taxId" name="taxId" value="<%= data.taxId %>">
             </div>
-            <div class="col-md mb-3">
-                <label class="form-label" for="lastName">Owner Last Name</label>
-                <input class="form-control" type="text" id="lastName" name="lastName" value="<%= data.lastName %>" placeholder="Smith" required>
+            <div class="form-row">
+                <div class="col-md mb-3">
+                    <label class="form-label" for="ownerFirstName">Owner First Name</label>
+                    <input class="form-control" type="text" id="ownerFirstName" name="ownerFirstName" value="<%= data.ownerFirstName %>" placeholder="John">
+                </div>
+                <div class="col-md mb-3">
+                    <label class="form-label" for="ownerLastName">Owner Last Name</label>
+                    <input class="form-control" type="text" id="ownerLastName" name="ownerLastName" value="<%= data.ownerLastName %>" placeholder="Smith">
+                </div>
             </div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="email">Owner Email</label>
-            <input class="form-control" type="email" id="email" name="email" value="<%= data.email %>" placeholder="johnsmith@gmail.com" required>
+            <div class="mb-3">
+                <label class="form-label" for="ownerEmail">Owner Email</label>
+                <input class="form-control" type="email" id="ownerEmail" name="ownerEmail" value="<%= data.ownerEmail %>" placeholder="johnsmith@gmail.com">
+            </div>
         </div>
     </div>
     <div class="tab">
@@ -103,16 +106,18 @@
         </div>
     </div>
     <div class="tab" id="summary">
+        <h3><%= user.name %></h3>
         <h5>Date of Birth</h5>
         <p id="sum-dob"></p>
         <h5>Title</h6>
         <p id="sum-title"></p>
         <hr>
+        <h3><%= user.businessName %></h3>
         <h5>Phone Number</h5>
         <p id="sum-phoneNumber"></p>
         <h5>Address</h6>
         <div id="sum-address"></div>
-        <hr>
+        <br>
         <h5>Business Type</h5>
         <p id="sum-businessType"></p>
         <h5>Business Category</h5>
@@ -121,14 +126,14 @@
         <p id="sum-description"></p>
         <h5>Tax ID</h6>
         <p id="sum-taxId"></p>
-        <hr>
         <h5>Bank Account Number</h5>
         <p id="sum-bankAccount"></p>
         <h5>Bank Routing Number</h5>
         <p id="sum-bankRouting"></p>
+        <hr>
         <div class="mb-3">
-            <input type="checkbox" name="tos" id="tos" required>
-            <label for="tos">I agree to the terms of service</label>
+            <input class="form-check-input" type="checkbox" name="tos" id="tos" required>
+            <label class="form-check-label" for="tos">I agree to the terms of service</label>
         </div>
     </div>
     <div class="mb-3 alert alert-danger" id="errorMessage" hidden>
@@ -141,6 +146,13 @@
         <button class="btn btn-primary px-5" id="nextButton" type="button">
             <span class="h5">Next</span>
         </button>
+        <button class="btn btn-primary px-5" id="submitButton" type="submit" hidden>
+            <span class="h5">Submit</span>
+        </button>
     </div>
 </form>
+<script>
+    const categories = <%- JSON.stringify(categories) %>;
+</script>
 <% block("scripts").append('<script src="/js/multi-step-form.js"></script>') %>
+<% block("scripts").append('<script src="/js/category-search.js"></script>') %>
