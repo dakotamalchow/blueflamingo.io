@@ -99,6 +99,10 @@ app.get("/pricing-and-details",(req,res)=>{
     res.render("pricing-and-details");
 });
 
+app.get("/terms-of-service",(req,res)=>{
+    res.render("terms-of-service");
+});
+
 app.all("*",(req,res,next)=>{
     next(new AppError(404,"Page not found"));
 });
