@@ -21,7 +21,7 @@ module.exports.hasPlan = (req,res,next)=>{
 module.exports.isStripeVerified = (req,res,next)=>{
     const user = res.locals.currentUser;
     if(!user.isStripeVerified){
-        return res.redirect("/register/add-account-info");
+        return res.redirect("/register/account-info");
     };
     next();
 };

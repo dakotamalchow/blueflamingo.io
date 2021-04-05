@@ -19,34 +19,96 @@
             <label class="form-label" for="title">Title</label>
             <input class="form-control" type="text" id="title" name="title" value="<%= data.title %>" placeholder="Owner, Manager, General Employee, etc." required>
         </div>
+        <div class="mb-3">
+            <label class="form-label" for="ssn">SSN</label>
+            <input class="form-control" type="text" id="ssn" name="ssn" value="<%= data.ssn %>" autocomplete="off" pattern="^\d{3}-\d{2}-\d{4}$" required>
+            <small>Format: 123-45-6789</small>
+        </div>
     </div>
     <div class="tab">
         <h4>Business Info</h4>
         <div class="mb-3">
             <label class="form-label" for="phoneNumber">Phone Number</label>
-            <input class="form-control" type="tel" id="phoneNumber" name="phoneNumber" value="<%= data.phoneNumber %>" placeholder="123-456-7890" pattern="<%= regExPhoneNumber %>" required>
+            <input class="form-control" type="tel" id="phoneNumber" name="phoneNumber" value="<%= data.phoneNumber %>" placeholder="123-456-7890" pattern="^\d{3}-\d{3}-\d{4}$" required>
             <small>Format: 123-456-7890</small>
         </div>
         <div class="mb-3">
             <label class="form-label" for="address">Address</label>
-            <input class="form-control" type="text" id="address" name="address[line1]" value="<%= data.address %>" placeholder="123 N Main St" required>
+            <input class="form-control" type="text" id="address" name="address[line1]" value="<%= data.line1 %>" placeholder="123 N Main St" required>
         </div>
         <div class="mb-3">
             <label class="form-label" for="address2">Address Line 2</label>
-            <input class="form-control" type="text" id="address2" name="address[line2]" value="<%= data.address %>" placeholder="Ex: Apt 101">
+            <input class="form-control" type="text" id="address2" name="address[line2]" value="<%= data.line2 %>" placeholder="Ex: Apt 101">
         </div>
         <div class="form-row">
-            <div class="col-md-6 mb-3">
+            <div class="col-md-5 mb-3">
                 <label class="form-label" for="city">City</label>
-                <input class="form-control" type="text" id="city" name="address[city]" value="<%= data.address %>" placeholder="Muncie" required>
+                <input class="form-control" type="text" id="city" name="address[city]" value="<%= data.city %>" placeholder="Muncie" required>
+                <small>Only US Addresses are supported at this time</small>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-md-2 mb-3">
                 <label class="form-label" for="state">State</label>
-                <input class="form-control" type="text" id="state" name="address[state]" value="<%= data.address %>" placeholder="IN" required>
+                <select class="custom-select" name="address[state]" id="state" required>
+                    <option value="">State</option>
+                    <option value="Alabama" <%= data.state=="Alabama"?"selected":"" %>>Alabama</option>
+                    <option value="Alaska" <%= data.state=="Alaska"?"selected":"" %>>Alaska</option>
+                    <option value="Arizona" <%= data.state=="Arizona"?"selected":"" %>>Arizona</option>
+                    <option value="Arkansas" <%= data.state=="Arkansas"?"selected":"" %>>Arkansas</option>
+                    <option value="California" <%= data.state=="California"?"selected":"" %>>California</option>
+                    <option value="Colorado" <%= data.state=="Colorado"?"selected":"" %>>Colorado</option>
+                    <option value="Connecticut" <%= data.state=="Connecticut"?"selected":"" %>>Connecticut</option>
+                    <option value="Delaware" <%= data.state=="Delaware"?"selected":"" %>>Delaware</option>
+                    <option value="Florida" <%= data.state=="Florida"?"selected":"" %>>Florida</option>
+                    <option value="Georgia" <%= data.state=="Georgia"?"selected":"" %>>Georgia</option>
+                    <option value="Hawaii" <%= data.state=="Hawaii"?"selected":"" %>>Hawaii</option>
+                    <option value="Idaho" <%= data.state=="Idaho"?"selected":"" %>>Idaho</option>
+                    <option value="Illinois" <%= data.state=="Illinois"?"selected":"" %>>Illinois</option>
+                    <option value="Indiana" <%= data.state=="Indiana"?"selected":"" %>>Indiana</option>
+                    <option value="Iowa" <%= data.state=="Iowa"?"selected":"" %>>Iowa</option>
+                    <option value="Kansas" <%= data.state=="Kansas"?"selected":"" %>>Kansas</option>
+                    <option value="Kentucky" <%= data.state=="Kentucky"?"selected":"" %>>Kentucky</option>
+                    <option value="Louisiana" <%= data.state=="Louisiana"?"selected":"" %>>Louisiana/option>
+                    <option value="Maine" <%= data.state=="Maine"?"selected":"" %>>Maine</option>
+                    <option value="Maryland" <%= data.state=="Maryland"?"selected":"" %>>Maryland</option>
+                    <option value="Massachusetts" <%= data.state=="Massachusetts"?"selected":"" %>>Massachusetts</option>
+                    <option value="Michigan" <%= data.state=="Michigan"?"selected":"" %>>Michigan</option>
+                    <option value="Minnesota" <%= data.state=="Minnesota"?"selected":"" %>>Minnesota</option>
+                    <option value="Mississippi" <%= data.state=="Mississippi"?"selected":"" %>>Mississippi</option>
+                    <option value="Missouri" <%= data.state=="Missouri"?"selected":"" %>>Missouri</option>
+                    <option value="Montana" <%= data.state=="Montana"?"selected":"" %>>Montana</option>
+                    <option value="Nebraska" <%= data.state=="Nebraska"?"selected":"" %>>Nebraska</option>
+                    <option value="Nevada" <%= data.state=="Nevada"?"selected":"" %>>Nevada</option>
+                    <option value="New Hampshire" <%= data.state=="New Hampshire"?"selected":"" %>>New Hampshire/option>
+                    <option value="New Jersey" <%= data.state=="New Jersey"?"selected":"" %>>New Jersey</option>
+                    <option value="New Mexico" <%= data.state=="New Mexico"?"selected":"" %>>New Mexico</option>
+                    <option value="New York" <%= data.state=="New York"?"selected":"" %>>New York</option>
+                    <option value="North Carolina" <%= data.state=="North Carolina"?"selected":"" %>>North Carolina</option>
+                    <option value="North Dakota" <%= data.state=="North Dakota"?"selected":"" %>>North Dakota</option>
+                    <option value="Ohio" <%= data.state=="Ohio"?"selected":"" %>>Ohio</option>
+                    <option value="Oklahoma" <%= data.state=="Oklahoma"?"selected":"" %>>Oklahoma</option>
+                    <option value="Oregon" <%= data.state=="Oregon"?"selected":"" %>>Oregon</option>
+                    <option value="Pennsylvania" <%= data.state=="Pennsylvania"?"selected":"" %>>Pennsylvania</option>
+                    <option value="Rhode Island" <%= data.state=="Rhode Island"?"selected":"" %>>Rhode Island</option>
+                    <option value="South Carolina" <%= data.state=="South Carolina"?"selected":"" %>>South Carolina</option>
+                    <option value="South Dakota" <%= data.state=="South Dakota"?"selected":"" %>>South Dakota</option>
+                    <option value="Tennessee" <%= data.state=="Tennessee"?"selected":"" %>>Tennessee</option>
+                    <option value="Texas" <%= data.state=="Texas"?"selected":"" %>>Texas</option>
+                    <option value="Utah" <%= data.state=="Utah"?"selected":"" %>>Utah</option>
+                    <option value="Vermont" <%= data.state=="Vermont"?"selected":"" %>>Vermont</option>
+                    <option value="Virginia" <%= data.state=="Virginia"?"selected":"" %>>Virginia</option>
+                    <option value="Washington" <%= data.state=="Washington"?"selected":"" %>>Washington</option>
+                    <option value="West Virginia" <%= data.state=="West Virginia"?"selected":"" %>>West Virginia</option>
+                    <option value="Wisconsin" <%= data.state=="Wisconsin"?"selected":"" %>>Wisconsin</option>
+                    <option value="Wyoming" <%= data.state=="Wyoming"?"selected":"" %>>Wyoming</option>
+                </select>
             </div>
             <div class="col-md-3 mb-3">
                 <label class="form-label" for="postalCode">Postal Code</label>
-                <input class="form-control" type="text" id="postalCode" name="address[postalCode]" value="<%= data.address %>" placeholder="47305" required>
+                <input class="form-control" type="text" id="postalCode" name="address[postalCode]" value="<%= data.postalCode %>" placeholder="47305" pattern="[0-9\-]+" required>
+            </div>
+            <div class="col-md-2 mb-3">
+                <label class="form-label" for="country">Country</label>
+                <input class="form-control" type="text" id="country" name="address[country]" value="US" disabled>
             </div>
         </div>
     </div>
@@ -77,6 +139,7 @@
                 <label class="form-label" for="taxId">Tax ID</label>
                 <input class="form-control" type="number" id="taxId" name="taxId" value="<%= data.taxId %>">
             </div>
+            <!-- need to include multiple owners -->
             <div class="form-row">
                 <div class="col-md mb-3">
                     <label class="form-label" for="ownerFirstName">Owner First Name</label>
@@ -99,10 +162,25 @@
         <div class="mb-3">
             <label class="form-label" for="bankAccount">Bank Account Number</label>
             <input class="form-control" type="number" id="bankAccount" name="bankAccount" value="<%= data.bankAccount %>" required>
+            <small>This must be a checking account</small>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="confirmBankAccount">Confirm Bank Account Number</label>
+            <input class="form-control" type="number" id="confirmBankAccount" name="confirmBankAccount" value="<%= data.confirmBankAccount %>" required>
         </div>
         <div class="mb-3">
             <label class="form-label" for="bankRouting">Bank Routing Number</label>
             <input class="form-control" type="number" id="bankRouting" name="bankRouting" value="<%= data.bankRouting %>" required>
+            <small>Only US banks are supported at this time</small>
+        </div>
+        <h5>Who does this account belong to?</h5>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="bankOwner" id="bankOwnerBusiness" value="<%= user.businessName %>" <%= data.bankOwner==user.businessName?"checked":"" %>>
+            <label class="form-check-label" for="bankOwnerBusiness"><%= user.businessName %></label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="bankOwner" id="bankOwnerIndividual" value="<%= user.name %>" <%= data.bankOwner==user.name?"checked":"" %>>
+            <label class="form-check-label" for="bankOwnerIndividual"><%= user.name %></label>
         </div>
     </div>
     <div class="tab" id="summary">
@@ -124,16 +202,14 @@
         <p id="sum-category"></p>
         <h5>Business Description</h5>
         <p id="sum-description"></p>
-        <h5>Tax ID</h6>
-        <p id="sum-taxId"></p>
         <h5>Bank Account Number</h5>
         <p id="sum-bankAccount"></p>
         <h5>Bank Routing Number</h5>
         <p id="sum-bankRouting"></p>
         <hr>
-        <div class="mb-3">
+        <div class="form-check mb-3">
             <input class="form-check-input" type="checkbox" name="tos" id="tos" required>
-            <label class="form-check-label" for="tos">I agree to the terms of service</label>
+            <label class="form-check-label" for="tos">I agree to the <b><a href="/terms-of-service">terms of service</a></b></label>
         </div>
     </div>
     <div class="mb-3 alert alert-danger" id="errorMessage" hidden>
@@ -155,4 +231,5 @@
     const categories = <%- JSON.stringify(categories) %>;
 </script>
 <% block("scripts").append('<script src="/js/multi-step-form.js"></script>') %>
+<% block("scripts").append('<script src="/js/register-validation.js"></script>') %>
 <% block("scripts").append('<script src="/js/category-search.js"></script>') %>

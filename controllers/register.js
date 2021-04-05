@@ -64,7 +64,6 @@ const validateBusinessName = (businessName)=>{
 
 module.exports.registerUser = async(req,res,next)=>{
     const {firstName,lastName,businessName,email,password,confirmPassword} = req.body;
-    const isBusinessNameValid = validateBusinessName(businessName);
     const isPasswordValid = validatePassword(password,confirmPassword);
     if(isBusinessNameValid!=true||isPasswordValid!=true){
         let queryString = `?firstName=${encodeURIComponent(firstName)}`;
@@ -86,34 +85,207 @@ module.exports.registerUser = async(req,res,next)=>{
     req.login(registeredUser,err=>{
         if(err) {return next(err);}
     });
+    await user.save();
+    req.flash("success","Account successfully created");
+    res.redirect("/register/account-info");
+};
+
+module.exports.accountInfoForm = (req,res)=>{
+    const user = res.locals.currentUser;
+    const data = req.query;
+    const categories = JSON.parse(fs.readFileSync("merchant-categories.json"));
+    res.render("register/account-info",{user,data,categories});
+};
+
+const validateDOB = (dob)=>{
+    let parsedDob = Date.parse(dob);
+    let date13 = new Date();
+    date13.setFullYear(date13.getFullYear()-13);
+    if(date13<parsedDob){
+        return "User must be at least 13 years old.";
+    };
+    return true;
+};
+
+//should include validation for bank/tax id? (client or server side)
+
+module.exports.submitAccountInfo = async(req,res)=>{
+    const user = res.locals.currentUser;
+    const {dob,title,ssn,phoneNumber,address,businessType,mcc,description,
+        taxId,ownerFirstName,ownerLastName,ownerEmail,
+        bankAccount,confirmBankAccount,bankRouting,bankOwner,tos} = req.body;
+    const isDOBValid = validateDOB(dob);
+    if(isDOBValid!=true){
+        let queryString = `?dob=${encodeURIComponent(dob)}`;
+        queryString+= `&title=${encodeURIComponent(title)}`;
+        queryString+= `&ssn=${encodeURIComponent(ssn)}`;
+        queryString+=`&phoneNumber=${encodeURIComponent(phoneNumber)}`;
+        queryString+=`&line1=${encodeURIComponent(address.line1)}`;
+        queryString+=`&line2=${encodeURIComponent(address.line2)}`;
+        queryString+=`&city=${encodeURIComponent(address.city)}`;
+        queryString+=`&state=${encodeURIComponent(address.state)}`;
+        queryString+=`&postalCode=${encodeURIComponent(address.postalCode)}`;
+        queryString+=`&businessType=${encodeURIComponent(businessType)}`;
+        queryString+=`&mcc=${encodeURIComponent(mcc)}`;
+        queryString+=`&description=${encodeURIComponent(description)}`;
+        if(businessType=="company"){
+            queryString+=`&taxId=${encodeURIComponent(taxId)}`;
+            //need to include multiple owners
+            queryString+=`&ownerFirstName=${encodeURIComponent(ownerFirstName)}`;
+            queryString+=`&ownerLastName=${encodeURIComponent(ownerLastName)}`;
+            queryString+=`&ownerEmail=${encodeURIComponent(ownerEmail)}`;
+        };
+        queryString+=`&bankAccount=${encodeURIComponent(bankAccount)}`;
+        queryString+=`&confirmBankAccount=${encodeURIComponent(confirmBankAccount)}`;
+        queryString+=`&bankRouting=${encodeURIComponent(bankRouting)}`;
+        queryString+=`&bankOwner=${encodeURIComponent(bankOwner)}`;
+        queryString+=`&tos=${encodeURIComponent(tos)}`;
+        let errorMessage = "";
+        if(isDOBValid!=true){
+            errorMessage+=`${isDOBValid} `;
+        };
+        req.flash("error",errorMessage);
+        return res.redirect("/register"+queryString);
+    };
     const stripeAccount = await stripe.accounts.create({
-        type:"express",
+        type:"custom",
         country:"US",
-        email: user.email,
+        email:user.email,
+        business_type:businessType,
         business_profile:{
-            name:businessName
+            name:user.businessName,
+            mcc:mcc,
+            product_description:description
+        },
+        external_account:{
+            object:"bank_account",
+            country:"US",
+            currency:"usd",
+            account_holder_name:bankOwner,
+            account_holder_type:businessType,
+            account_number:bankAccount,
+            routing_number:bankRouting
+        },
+        tos_acceptance:{
+            date:Math.floor(Date.now()/1000),
+            ip:req.connection.remoteAddress
         },
         capabilities:{
             card_payments:{requested:true},
             transfers:{requested:true}
         },
+        // need to look into statement descriptors for custom accounts
         settings:{
             payments:{
                 statement_descriptor: user.statementDescriptor
             }
         }
     });
+    if(businessType=="individual"){
+        await stripe.accounts.update(
+            stripeAccount.id,
+            {
+                individual:{
+                    first_name:user.firstName,
+                    last_name:user.lastName,
+                    email:user.email,
+                    phone:phoneNumber.replace(/-/g,""),
+                    dob:{
+                        day:dob.split("-")[2],
+                        month:dob.split("-")[1],
+                        year:dob.split("-")[0]
+                    },
+                    address:{
+                        line1:address.line1,
+                        line2:address.line2,
+                        city:address.city,
+                        state:address.state,
+                        postal_code:address.postalCode,
+                        country:"US"
+                    },
+                    id_number:ssn.replace(/-/g,""),
+                    ssn_last_4:ssn.substring(7,12)
+                }
+            }
+        );
+    }
+    else if(businessType=="company"){
+        await stripe.accounts.createPerson(
+            stripeAccount.id,
+            {
+                first_name:user.firstName,
+                last_name:user.lastName,
+                email:user.email,
+                phone:phoneNumber.replace(/-/g,""),
+                dob:{
+                    day:dob.split("-")[2],
+                    month:dob.split("-")[1],
+                    year:dob.split("-")[0]
+                },
+                address:{
+                    line1:address.line1,
+                    line2:address.line2,
+                    city:address.city,
+                    state:address.state,
+                    postal_code:address.postalCode,
+                    country:"US"
+                },
+                relationship:{
+                    title:title,
+                    representative:true,
+                    executive:true
+                },
+                id_number:ssn.replace(/-/g,""),
+                ssn_last_4:ssn.substring(7,12)
+            }
+        );
+        await stripe.accounts.createPerson(
+            stripeAccount.id,
+            {
+                first_name:user.firstName,
+                last_name:user.lastName,
+                email:user.email,
+                relationship:{
+                    title:title,
+                    owner:true
+                }
+            }
+        );
+        await stripe.accounts.update(
+            stripeAccount.id,
+            {
+                company:{
+                    name:user.businessName,
+                    phone:phoneNumber.replace(/-/g,""),
+                    address:{
+                        line1:address.line1,
+                        line2:address.line2,
+                        city:address.city,
+                        state:address.state,
+                        postal_code:address.postalCode,
+                        country:"US"
+                    },
+                    tax_id:taxId.replace(/-/g,""),
+                    owners_provided:true
+                }
+            }
+        );
+    }
+    else{
+        // some type of error? validate business type before?
+    };
     user.stripeAccount = stripeAccount.id;
+    //add address and phone?
     const stripeCustomer = await stripe.customers.create({
         name: user.name,
         email: user.email
     });
     user.stripeCustomer = stripeCustomer.id;
     await user.save();
-    req.flash("success","Account successfully created");
-    res.redirect("/register/add-account-info");
+    res.send("done");
 };
 
+/*
 module.exports.addAccountInfoPage = async(req,res)=>{
     const user = res.locals.currentUser;
     const stripeAccount = await stripe.accounts.retrieve(user.stripeAccount);
@@ -150,6 +322,7 @@ module.exports.refreshAccountLinks = async(req,res)=>{
     };
     res.redirect("/");
 };
+*/
 
 module.exports.verifyingAccountPage = async(req,res)=>{
     const user = res.locals.currentUser;

@@ -31,5 +31,7 @@ const updateDropdown = function(){
     };
 };
 
+// if a category wasn't picked, clear the field
+
 categoryInput.addEventListener("keydown",updateDropdown);
 categoryInput.addEventListener("click",updateDropdown);

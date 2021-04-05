@@ -5,30 +5,8 @@ const prevButton = document.querySelector("#prevButton");
 const nextButton = document.querySelector("#nextButton");
 const nextButtonSpan = document.querySelector("#nextButton span");
 const submitButton = document.querySelector("#submitButton");
+// error span is used in register-validation.js as well
 const errorSpan = document.querySelector("#errorMessage");
-
-const companyInfoDiv = document.querySelector("#companyInfo");
-const businessTypeSelect = document.querySelector("#businessType");
-
-const showCompanyInfo = function(){
-    errorSpan.innerHTML = "";
-    errorSpan.setAttribute("hidden",true);
-    const companyInputs = companyInfoDiv.getElementsByTagName("input");
-    if(this.value=="company"){
-        companyInfoDiv.removeAttribute("hidden");
-        for(let input of companyInputs){
-            input.setAttribute("required",true);
-        };
-    }
-    else{
-        companyInfoDiv.setAttribute("hidden",true);
-        for(let input of companyInputs){
-            input.removeAttribute("required");
-        };
-    };
-};
-
-businessTypeSelect.addEventListener("change",showCompanyInfo);
 
 const showTab = function(currentTab){
     pills.forEach((pill,i)=>{
@@ -82,21 +60,10 @@ const populateSummary = function(){
     document.querySelector("#sum-bankRouting").innerText = document.querySelector("#bankRouting").value;
 };
 
-const prevTab = function(){
-    errorSpan.innerHTML = "";
-    errorSpan.setAttribute("hidden",true);
-    if(currentTab>0){
-        currentTab-=1;
-        showTab(currentTab);
-    };
-};
-
-const nextTab = function(){
-    errorSpan.innerHTML = "";
-    errorSpan.setAttribute("hidden",true);
+const validateFields = function(){
     let isError = false;
-    if(currentTab<tabs.length-1){
-        const labels = tabs[currentTab].getElementsByTagName("label");
+    let emptyFields = false;
+    const labels = tabs[currentTab].getElementsByTagName("label");
         const inputs = [];
         for (let i=0; i<labels.length; i++){
             if(labels[i].htmlFor!=""){
@@ -110,14 +77,76 @@ const nextTab = function(){
         for(let i=0; i<inputs.length; i++){
             if(inputs[i].required&&inputs[i].value==""){
                 errorSpan.innerHTML += `<li>${inputs[i].label.innerText}</li>`;
-                errorSpan.removeAttribute("hidden");
+                emptyFields = true;
+            };
+        };
+        if(emptyFields){
+            errorSpan.innerHTML = "The following fields are required:" + errorSpan.innerHTML;
+            isError = true;
+        };
+        if(currentTab==0){
+            const dob = document.querySelector("#dob").value;
+            let parsedDob = Date.parse(dob);
+            let date13 = new Date();
+            date13.setFullYear(date13.getFullYear()-13);
+            if(date13<parsedDob){
+                errorSpan.innerHTML += "User must be at least 13 years old.<br>";
+                isError = true;
+            };
+            const ssn = document.querySelector("#ssn").value;
+            if(ssn&&!/^\d{3}-\d{2}-\d{4}$/.test(ssn)){
+                errorSpan.innerHTML += "SSN must be in the format 123-45-6789.<br>";
+                isError = true;
+            };
+        }
+        else if(currentTab==1){
+            const phoneNumber = document.querySelector("#phoneNumber").value;
+            if(phoneNumber&&!/\d{3}-\d{3}-\d{4}$/.test(phoneNumber)){
+                errorSpan.innerHTML += "Phone Number must be in the format 123-456-7890.<br>";
+                isError = true;
+            };
+        }
+        else if(currentTab==2){
+            const description = document.querySelector("#description").value;
+            if(description&&description.length<10){
+                errorSpan.innerHTML += "Business Description needs to be longer (at least 10 characters).<br>";
+                isError = true;
+            };
+        }
+        else if(currentTab==3){
+            const bankAccount = document.querySelector("#bankAccount").value;
+            const confirmBankAccount = document.querySelector("#confirmBankAccount").value;
+            const bankRouting = document.querySelector("#bankRouting").value;
+            if(bankAccount&&confirmBankAccount&&(bankAccount!=confirmBankAccount)){
+                errorSpan.innerHTML += "Bank Account numbers must match.<br>";
+                isError = true;
+            };
+            if(bankRouting&&bankRouting.length!=9){
+                errorSpan.innerHTML += "Bank Routing number must be 9 digits long.<br>";
                 isError = true;
             };
         };
         if(isError){
-            errorSpan.innerHTML = "The following field(s) are required:" + errorSpan.innerHTML;
-        }
-        else{
+            errorSpan.removeAttribute("hidden");
+        };
+        return isError;
+};
+
+const prevTab = function(){
+    errorSpan.innerHTML = "";
+    errorSpan.setAttribute("hidden",true);
+    if(currentTab>0){
+        currentTab-=1;
+        showTab(currentTab);
+    };
+};
+
+const nextTab = function(){
+    errorSpan.innerHTML = "";
+    errorSpan.setAttribute("hidden",true);
+    if(currentTab<tabs.length-1){
+        const isError = validateFields();
+        if(!isError){
             currentTab+=1;
             showTab(currentTab);
         };
