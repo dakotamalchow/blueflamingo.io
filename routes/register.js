@@ -13,12 +13,6 @@ router.get("/account-info",isLoggedIn,register.accountInfoForm);
 
 router.post("/account-info",isLoggedIn,register.submitAccountInfo);
 
-/*
-router.get("/add-account-info",isLoggedIn,register.addAccountInfoPage);
-
-router.get("/refresh-account-links",isLoggedIn,register.refreshAccountLinks);
-*/
-
 router.get("/verifying-account",isLoggedIn,register.verifyingAccountPage);
 
 router.get("/purchase-plan",isLoggedIn,isStripeVerified,register.purchasePlanForm);

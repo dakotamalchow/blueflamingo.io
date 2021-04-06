@@ -282,47 +282,8 @@ module.exports.submitAccountInfo = async(req,res)=>{
     });
     user.stripeCustomer = stripeCustomer.id;
     await user.save();
-    res.send("done");
+    res.redirect("/register/verifying-account");
 };
-
-/*
-module.exports.addAccountInfoPage = async(req,res)=>{
-    const user = res.locals.currentUser;
-    const stripeAccount = await stripe.accounts.retrieve(user.stripeAccount);
-    if(stripeAccount.charges_enabled && stripeAccount.details_submitted){
-        user.isStripeVerified = true;
-        await user.save();
-        req.flash("success","Accout info added successfully");
-        return res.redirect("/register/purchase-plan");
-    }
-    else{
-        const accountLinks = await stripe.accountLinks.create({
-            account:stripeAccount.id,
-            refresh_url:"https://blueflamingo.io/register/refresh-account-links",
-            return_url:"https://blueflamingo.io/register/verifying-account",
-            type:"account_onboarding"
-        });
-        const url = accountLinks.url;
-        return res.render("register/add-account-info",{url});
-    };
-};
-
-module.exports.refreshAccountLinks = async(req,res)=>{
-    const user = res.locals.currentUser;
-    const stripeAccount = await stripe.accounts.retrieve(user.stripeAccount);
-    if(!stripeAccount.charges_enabled || !stripeAccount.details_submitted){
-        const accountLinks = await stripe.accountLinks.create({
-            account:stripeAccount.id,
-            refresh_url:"https://blueflamingo.io/register/refresh-account-links",
-            return_url:"https://blueflamingo.io/register/verifying-account",
-            type:"account_onboarding"
-        });
-        const url = accountLinks.url;
-        return res.redirect(url);
-    };
-    res.redirect("/");
-};
-*/
 
 module.exports.verifyingAccountPage = async(req,res)=>{
     const user = res.locals.currentUser;
