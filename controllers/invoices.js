@@ -38,29 +38,45 @@ const sendEmailInvoice = async(invoiceId,emailType,errorMessage="")=>{
             //danger - red
             statusColor += "#dc3545"
     };
-    let subject = "";
-    let text = "";
+    let customerSubject,customerText,userSubject,userText = "";
+    let sendUserEmail = false;
     if(emailType=="invoice"){
-        subject = `New Invoice from ${invoice.user.businessName} #${invoice.invoiceNumber}`;
-        text = `${invoice.user.businessName} sent you a new invoice for $${invoice.amount.due.toFixed(2)}. Please visit https://blueflamingo.io/invoices/${invoice._id}/pay to pay your invoice.`;
+        customerSubject = `New Invoice from ${invoice.user.businessName} #${invoice.invoiceNumber}`;
+        customerText = `${invoice.user.businessName} sent you a new invoice for $${invoice.amount.due.toFixed(2)}. Please visit https://blueflamingo.io/invoices/${invoice._id}/pay to pay your invoice.`;
     }
     else if(emailType=="receipt"){
-        subject = `Receipt from ${invoice.user.businessName} #${invoice.invoiceNumber}`;
-        text = `This is a confirmation that invoice #${invoice.invoiceNumber} from ${invoice.user.businessName} is ${invoice.status}.`;
+        customerSubject = `Receipt from ${invoice.user.businessName} #${invoice.invoiceNumber}`;
+        customerText = `This is a confirmation that invoice #${invoice.invoiceNumber} from ${invoice.user.businessName} is ${invoice.status}.`;
+        userSubject = `${invoice.customer.name} has paid invoice #${invoice.invoiceNumber}`;
+        userText = `This is a confirmation that ${invoice.customer.name} has paid invoice #${invoice.invoiceNumber}.`;
+        sendUserEmail = true;
     }
     else if(emailType=="payment failure"){
-        subject = `Payment failure - ${invoice.user.businessName} #${invoice.invoiceNumber}`;
-        text = `Your payment failed on invoice #${invoice.invoiceNumber} from ${invoice.user.businessName}. Please visit https://blueflamingo.io/invoices/${invoice._id}/pay to pay your invoice.`;
+        customerSubject = `Payment failure - ${invoice.user.businessName} #${invoice.invoiceNumber}`;
+        customerText = `Your payment failed on invoice #${invoice.invoiceNumber} from ${invoice.user.businessName}. Please visit https://blueflamingo.io/invoices/${invoice._id}/pay to pay your invoice.`;
+        userSubject = `Payment failed on Invoice #${invoice.invoiceNumber}`;
+        customerText = `Attempted payment has failed for invoice #${invoice.invoiceNumber}.`;
+        sendUserEmail = true;
     };
-    const msg = {
+    const customerMessage = {
         to:invoice.customer.email,
         from:"billing@blueflamingo.io",
-        subject:subject,
-        text:text,
+        subject:customerSubject,
+        text:customerText,
         html:ejs.render(invoiceTemplate,{invoice,statusColor,errorMessage})
     };
-    await sgMail.send(msg);
+    await sgMail.send(customerMessage);
     invoice.log.push({timeStamp:new Date(),description:`Email ${emailType} sent to customer`});
+    if(sendUserEmail){
+        const userMessage = {
+            to:user.email,
+            from:"billing@blueflamingo.io",
+            subject:userSubject,
+            text:userText,
+            html:ejs.render(invoiceTemplate,{invoice,statusColor,errorMessage})
+        };
+        await sgMail.send(userMessage);
+    };
     await invoice.save();
 };
 
