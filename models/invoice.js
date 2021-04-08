@@ -26,8 +26,28 @@ const invoiceSchema = new Schema({
         amount:{
             type: Number,
             required: true
+        },
+        quantity:{
+            type: Number,
+            required: true
+        },
+        tax:{
+            type: String,
+            required: true
         }
     }],
+    subtotal:{
+        type: Number,
+        required: true
+    },
+    taxTotal:{
+        type: Number,
+        requiried: true
+    },
+    total:{
+        type: Number,
+        required: true
+    },
     amount:{
         due:{
             type: Number,

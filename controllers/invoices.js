@@ -113,15 +113,23 @@ module.exports.createInvoice = async(req,res)=>{
     const invoiceCount = user.increaseInvoiceCount();
     const invoiceNumber = String(invoiceCount).padStart(4,"0");
     const invoice = new Invoice({user,customer,invoiceNumber,lineItems:Object.values(lineItems),paymentOptions,notes});
-    let amount = 0;
+    let subtotal = 0;
+    let taxTotal = 0;
     //lineItems comes back as nested objects, so this returns an array
     for(let lineItem of Object.values(lineItems)){
-        amount += parseFloat(lineItem.amount);
+        const amountValue = parseFloat(lineItem.amount);
+        subtotal += amountValue;
+        const taxValue = parseFloat(lineItem.tax);
+        taxTotal += amountValue*taxValue;
     };
+    const total = subtotal+taxTotal;
+    invoice.subtotal = subtotal;
+    invoice.taxTotal = taxTotal;
+    invoice.total = total;
     invoice.amount = {
-        due: amount,
+        due: total,
         paid: 0,
-        remaining: amount
+        remaining: total
     };
     invoice.status = "open";
     invoice.log.push({timeStamp:new Date(),description:"Invoice created"});
