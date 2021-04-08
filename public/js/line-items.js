@@ -2,6 +2,8 @@ const addItemButton = document.querySelector("#add-item-button");
 const removeItemButton = document.querySelector("#remove-item-button");
 const lineItemsDiv = document.querySelector("#line-items");
 const total = document.querySelector("#total");
+const subtotal = document.querySelector("#subtotal");
+const tax = document.querySelector("#tax");
 let lineItemCount = 0;
 
 const addToLineItem = function(){
@@ -65,19 +67,25 @@ const updateLineItemTotal = function(){
     const lineItemNumber = this.id.slice(-1);
     const amount = document.querySelector(`#amountInput${lineItemNumber}`).value;
     const quantity = document.querySelector(`#quantityInput${lineItemNumber}`).value;
-    const tax = parseFloat(document.querySelector(`#taxInput${lineItemNumber}`).value)+1;
-    const total = amount*quantity*tax;
+    const total = amount*quantity;
     document.querySelector(`#total${lineItemNumber}`).innerText = total.toFixed(2);
-    updateTotal();
+    updateTotals();
 };
 
-const updateTotal = function(){
+const updateTotals = function(){
     const lineItemAmounts = document.querySelectorAll(".line-item-amount");
-    let newTotal = 0;
+    let newSubtotal = 0;
+    let newTaxTotal = 0;
     for(let amount of lineItemAmounts){
-        newTotal += parseFloat(amount.innerText);
+        const amountValue = parseFloat(amount.innerText);
+        newSubtotal += amountValue;
+        const lineItemNumber = amount.id.slice(-1);
+        const taxValue = parseFloat(document.querySelector(`#taxInput${lineItemNumber}`).value);
+        newTaxTotal += amountValue*taxValue;
     };
-    if(!newTotal) newTotal = 0;
+    const newTotal = newSubtotal+newTaxTotal;
+    subtotal.innerText = newSubtotal.toFixed(2);
+    tax.innerText = newTaxTotal.toFixed(2);
     total.innerText = newTotal.toFixed(2);
 };
 
