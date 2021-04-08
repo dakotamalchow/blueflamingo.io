@@ -1,31 +1,14 @@
 const addItemButton = document.querySelector("#add-item-button");
 const removeItemButton = document.querySelector("#remove-item-button");
 const lineItemsDiv = document.querySelector("#line-items");
-
 const total = document.querySelector("#total");
-total.innerText = "0.00";
 let lineItemCount = 0;
-
-const updateTotal = function(){
-    this.value = parseFloat(this.value).toFixed(2);
-    const lineItemAmounts = document.querySelectorAll(".line-item-amount");
-    let newTotal = 0;
-    for(let amount of lineItemAmounts){
-        newTotal += parseFloat(amount.value);
-    };
-    if(!newTotal) newTotal = 0;
-    total.innerText = newTotal.toFixed(2);
-};
-
-const amountInput0 = document.querySelector("#amountInput0");
-amountInput0.addEventListener("change",updateTotal);
 
 const addToLineItem = function(){
     const descriptionInput = document.querySelector(`#descriptionInput${this.i}`);
     descriptionInput.value = this.description;
     const amountInput = document.querySelector(`#amountInput${this.i}`);
     amountInput.value = this.amount.toFixed(2);
-    updateTotal();
 };
 
 /*
@@ -74,25 +57,81 @@ const updateDropdown = function(){
     };
 };
 
+const formatAmount = function(){
+    this.value = parseFloat(this.value).toFixed(2);
+};
+
+const updateLineItemTotal = function(){
+    const lineItemNumber = this.id.slice(-1);
+    const amount = document.querySelector(`#amountInput${lineItemNumber}`).value;
+    const quantity = document.querySelector(`#quantityInput${lineItemNumber}`).value;
+    const tax = parseFloat(document.querySelector(`#taxInput${lineItemNumber}`).value)+1;
+    const total = amount*quantity*tax;
+    document.querySelector(`#total${lineItemNumber}`).innerText = total.toFixed(2);
+    updateTotal();
+};
+
+const updateTotal = function(){
+    const lineItemAmounts = document.querySelectorAll(".line-item-amount");
+    let newTotal = 0;
+    for(let amount of lineItemAmounts){
+        newTotal += parseFloat(amount.innerText);
+    };
+    if(!newTotal) newTotal = 0;
+    total.innerText = newTotal.toFixed(2);
+};
+
 const descriptionInput0 = document.querySelector("#descriptionInput0");
 descriptionInput0.addEventListener("keydown",updateDropdown);
 descriptionInput0.addEventListener("click",updateDropdown);
+const amountInput0 = document.querySelector("#amountInput0");
+const quantityInput0 = document.querySelector("#quantityInput0");
+const taxInput0 = document.querySelector("#taxInput0");
+amountInput0.addEventListener("change",formatAmount);
+amountInput0.addEventListener("change",updateLineItemTotal);
+quantityInput0.addEventListener("change",updateLineItemTotal);
+taxInput0.addEventListener("change",updateLineItemTotal);
 
 /*
-<div class="form-row ml-0 mb-2 line-item">
-    <input class="form-control px-2 col-7 col-sm-8 col-md-9 col-lg-10" type="text" id="descriptionInput#" name="lineItems[item#][description]" placeholder="Description" data-toggle="dropdown" autocomplete="off" required>
-    <div class="input-group col-5 col-sm-4 col-md-3 col-lg-2">
-        <span class="input-group-text">$</span>
-        <input class="form-control line-item-amount" type="number" id="amountInput0" name="lineItems[item#][amount]" placeholder="0.00" step="0.01" min="0" required>
-    </div>
-    <ul class="dropdown-menu p-0 pre-scrollable" role="menu" aria-labelledby="descriptionInput#">
-        <a class="btn btn-block btn-outline-primary m-0" href="/items/new">
-            <li class="text-left" role="menuitem">&plus; Create New Item</li>
-        </a>
-        <div id="searchResultDiv">
-            <!-- search results for descriptionInput0 will be added here -->
+<div class="ml-0 mb-3 line-item">
+    <hr>
+    <div class="form-row">
+        <div class="col mb-1">
+            <input class="form-control px-2" type="text" id="descriptionInput0" name="lineItems[item0][description]" placeholder="Description" data-toggle="dropdown" autocomplete="off" required>
         </div>
-    </ul>
+        <ul class="dropdown-menu p-0 pre-scrollable" role="menu" aria-labelledby="descriptionInput0">
+            <a class="btn btn-block btn-outline-primary m-0" href="/items/new">
+                <li class="text-left" role="menuitem">&plus; Create New Item</li>
+            </a>
+            <div id="searchResultDiv0">
+                <!-- search results for descriptionInput0 will be added here -->
+            </div>
+        </ul>
+    </div>
+    <div class="form-row justify-content-between">
+        <div class="col-6 col-sm-3 mb-1">
+            <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input class="form-control px-2" type="number" id="amountInput0" name="lineItems[item0][amount]" placeholder="0.00" step="0.01" min="0" required>
+            </div>
+        </div>
+        <div class="col-6 col-sm-3 col-md-2 mb-1">
+            <div class="input-group">
+                <span class="input-group-text">x</span>
+                <input class="form-control line-item-quantity px-2 text-right" type="number" id="quantityInput0" name="lineItems[item0][quantity]" value="1" min="1" required>
+            </div>
+        </div>
+        <div class="col-6 col-sm-3 mb-1">
+            <select class="custom-select" name="lineItem[item0][tax]" id="taxInput0" required>
+                <option value="0">No Tax</option>
+                <option value="0.07">Tax</option>
+            </select>
+        </div>
+        <div class="col-6 col-sm-3 col-md-4 mb-1 pb-1 text-right align-self-end h5">
+            <span>$</span>
+            <span class="line-item-amount" id="total0">0.00<span>
+        </div>
+    </div>
 </div>
 */
 
@@ -100,10 +139,16 @@ const addLineItem = function(){
     lineItemCount+=1;
 
     const itemDiv = document.createElement("div");
-    itemDiv.classList.add("form-row","ml-0","mb-2","line-item");
+    itemDiv.classList.add("ml-0","mb-3","line-item");
+
+    const row1Div = document.createElement("div");
+    row1Div.classList.add("form-row");
+
+    const row1col1Div = document.createElement("div");
+    row1col1Div.classList.add("col","mb-1");
 
     const descriptionInput = document.createElement("input");
-    descriptionInput.classList.add("form-control","px-2","col-7","col-sm-8","col-md-9","col-lg-10");
+    descriptionInput.classList.add("form-control","px-2");
     descriptionInput.setAttribute("type","text");
     descriptionInput.setAttribute("id",`descriptionInput${lineItemCount}`);
     descriptionInput.setAttribute("name",`lineItems[item${lineItemCount}][description]`);
@@ -113,33 +158,6 @@ const addLineItem = function(){
     descriptionInput.setAttribute("required",true);
     descriptionInput.addEventListener("keydown",updateDropdown);
     descriptionInput.addEventListener("click",updateDropdown);
-
-    const inputGroup = document.createElement("div");
-    inputGroup.classList.add("input-group","col-5","col-sm-4","col-md-3","col-lg-2");
-
-    const dollarSignSpan = document.createElement("span");
-    dollarSignSpan.classList.add("input-group-text");
-    dollarSignSpan.innerText = "$";
-
-    const amountInput = document.createElement("input");
-    amountInput.classList.add("form-control","line-item-amount");
-    amountInput.setAttribute("type","number");
-    amountInput.setAttribute("id",`amountInput${lineItemCount}`);
-    amountInput.setAttribute("name",`lineItems[item${lineItemCount}][amount]`);
-    amountInput.setAttribute("placeholder","0.00");
-    amountInput.setAttribute("step","0.01");
-    amountInput.setAttribute("min","0");
-    amountInput.setAttribute("required",true);
-    amountInput.addEventListener("change",updateTotal);
-
-// <ul role="menu" aria-labelledby="descriptionInput0">
-//     <a class="btn btn-block btn-outline-primary m-0" href="/items/new">
-//         <li class="text-left" role="menuitem">&plus; Create New Item</li>
-//     </a>
-//     <div id="searchResultDiv">
-//         <!-- search results for descriptionInput0 will be added here -->
-//     </div>
-// </ul>
 
     const dropDownUl = document.createElement("ul");
     dropDownUl.classList.add("dropdown-menu","p-0","pre-scrollable");
@@ -158,14 +176,113 @@ const addLineItem = function(){
     const searchResultDiv = document.createElement("div");
     searchResultDiv.setAttribute("id",`searchResultDiv${lineItemCount}`);
 
-    itemDiv.append(descriptionInput);
-    inputGroup.append(dollarSignSpan);
-    inputGroup.append(amountInput);
-    itemDiv.append(inputGroup);
     buttonLink.append(newItemLi);
     dropDownUl.append(buttonLink);
     dropDownUl.append(searchResultDiv);
-    itemDiv.append(dropDownUl);
+    row1col1Div.append(descriptionInput);
+    row1col1Div.append(dropDownUl);
+    row1Div.append(row1col1Div);
+
+    const row2Div = document.createElement("div");
+    row2Div.classList.add("form-row","justify-content-between");
+
+    const row2col1Div = document.createElement("div");
+    row2col1Div.classList.add("col-6","col-sm-3","mb-1");
+
+    const amountInputGroup = document.createElement("div");
+    amountInputGroup.classList.add("input-group");
+
+    const dollarSignSpan = document.createElement("span");
+    dollarSignSpan.classList.add("input-group-text");
+    dollarSignSpan.innerText = "$";
+
+    const amountInput = document.createElement("input");
+    amountInput.classList.add("form-control","px-2");
+    amountInput.setAttribute("type","number");
+    amountInput.setAttribute("id",`amountInput${lineItemCount}`);
+    amountInput.setAttribute("name",`lineItems[item${lineItemCount}][amount]`);
+    amountInput.setAttribute("placeholder","0.00");
+    amountInput.setAttribute("step","0.01");
+    amountInput.setAttribute("min","0");
+    amountInput.setAttribute("required",true);
+    amountInput.addEventListener("change",updateLineItemTotal);
+
+    amountInputGroup.append(dollarSignSpan);
+    amountInputGroup.append(amountInput);
+    row2col1Div.append(amountInputGroup);
+
+    const row2col2Div = document.createElement("div");
+    row2col2Div.classList.add("col-6","col-sm-3","col-md-2","mb-1");
+
+    const quantityInputGroup = document.createElement("div");
+    quantityInputGroup.classList.add("input-group");
+
+    const timesSpan = document.createElement("span");
+    timesSpan.classList.add("input-group-text");
+    timesSpan.innerText = "x";
+
+    const quantityInput = document.createElement("input");
+    quantityInput.classList.add("form-control","line-item-quantity","px-2","text-right");
+    quantityInput.setAttribute("type","number");
+    quantityInput.setAttribute("id",`quantityInput${lineItemCount}`);
+    quantityInput.setAttribute("name",`lineItems[item${lineItemCount}][quantity]`);
+    quantityInput.setAttribute("value","1");
+    quantityInput.setAttribute("min","1");
+    quantityInput.setAttribute("required",true);
+    quantityInput.addEventListener("change",updateLineItemTotal);
+
+    quantityInputGroup.append(timesSpan);
+    quantityInputGroup.append(quantityInput);
+    row2col2Div.append(quantityInputGroup);
+
+    const row2col3Div = document.createElement("div");
+    row2col3Div.classList.add("col-6","col-sm-3","mb-1");
+
+    const taxSelect = document.createElement("select");
+    taxSelect.classList.add("custom-select");
+    taxSelect.setAttribute("id",`taxInput${lineItemCount}`);
+    taxSelect.setAttribute("name",`lineItems[item${lineItemCount}][tax]`);
+    taxSelect.setAttribute("required",true);
+    taxSelect.addEventListener("change",updateLineItemTotal);
+
+    //need to loop over tax options?
+    const noTaxOption = document.createElement("option");
+    noTaxOption.setAttribute("value","0");
+    noTaxOption.innerText = "No Tax";
+
+    const taxOption = document.createElement("option");
+    taxOption.setAttribute("value","0.07");
+    taxOption.innerText = "Tax";
+
+    taxSelect.append(noTaxOption);
+    taxSelect.append(taxOption);
+    row2col3Div.append(taxSelect);
+
+    const row2col4Div = document.createElement("div");
+    row2col4Div.classList.add("col-6","col-sm-3","col-md-4","mb-1","pb-1","text-right","align-self-end","h5");
+
+    const totalDollarSignSpan = document.createElement("span");
+    totalDollarSignSpan.innerText = "$";
+
+    const totalSpan = document.createElement("span");
+    totalSpan.classList.add("line-item-amount");
+    totalSpan.setAttribute("id",`total${lineItemCount}`);
+    totalSpan.innerText = "0.00";
+    // update item total
+
+    row2col4Div.append(totalDollarSignSpan);
+    row2col4Div.append(totalSpan);
+
+    row2Div.append(row2col1Div);
+    row2Div.append(row2col2Div);
+    row2Div.append(row2col3Div);
+    row2Div.append(row2col4Div);
+
+    const hr = document.createElement("hr");
+
+    itemDiv.append(hr);
+    itemDiv.append(row1Div);
+    itemDiv.append(row2Div);
     lineItemsDiv.append(itemDiv);
 
     removeItemButton.removeAttribute("hidden");
