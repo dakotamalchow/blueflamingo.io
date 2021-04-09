@@ -64,6 +64,7 @@ const validateBusinessName = (businessName)=>{
 
 module.exports.registerUser = async(req,res,next)=>{
     const {firstName,lastName,businessName,email,password,confirmPassword} = req.body;
+    const isBusinessNameValid = validateBusinessName(businessName);
     const isPasswordValid = validatePassword(password,confirmPassword);
     if(isBusinessNameValid!=true||isPasswordValid!=true){
         let queryString = `?firstName=${encodeURIComponent(firstName)}`;
