@@ -275,6 +275,7 @@ module.exports.submitAccountInfo = async(req,res)=>{
     else{
         // some type of error? validate business type before?
     };
+    user.phoneNumber = phoneNumber;
     user.stripeAccount = stripeAccount.id;
     //add address and phone?
     const stripeCustomer = await stripe.customers.create({
