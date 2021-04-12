@@ -117,7 +117,7 @@ module.exports.createInvoice = async(req,res)=>{
     let taxTotal = 0;
     //lineItems comes back as nested objects, so this returns an array
     for(let lineItem of Object.values(lineItems)){
-        const amountValue = parseFloat(lineItem.amount);
+        const amountValue = parseFloat(lineItem.quantity*lineItem.amount);
         subtotal += amountValue;
         const taxValue = parseFloat(lineItem.tax);
         taxTotal += amountValue*taxValue;

@@ -18,12 +18,29 @@
 <p><%= invoice.customer.name %> (<%= invoice.customer.email %>)</p>
 <hr>
 <h4>Line Items</h4>
+<div class="row justify-content-between">
+    <span class="col-5 mb-0">Description</span>
+    <span class="col-2 mb-0 text-right">Quantity</span>
+    <span class="col-2 mb-0 text-right">Amount</span>
+    <span class="col-3 mb-0 text-right">Total</span>
+</div>
 <% for(let lineItem of invoice.lineItems){ %>
-    <div class="row justify-content-between mx-0">
-        <p class="col mb-0"><%= lineItem.description %></p>
-        <p class="col-3 col-md-2 mb-0 text-right">$<%= lineItem.amount.toFixed(2) %></p>
+    <div class="row justify-content-between">
+        <span class="col-5 mb-0"><%= lineItem.description %></span>
+        <span class="col-2 mb-0 text-right">x<%= lineItem.quantity %></span>
+        <span class="col-2 mb-0 text-right">$<%= lineItem.amount.toFixed(2) %></span>
+        <span class="col-3 mb-0 text-right">$<%= (lineItem.quantity*lineItem.amount).toFixed(2) %> <%= parseFloat(lineItem.tax)?"(T)":"(N)" %></span>
     </div>
 <% } %>
+<hr>
+<div class="row justify-content-between">
+    <h5 class="col">Subtotal:</h5>
+    <h5 class="col text-right">$<%= invoice.subtotal.toFixed(2) %></h5>
+</div>
+<div class="row justify-content-between">
+    <h5 class="col">Tax:</h5>
+    <h5 class="col text-right">$<%= invoice.taxTotal.toFixed(2) %></h5>
+</div>
 <hr>
 <div class="row justify-content-between">
     <h4 class="col">Total:</h4>

@@ -12,7 +12,10 @@
                 <img src="<%= invoice.user.thumbnail %>" alt="logo">
             </div>
         <% } %>
-        <p style="font-size: 2rem; text-align: center; margin-top: 0; margin-bottom: 0.5rem;"><%= invoice.user.businessName %></p>
+        <p style="font-size: 2rem; text-align: center; margin-top: 0; margin-bottom: 0;"><%= invoice.user.businessName %></p>
+        <p style="font-size: 1rem; text-align: center; margin-top: 0; margin-bottom: 0;">Phone: <%= invoice.user.phoneNumber %></p>
+        <p style="font-size: 1rem; text-align: center; margin-top: 0; margin-bottom: 0.5rem;">Email: <%= invoice.user.email %></p>
+        <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
         <p style="font-size: 1.75rem; text-align: center; margin-top: 0; margin-bottom: 0.5rem;">Invoice #<%= invoice.invoiceNumber %></p>
         <div style="text-align: center;">
             <span style="font-size: 1.25rem; margin-top: 0; padding: 0.1rem 1rem; color: #FFF; background-color: <%= statusColor %>; border-radius: 0.25rem;"><%= invoice.status %></span>
@@ -27,13 +30,46 @@
         <p style="font-size: 1rem;"><%= invoice.customer.name %> (<%= invoice.customer.email %>)</p>
         <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
         <p style="font-size: 1.5rem; margin-top: 0; margin-bottom: 0.5rem;">Line Items</p>
-        <table>
+        <table style="width: 100%;">
+            <colgroup>
+                <col span="1" style="width: 41.667%;">
+                <col span="1" style="width: 16.667%;">
+                <col span="1" style="width: 16.667%;">
+                <col span="1" style="width: 25%;">
+            </colgroup>
+            <tr>
+                <td style="font-size: 1rem;">Description</td>
+                <td style="text-align: right; font-size: 1rem;">Quantity</td>
+                <td style="text-align: right; font-size: 1rem;">Amount</td>
+                <td style="text-align: right; font-size: 1rem;">Total</td>
+            </tr>
             <% for(let lineItem of invoice.lineItems){ %>
                 <tr>
-                    <td style="width: 100%; font-size: 1rem;"><%= lineItem.description %></td>
+                    <td style="font-size: 1rem;"><%= lineItem.description %></td>
+                    <td style="text-align: right; font-size: 1rem;">x<%= lineItem.quantity %></td>
                     <td style="text-align: right; font-size: 1rem;">$<%= lineItem.amount.toFixed(2) %></td>
+                    <td style="text-align: right; font-size: 1rem;">$<%= (lineItem.quantity*lineItem.amount).toFixed(2) %> <%= parseFloat(lineItem.tax)?"(T)":"(N)" %></td>
                 </tr>
             <% } %>
+        </table>
+        <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
+        <table>
+            <tr>
+                <td style="width: 100%; font-size: 1.25rem; margin-top: 0; margin-bottom: 0.5rem;">
+                    Subtotal:
+                </td>
+                <td style="text-align: right; font-size: 1.25rem; margin-top: 0; margin-bottom: 0.5rem;">
+                    $<%= invoice.subtotal.toFixed(2) %>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 100%; font-size: 1.25rem; margin-top: 0; margin-bottom: 0.5rem;">
+                    Tax:
+                </td>
+                <td style="text-align: right; font-size: 1.25rem; margin-top: 0; margin-bottom: 0.5rem;">
+                    $<%= invoice.taxTotal.toFixed(2) %>
+                </td>
+            </tr>
         </table>
         <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
         <table>
@@ -76,7 +112,7 @@
                 <a style="text-decoration: none; color: #FFF; background-color: #0040F0; padding: 0.5rem 3rem; border-radius: 0.25rem; font-size: 1.25rem;" href="https://blueflamingo.io/invoices/<%= invoice._id %>/pay">Pay Invoice</a>
             </div>
             <hr style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
-        <% } %> 
+        <% } %>
         <p style="text-align: center;">Powered by <a href="https://blueflamingo.io">Blue Flamingo</a></p>
     </div>
 </body>
