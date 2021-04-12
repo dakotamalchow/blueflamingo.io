@@ -60,7 +60,9 @@ module.exports.validateInvoiceReqBody = (req,res,next)=>{
             Joi.string().required(),
             Joi.object({
                 description: Joi.string().required(),
-                amount: Joi.number().min(0).precision(2).required()
+                amount: Joi.number().min(0).precision(2).required(),
+                quantity: Joi.number().min(1).required(),
+                tax:Joi.number().required()
             }).required()
         ).required(),
         paymentOptions: Joi.object().required(),
