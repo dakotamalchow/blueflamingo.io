@@ -69,7 +69,7 @@ const sendEmailInvoice = async(invoiceId,emailType,errorMessage="")=>{
     invoice.log.push({timeStamp:new Date(),description:`Email ${emailType} sent to customer`});
     if(sendUserEmail){
         const userMessage = {
-            to:user.email,
+            to:invoice.user.email,
             from:"billing@blueflamingo.io",
             subject:userSubject,
             text:userText,
