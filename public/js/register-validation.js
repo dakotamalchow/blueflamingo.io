@@ -2,6 +2,7 @@ const phoneNumberInput = document.querySelector("#phoneNumber");
 const ssnInput = document.querySelector("#ssn");
 const companyInfoDiv = document.querySelector("#companyInfo");
 const businessTypeSelect = document.querySelector("#businessType");
+const taxIdInput = document.querySelector("#taxId");
 // currentTab and errorSpan are defined in multi-step-form.js
 
 const formatSSN = function(){
@@ -18,7 +19,7 @@ const formatSSN = function(){
 
 ssnInput.addEventListener("change",formatSSN);
 
-const formatPhoneNumber= function(){
+const formatPhoneNumber = function(){
     let unformattedNumber = this.value.replace(/\D/g,"");
     let formattedNumber = unformattedNumber.substring(0,3);
     if(unformattedNumber.length>3){
@@ -31,6 +32,17 @@ const formatPhoneNumber= function(){
 };
 
 phoneNumberInput.addEventListener("change",formatPhoneNumber);
+
+const formatTaxId = function(){
+    let unformattedTaxId = this.value.replace(/\D/g,"");
+    let formattedTaxId = unformattedTaxId.substring(0,2);
+    if(unformattedTaxId.length>2){
+        formattedTaxId +=  "-"+unformattedTaxId.substring(2,10);
+    };
+    this.value = formattedTaxId;
+};
+
+taxIdInput.addEventListener("change",formatTaxId);
 
 const showCompanyInfo = function(){
     errorSpan.innerHTML = "";

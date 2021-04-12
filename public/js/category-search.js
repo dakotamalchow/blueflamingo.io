@@ -1,9 +1,11 @@
 const categoryInput = document.querySelector("#category");
 const mccInput = document.querySelector("#mcc");
+let categoryIndex;
 
 const selectCategory = function(){
     categoryInput.value = this.description;
     mccInput.value = this.mcc;
+    categoryIndex = this.index;
 };
 
 const updateDropdown = function(){
@@ -13,17 +15,18 @@ const updateDropdown = function(){
     };
     const input = this.value.toLowerCase();
     //categories is passed as a variable in the view
-    for(let category of categories){
-        if(category.description.toLowerCase().includes(input)||input==""){
+    for(let i=0; i<categories.length; i++){
+        if(categories[i].description.toLowerCase().includes(input)||input==""){
             const buttonDiv = document.createElement("div");
             buttonDiv.classList.add("btn","btn-block","btn-outline-light","text-dark","border","m-0");
-            buttonDiv.description = category.description;
-            buttonDiv.mcc = category.mcc;
+            buttonDiv.description = categories[i].description;
+            buttonDiv.mcc = categories[i].mcc;
+            buttonDiv.index = i;
             buttonDiv.addEventListener("click",selectCategory);
 
             const categoryLi = document.createElement("li");
             categoryLi.setAttribute("role","menuitem");
-            categoryLi.innerText = category.description;
+            categoryLi.innerText = categories[i].description;
 
             buttonDiv.append(categoryLi);
             searchResultUl.append(buttonDiv);
@@ -31,7 +34,13 @@ const updateDropdown = function(){
     };
 };
 
-// if a category wasn't picked, clear the field
+const validateCategory = function(){
+    if((!categories[categoryIndex])||(categories[categoryIndex].description!=this.value)){
+        this.value = "";
+        mccInput.value = "";
+    };
+};
 
 categoryInput.addEventListener("keydown",updateDropdown);
 categoryInput.addEventListener("click",updateDropdown);
+categoryInput.addEventListener("change",validateCategory);
