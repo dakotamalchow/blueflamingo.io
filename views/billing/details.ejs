@@ -63,11 +63,12 @@
             let processingFee = 0;
             if(invoice.paymentType=="card"){
                 paymentType = "Card";
-                processingFee = ((invoice.amount.due*0.029)+0.30).toFixed(2);
+                processingFee = (invoice.amount.due*0.029)+0.30;
             } else if(invoice.paymentType=="bank"){
                 paymentType = "Bank";
-                processingFee = (invoice.amount.due*0.0105).toFixed(2);
+                processingFee = invoice.amount.due*0.0105;
             }
+            processingFee = (Math.round(processingFee*100)/100).toFixed(2);
         %>
         <h5 class="col"><%= paymentType %>  Processing Fee:</h5>
         <h5 class="col text-right">($<%= processingFee %>)</h5>

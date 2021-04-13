@@ -83,6 +83,8 @@ const updateTotals = function(){
         const taxValue = parseFloat(document.querySelector(`#taxInput${lineItemNumber}`).value);
         newTaxTotal += amountValue*taxValue;
     };
+    newSubtotal = Math.round(newSubtotal*100)/100;
+    newTaxTotal = Math.round(newTaxTotal*100)/100;
     const newTotal = newSubtotal+newTaxTotal;
     subtotal.innerText = newSubtotal.toFixed(2);
     tax.innerText = newTaxTotal.toFixed(2);

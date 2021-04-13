@@ -122,9 +122,11 @@ module.exports.createInvoice = async(req,res)=>{
         const taxValue = parseFloat(lineItem.tax);
         taxTotal += amountValue*taxValue;
     };
-    const total = subtotal+taxTotal;
-    invoice.subtotal = subtotal;
-    invoice.taxTotal = taxTotal;
+    subtotal = Math.round(subtotal*100)/100;
+    taxTotal = Math.round(taxTotal*100)/100;
+    const total = (subtotal+taxTotal).toFixed(2);
+    invoice.subtotal = subtotal.toFixed(2);
+    invoice.taxTotal = taxTotal.toFixed(2);
     invoice.total = total;
     invoice.amount = {
         due: total,
