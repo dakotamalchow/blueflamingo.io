@@ -11,10 +11,6 @@ const checkPromoCode = ()=>{
             promoCodeConfirmation.innerHTML = "The applied promo code will give you your first <b>two</b> months for free.";
             promoCodeConfirmation.innerHTML += " You will be charged on a recurring basis after that, but can cancel any time.";
         }
-        else if(promoCodeInput.value.toUpperCase()=="3FLAMINGOS"){
-            promoCodeConfirmation.innerHTML = "The applied promo code will give you your first <b>three</b> months for free.";
-            promoCodeConfirmation.innerHTML += " You will be charged on a recurring basis after that, but can cancel any time.";
-        }
         else{
             promoCodeConfirmation.innerText = "";
         };
