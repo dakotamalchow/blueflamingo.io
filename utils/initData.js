@@ -20,7 +20,7 @@ const setupPlans = async(blueFlamingo)=>{
             name: "Standard Plan"
         });
         const price = await stripe.prices.create({
-            unit_amount: 4000,
+            unit_amount: 2400,
             currency: "usd",
             recurring: {interval: "month"},
             product: product.id
