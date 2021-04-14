@@ -10,7 +10,11 @@ const itemSchema = new Schema({
         type: String,
         required: true
     },
-    amount: {
+    amount:{
+        type: Number,
+        required: true
+    },
+    tax:{
         type: Number,
         required: true
     }

@@ -11,6 +11,13 @@ const addToLineItem = function(){
     descriptionInput.value = this.description;
     const amountInput = document.querySelector(`#amountInput${this.i}`);
     amountInput.value = this.amount.toFixed(2);
+    const taxInput = document.querySelector(`#taxInput${this.i}`);
+    taxInput.value = this.tax;
+    const amount = document.querySelector(`#amountInput${this.i}`).value;
+    const quantity = document.querySelector(`#quantityInput${this.i}`).value;
+    const total = amount*quantity;
+    document.querySelector(`#total${this.i}`).innerText = total.toFixed(2);
+    updateTotals();
 };
 
 /*
@@ -37,6 +44,7 @@ const updateDropdown = function(){
             buttonDiv.i = lineItemNumber;
             buttonDiv.description = item.description;
             buttonDiv.amount = item.amount;
+            buttonDiv.tax = item.tax;
             buttonDiv.addEventListener("click",addToLineItem);
 
             const menuItemLi = document.createElement("li");

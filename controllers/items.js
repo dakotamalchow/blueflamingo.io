@@ -17,9 +17,9 @@ module.exports.newForm = async(req,res)=>{
 };
 
 module.exports.saveItem = async(req,res)=>{
-    const {description,amount,returnToUrl} = req.body;
+    const {description,amount,tax,returnToUrl} = req.body;
     const user = res.locals.currentUser;
-    const item = new Item({user,description,amount});
+    const item = new Item({user,description,amount,tax});
     await item.save();
     req.flash("success","Successfully saved new item");
     res.redirect(returnToUrl);
@@ -39,8 +39,8 @@ module.exports.editForm = async(req,res)=>{
 
 module.exports.editItem = async(req,res)=>{
     const itemId = req.params.id;
-    const {description,amount} = req.body;
-    const item = await Item.findByIdAndUpdate(itemId,{description,amount},{new:true});
+    const {description,amount,tax} = req.body;
+    const item = await Item.findByIdAndUpdate(itemId,{description,amount,tax},{new:true});
     req.flash("success","Item successfully saved");
     res.redirect(`/items/${item._id}`);
 };

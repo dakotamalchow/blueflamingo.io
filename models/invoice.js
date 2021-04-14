@@ -32,7 +32,7 @@ const invoiceSchema = new Schema({
             required: true
         },
         tax:{
-            type: String,
+            type: Number,
             required: true
         }
     }],
