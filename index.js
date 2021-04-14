@@ -19,6 +19,7 @@ const User = require("./models/user");
 
 const invoiceRoutes = require("./routes/invoices");
 const itemRoutes = require("./routes/items");
+const taxRoutes = require("./routes/taxes");
 const customerRoutes = require("./routes/customers");
 const userRoutes = require("./routes/users");
 const registerRoutes = require("./routes/register");
@@ -85,6 +86,7 @@ app.use(async(req,res,next)=>{
 
 app.use("/invoices",invoiceRoutes);
 app.use("/items",itemRoutes);
+app.use("/taxes",taxRoutes);
 app.use("/customers",customerRoutes);
 app.use("/",userRoutes);
 app.use("/register",registerRoutes);

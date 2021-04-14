@@ -1,0 +1,28 @@
+<% layout("layouts/boilerplate") %>
+<div class="row">
+    <div class="col-2 col-sm-1">
+        <a class="btn btn-danger align-self-start" href="<%= returnToUrl %>">
+            <span class="oi oi-arrow-thick-left" title="arrow thick left" aria-hidden="true"></span>
+        </a>
+    </div>
+    <div class="col">
+        <h2 class="text-center">Create a New Tax</h2>
+    </div>
+    <div class="col-2 col-sm-1"></div>
+</div>
+<hr>
+<form action="/taxes" method="POST" class="validated-form" novalidate>
+    <div class="mb-3">
+        <label class="form-label h4" for="description">Description</label>
+        <input class="form-control" type="text" id="description" name="description" placeholder="Tax Description" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label h4" for="amount">Amount</label>
+        <input class="form-control" type="number" id="amount" name="amount" placeholder="0" step="0.001" min="0" required>
+    </div>
+    <input type="hidden" name="returnToUrl" value="<%= returnToUrl %>">
+    <div class="mb-3 text-center">
+        <p>Saving this tax will allow it to be used in future invoices.</p>
+        <button class="btn btn-primary btn-lg">Save</button>
+    </div>
+</form>

@@ -1,0 +1,26 @@
+<% layout("layouts/boilerplate") %>
+<div class="row">
+    <div class="col-2 col-sm-1">
+        <a class="btn btn-danger align-self-start" href="/taxes/<%= tax._id %>">
+            <span class="oi oi-arrow-thick-left" title="arrow thick left" aria-hidden="true"></span>
+        </a>
+    </div>
+    <div class="col">
+        <h2 class="text-center">Edit Tax</h2>
+    </div>
+    <div class="col-2 col-sm-1"></div>
+</div>
+<hr>
+<form action="/taxes/<%= tax._id %>" method="POST" class="validated-form" novalidate>
+    <div class="mb-3">
+        <label class="form-label h4" for="description">Description</label>
+        <input class="form-control" type="text" id="description" name="description" value="<%= tax.description %>" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label h4" for="amount">Amount</label>
+        <input class="form-control" type="number" id="amount" name="amount" value="<%= tax.amount %>" step="0.001" min="0" required>
+    </div>
+    <div class="mb-3 text-center">
+        <button class="btn btn-primary btn-lg">Save</button>
+    </div>
+</form>
