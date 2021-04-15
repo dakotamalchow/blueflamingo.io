@@ -43,7 +43,7 @@ const setupCoupons = async(blueFlamingo)=>{
         });
         blueFlamingo.coupons.push(coupon.name);
         await blueFlamingo.save();
-        console.log("Create one free month coupon");
+        console.log("Created one free month coupon");
     };
     if(!blueFlamingo.coupons.includes("two free months")){
         const coupon = await stripe.coupons.create({
@@ -55,7 +55,7 @@ const setupCoupons = async(blueFlamingo)=>{
         });
         blueFlamingo.coupons.push(coupon.name);
         await blueFlamingo.save();
-        console.log("Create two free months coupon");
+        console.log("Created two free months coupon");
     };
 };
 
