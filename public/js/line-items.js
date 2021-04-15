@@ -265,16 +265,13 @@ const addLineItem = function(){
     taxSelect.addEventListener("change",updateLineItemTotal);
 
     //need to loop over tax options?
-    const noTaxOption = document.createElement("option");
-    noTaxOption.setAttribute("value","0");
-    noTaxOption.innerText = "No Tax";
+    for(let tax of taxes){
+        const taxOption = document.createElement("option");
+        taxOption.setAttribute("value",tax._id);
+        taxOption.innerText = `${tax.description} (${tax.amount}%)`;
+        taxSelect.append(taxOption);
+    };
 
-    const taxOption = document.createElement("option");
-    taxOption.setAttribute("value","0.07");
-    taxOption.innerText = "Tax";
-
-    taxSelect.append(noTaxOption);
-    taxSelect.append(taxOption);
     row2col3Div.append(taxSelect);
 
     const row2col4Div = document.createElement("div");
