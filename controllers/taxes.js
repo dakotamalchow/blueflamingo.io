@@ -6,7 +6,8 @@ module.exports.index = async(req,res)=>{
     const {sortBy,sortOrder} = req.query;
     sortQuery = {};
     sortQuery[sortBy] = sortOrder;
-    const taxes = await Tax.find({user}).sort(sortQuery);
+    const noTax = await Tax.findOne({user,description:"No Tax",amount:0});
+    const taxes = await Tax.find({user,_id:{$ne:noTax._id}}).sort(sortQuery);
     res.render("taxes/index",{taxes});
 };
 

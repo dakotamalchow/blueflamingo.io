@@ -67,7 +67,6 @@
                 </div>
                 <div class="col-6 col-sm-3 mb-1">
                     <select class="custom-select" name="lineItems[item0][tax]" id="taxInput0" required>
-                        <option value="0">No Tax</option>
                         <% for(let tax of taxes){ %> 
                             <option value="<%= tax._id %>"><%= tax.description %> (<%= tax.amount %>%)</option>
                         <% } %> 
