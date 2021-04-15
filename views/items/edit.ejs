@@ -23,7 +23,6 @@
     <div class="mb-3">
         <label for="tax">Tax</label>
         <select class="custom-select" name="tax" id="tax" required>
-            <option value="0" <%= item.tax==0?"selected":"" %>>No Tax</option>
             <% for(let tax of taxes){ %> 
                 <option value="<%= tax._id %>"><%= tax.description %> (<%= tax.amount %>%)</option>
             <% } %> 
