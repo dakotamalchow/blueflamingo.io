@@ -13,7 +13,7 @@ const addToLineItem = function(){
     amountInput.value = this.amount.toFixed(2);
     const taxInput = document.querySelector(`#taxInput${this.i}`);
     taxInput.value = this.tax;
-    const amount = document.querySelector(`#amountInput${this.i}`).value;
+    const amount = amountInput.value;
     const quantity = document.querySelector(`#quantityInput${this.i}`).value;
     const total = amount*quantity;
     document.querySelector(`#total${this.i}`).innerText = total.toFixed(2);
@@ -88,7 +88,8 @@ const updateTotals = function(){
         const amountValue = parseFloat(amount.innerText);
         newSubtotal += amountValue;
         const lineItemNumber = amount.id.slice(-1);
-        const taxValue = parseFloat(document.querySelector(`#taxInput${lineItemNumber}`).value);
+        const taxInput = document.querySelector(`#taxInput${lineItemNumber}`);
+        const taxValue = (taxes.find(tax=>tax._id==taxInput.value).amount)/100;
         newTaxTotal += amountValue*taxValue;
     };
     newSubtotal = Math.round(newSubtotal*100)/100;

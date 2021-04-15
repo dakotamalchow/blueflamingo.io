@@ -13,7 +13,7 @@
 <hr>
 <p>Description: <%= item.description %></p>
 <p>Amount: $<%= item.amount.toFixed(2) %></p>
-<p>Tax: <%= item.tax %></p>
+<p>Tax: <%= item.tax.amount %>%</p>
 <hr>
 <div class="text-center">
     <a class="btn btn-primary btn-lg" href="/items/<%= item._id %>/edit">Edit</a>

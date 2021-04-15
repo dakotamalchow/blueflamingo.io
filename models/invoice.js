@@ -32,8 +32,8 @@ const invoiceSchema = new Schema({
             required: true
         },
         tax:{
-            type: Number,
-            required: true
+            type: Schema.Types.ObjectId,
+            ref: "Tax"
         }
     }],
     subtotal:{

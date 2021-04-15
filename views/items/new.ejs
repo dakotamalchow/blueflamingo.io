@@ -24,7 +24,9 @@
         <label for="tax">Tax</label>
         <select class="custom-select" name="tax" id="tax" required>
             <option value="0">No Tax</option>
-            <option value="0.07">Tax</option>
+            <% for(let tax of taxes){ %> 
+                <option value="<%= tax._id %>"><%= tax.description %> (<%= tax.amount %>%)</option>
+            <% } %> 
         </select>
     </div>
     <input type="hidden" name="returnToUrl" value="<%= returnToUrl %>">

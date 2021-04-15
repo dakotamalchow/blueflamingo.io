@@ -5,6 +5,7 @@ const stripe = require('stripe')(process.env.STRIPE_SEC_KEY);
 
 const User = require("../models/user");
 const Plan = require("../models/plan");
+const Tax = require("../models/tax");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -284,6 +285,8 @@ module.exports.submitAccountInfo = async(req,res)=>{
     });
     user.stripeCustomer = stripeCustomer.id;
     await user.save();
+    const tax = new Tax({user,description:"No Tax",amount:0});
+    await tax.save();
     res.redirect("/register/verifying-account");
 };
 

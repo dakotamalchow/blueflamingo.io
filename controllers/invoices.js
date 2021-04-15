@@ -12,6 +12,7 @@ const plaidClient = new plaid.Client({
 
 const Invoice = require("../models/invoice");
 const Item = require("../models/item");
+const Tax = require("../models/tax");
 const Customer = require("../models/customer");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -102,8 +103,9 @@ module.exports.newForm = async(req,res)=>{
     const user = res.locals.currentUser;
     const customers = await Customer.find({user});
     const items = await Item.find({user});
+    const taxes = await Tax.find({user});
     req.session.returnTo = req.originalUrl;
-    res.render("billing/new",{customers,items});
+    res.render("billing/new",{customers,items,taxes});
 };
 
 module.exports.createInvoice = async(req,res)=>{
@@ -119,7 +121,8 @@ module.exports.createInvoice = async(req,res)=>{
     for(let lineItem of Object.values(lineItems)){
         const amountValue = parseFloat(lineItem.quantity*lineItem.amount);
         subtotal += amountValue;
-        const taxValue = parseFloat(lineItem.tax);
+        const tax = await Tax.findById(lineItem.tax);
+        const taxValue = tax.amount/100;
         taxTotal += amountValue*taxValue;
     };
     subtotal = Math.round(subtotal*100)/100;
@@ -159,9 +162,9 @@ module.exports.customerInvoiceView = async(req,res)=>{
     const processingFee = ((invoice.amount.due*.0315)+0.30).toFixed(2);
     const paymentIntent = await stripe.paymentIntents.create({
         payment_method_types: ["card"],
-        amount: invoice.amount.due*100,
+        amount: Math.round(invoice.amount.due*100),
         currency: "usd",
-        application_fee_amount: processingFee*100,
+        application_fee_amount: Math.round(processingFee*100),
         transfer_data: {
             destination: invoice.user.stripeAccount,
         }
@@ -210,10 +213,10 @@ module.exports.payInvoice = async(req,res)=>{
         await stripe.customers.update(stripeCustomerId,{source:bankAccountToken});
         const processingFee = (invoice.amount.due*.0125).toFixed(2);
         await stripe.charges.create({
-            amount: invoice.amount.due*100,
+            amount: Math.round(invoice.amount.due*100),
             currency: "usd",
             customer: stripeCustomerId,
-            application_fee_amount: processingFee*100,
+            application_fee_amount: Math.round(processingFee*100),
             transfer_data: {
                 destination: invoice.user.stripeAccount,
             },

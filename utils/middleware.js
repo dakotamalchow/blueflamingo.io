@@ -46,8 +46,8 @@ const validateReqBody = (req,res,next,schema)=>{
 
 module.exports.validateInvoiceReqBody = (req,res,next)=>{
     /*lineItems: {
-        item1: { description: 'test item 1', amount: '1.00' },
-        item2: { description: 'test item 2', amount: '2.00' },
+        item1: { description: 'test item 1', amount: '1.00', quantity: '1', tax: '12345678abcdef1234578'},
+        item2: { description: 'test item 2', amount: '2.00', quantity: '2', tax: '12345678abcdef1234579'},
         ...
     }*/
     /*paymentOptions: {
@@ -62,7 +62,7 @@ module.exports.validateInvoiceReqBody = (req,res,next)=>{
                 description: Joi.string().required(),
                 amount: Joi.number().min(0).precision(2).required(),
                 quantity: Joi.number().min(1).required(),
-                tax:Joi.number().required()
+                tax:Joi.string().required()
             }).required()
         ).required(),
         paymentOptions: Joi.object().required(),

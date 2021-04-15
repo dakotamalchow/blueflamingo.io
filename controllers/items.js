@@ -1,4 +1,5 @@
 const Item = require("../models/item");
+const Tax = require("../models/tax");
 
 module.exports.index = async(req,res)=>{
     const user = res.locals.currentUser;
@@ -11,9 +12,11 @@ module.exports.index = async(req,res)=>{
 };
 
 module.exports.newForm = async(req,res)=>{
+    const user = res.locals.currentUser;
     const returnToUrl = req.session.returnTo || "/items";
     delete req.session.returnTo;
-    res.render("items/new",{returnToUrl});
+    const taxes = await Tax.find({user});
+    res.render("items/new",{returnToUrl,taxes});
 };
 
 module.exports.saveItem = async(req,res)=>{
@@ -27,14 +30,16 @@ module.exports.saveItem = async(req,res)=>{
 
 module.exports.itemDetails = async(req,res)=>{
     const itemId = req.params.id;
-    const item = await Item.findById(itemId);
+    const item = await Item.findById(itemId).populate("tax");
     res.render("items/details",{item});
 };
 
 module.exports.editForm = async(req,res)=>{
+    const user = res.locals.currentUser;
     const itemId = req.params.id;
     const item = await Item.findById(itemId);
-    res.render("items/edit",{item});
+    const taxes = await Tax.find({user});
+    res.render("items/edit",{item,taxes});
 };
 
 module.exports.editItem = async(req,res)=>{
