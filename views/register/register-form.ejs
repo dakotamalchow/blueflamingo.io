@@ -21,11 +21,17 @@
     </div>
     <div class="mb-3">
         <label class="form-label" for="password">Password</label>
-        <input class="form-control" type="password" id="password" name="password" required>
+        <div class="input-group">
+            <input class="form-control" type="password" id="password" name="password" required>
+            <span class="input-group-text oi oi-eye" id="showPassword" title="eye" aria-hidden="true"></span>
+        </div>
     </div>
     <div class="mb-3">
         <label class="form-label" for="confirmPassword">Confirm Password</label>
-        <input class="form-control" type="password" id="confirmPassword" name="confirmPassword" required>
+        <div class="input-group">
+            <input class="form-control" type="password" id="confirmPassword" name="confirmPassword" required>
+            <span class="input-group-text oi oi-eye" id="showConfirmPassword" title="eye" aria-hidden="true"></span>
+        </div>
     </div>
     <p class="mb-0">Password requirements:</p>
     <ul>
@@ -40,3 +46,4 @@
         </button>
     </div>
 </form>
+<% block("scripts").append('<script src="/js/showPasswords.js"></script>') %>
