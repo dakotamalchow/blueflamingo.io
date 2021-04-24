@@ -18,7 +18,10 @@
     </div>
     <div class="mb-3">
         <label class="form-label h4" for="amount">Amount</label>
-        <input class="form-control" type="number" id="amount" name="amount" placeholder="0" step="0.001" min="0" required>
+        <div class="input-group">
+            <input class="form-control" type="number" id="amount" name="amount" placeholder="0" step="0.001" min="0" required>
+            <span class="input-group-text">%</span>
+        </div>
     </div>
     <input type="hidden" name="returnToUrl" value="<%= returnToUrl %>">
     <div class="mb-3 text-center">
