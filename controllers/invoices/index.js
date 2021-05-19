@@ -10,18 +10,16 @@ const plaidClient = new plaid.Client({
     env:plaid.environments[process.env.PLAID_ENV]
 });
 
-const Invoice = require("../models/invoice");
-const Item = require("../models/item");
-const Tax = require("../models/tax");
-const Customer = require("../models/customer");
+const Invoice = require("../../models/invoice");
+const Item = require("../../models/item");
+const Tax = require("../../models/tax");
+const Customer = require("../../models/customer");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const sendEmailInvoice = async(invoiceId,emailType,errorMessage="")=>{
-    const invoice = await Invoice.findById(invoiceId).populate("customer").populate("user");
-    const invoiceTemplate = fs.readFileSync("views/email/invoice.ejs",{encoding:"utf-8"});
+module.exports.getStatusColor = (status)=>{
     let statusColor = "";
-    switch(invoice.status){
+    switch(status){
         case "draft":
             //secondary - grey
             statusColor += "#6c757d";
@@ -39,6 +37,13 @@ const sendEmailInvoice = async(invoiceId,emailType,errorMessage="")=>{
             //danger - red
             statusColor += "#dc3545"
     };
+    return statusColor;
+};
+
+const sendEmailInvoice = async(invoiceId,emailType,errorMessage="")=>{
+    const invoice = await Invoice.findById(invoiceId).populate("customer").populate("user");
+    const invoiceTemplate = fs.readFileSync("views/email/invoice.ejs",{encoding:"utf-8"});
+    let statusColor = getStatusColor(invoice.status);
     let customerSubject,customerText,userSubject,userText = "";
     let sendUserEmail = false;
     if(emailType=="invoice"){
