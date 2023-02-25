@@ -1,5 +1,7 @@
 # Blue Flamingo
 
+UPDATE: Blue Flamingo online invoicing is no longer an active business and the website blueflamingo.io may no longer work as expected. The below instructions may be inaccurate. 
+
 ![image](https://user-images.githubusercontent.com/16712174/161678927-64c8a677-51ac-4a0c-b03f-b65c6db0c015.png)
 
 Online billing geared towards small business owners.
